@@ -1725,29 +1725,7 @@ function clearForm() {
   document.getElementById('beatFile').value = '';
 }
 
-function editBeat(id) {
-  const beat = adminBeats.find(b => b.id === id);
-  if (!beat) return;
-  document.getElementById('beatName').value = beat.name;
-  document.getElementById('beatProducer').value = beat.producer;
-  document.getElementById('beatGenre').value = beat.genre;
-  document.getElementById('beatPrice').value = beat.price;
-  document.getElementById('beatLicense').value = beat.license;
-  document.getElementById('beatStatus').value = beat.status;
-  document.getElementById('beatTags').value = beat.tags || '';
-  document.getElementById('beatBpm').value = beat.bpm || '';
-  document.getElementById('beatCoverUrl').value = beat.cover || '';
-  pendingAudioUrl = beat.audioUrl || null;
-  pendingAudioDataUrl = beat.audioUrl || null;
-  if (beat.cover) {
-    document.getElementById('coverThumb').src = beat.cover;
-    document.getElementById('coverPreview').style.display = 'block';
-    document.getElementById('coverLabel').textContent = '✓ Cover loaded';
-  }
-  deleteBeat(id);
-  document.getElementById('admin-dashboard').scrollTo({ top: 0, behavior: 'smooth' });
-  showToast('✓ Beat loaded for editing — make changes and republish');
-}
+
 
 function openEditModal(id) {
   const beat = adminBeats.find(b => b.id === id);
@@ -1813,28 +1791,7 @@ function saveEditBeat(id) {
   showToast('✓ Beat updated');
 }
 
-function editBeat(id) {
-  if (!beat) return;
-  document.getElementById('beatName').value = beat.name;
-  document.getElementById('beatProducer').value = beat.producer;
-  document.getElementById('beatGenre').value = beat.genre;
-  document.getElementById('beatPrice').value = beat.price;
-  document.getElementById('beatLicense').value = beat.license;
-  document.getElementById('beatStatus').value = beat.status;
-  document.getElementById('beatTags').value = beat.tags || '';
-  document.getElementById('beatBpm').value = beat.bpm || '';
-  document.getElementById('beatCoverUrl').value = beat.cover || '';
-  pendingAudioUrl = beat.audioUrl || null;
-  pendingAudioDataUrl = beat.audioUrl || null;
-  if (beat.cover) {
-    document.getElementById('coverThumb').src = beat.cover;
-    document.getElementById('coverPreview').style.display = 'block';
-    document.getElementById('coverLabel').textContent = '✓ Cover loaded';
-  }
-  deleteBeat(id);
-  document.getElementById('admin-dashboard').scrollTo({ top: 0, behavior: 'smooth' });
-  showToast('✓ Beat loaded for editing — make changes and republish');
-}
+
 
 function toggleStatus(id) {
   const beat = adminBeats.find(b => b.id === id);
