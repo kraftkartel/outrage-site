@@ -156,7 +156,8 @@
   .page-btn.prev-next { padding: 10px 22px; }
   #seeMoreWrap { text-align: center; margin-top: 2rem; display: none; }
   #seeMoreWrap.show { display: block; }
-  .catalog-modal { position: fixed; inset: 0; background: var(--black); z-index: 9998; overflow-y: scroll; -webkit-overflow-scrolling: touch; transform: translateX(100%); transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+  .catalog-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--black); z-index: 9998; overflow-x: hidden; overflow-y: auto; -webkit-overflow-scrolling: touch; transform: translateX(100%); transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94); will-change: transform; }
+  .catalog-modal.open { transform: translateX(0); }
   .catalog-modal.open { transform: translateX(0); }
   .catalog-modal-inner { max-width: 1200px; margin: 0 auto; padding: 5rem 5vw; }
   .catalog-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; flex-wrap: wrap; gap: 1rem; }
@@ -1487,10 +1488,13 @@ checkAdminRoute();
 
 function showUploadSuccess(beat) {
   const overlay = document.getElementById('uploadSuccessOverlay');
-  if (!overlay) { showToast('✓ Beat published to catalog'); return; }
-  document.getElementById('successBeatName').textContent = beat.name;
-  document.getElementById('successBeatMeta').textContent = beat.genre + ' · $' + beat.price + (beat.bpm ? ' · ' + beat.bpm + ' BPM' : '') + ' · ' + beat.license;
-  overlay.classList.add('show');
+  if (!overlay) { showToast('✓ ' + beat.name + ' published!'); return; }
+  document.getElementById('successBeatName').textContent = beat.name || 'Untitled';
+  document.getElementById('successBeatMeta').textContent =
+    (beat.genre || '') + ' · $' + (beat.price || '0') +
+    (beat.bpm ? ' · ' + beat.bpm + ' BPM' : '') +
+    ' · ' + (beat.license || 'Basic Lease');
+  setTimeout(() => overlay.classList.add('show'), 50);
 }
 function closeSuccessOverlay() {
   document.getElementById('uploadSuccessOverlay').classList.remove('show');
@@ -1501,12 +1505,15 @@ let catalogPage = 1;
 
 function openCatalogModal() {
   catalogPage = 1;
-  document.getElementById('catalogModal').classList.add('open');
+  const modal = document.getElementById('catalogModal');
+  modal.classList.add('open');
+  modal.scrollTop = 0;
   document.body.style.overflow = 'hidden';
-  renderCatalogPage();
+  requestAnimationFrame(() => renderCatalogPage());
 }
 function closeCatalogModal() {
-  document.getElementById('catalogModal').classList.remove('open');
+  const modal = document.getElementById('catalogModal');
+  modal.classList.remove('open');
   document.body.style.overflow = '';
 }
 function renderCatalogPage() {
