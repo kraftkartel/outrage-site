@@ -1332,6 +1332,7 @@ async function hashPass(str) {
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('').slice(0,32);
 }
 let adminBeats = JSON.parse(localStorage.getItem('outrage_beats') || '[]');
+let pendingAudioDataUrl = null;
 
 function saveBeatsToStorage() {
   localStorage.setItem('outrage_beats', JSON.stringify(adminBeats));
@@ -1381,26 +1382,24 @@ function adminLogout() {
 function handleFileSelect(e) {
   const file = e.target.files[0];
   if (!file) return;
-  document.getElementById('uploadProgress').classList.add('show');
-  document.getElementById('fileName').textContent = file.name;
-  let pct = 0;
+  const progress = document.getElementById('uploadProgress');
   const fill = document.getElementById('progressFill');
-  const interval = setInterval(() => {
-    pct = Math.min(pct + Math.random() * 18, 95);
-    fill.style.width = pct + '%';
-    if (pct >= 95) {
-      clearInterval(interval);
-      setTimeout(() => {
-        fill.style.width = '100%';
-        setTimeout(() => document.getElementById('uploadProgress').classList.remove('show'), 600);
-      }, 400);
-    }
-  }, 120);
-
+  progress.classList.add('show');
+  document.getElementById('fileName').textContent = file.name;
+  fill.style.width = '0%';
+  const reader = new FileReader();
+  reader.onprogress = (evt) => {
+    if (evt.lengthComputable) fill.style.width = (evt.loaded / evt.total * 90) + '%';
+  };
+  reader.onload = (evt) => {
+    pendingAudioDataUrl = evt.target.result;
+    fill.style.width = '100%';
+    setTimeout(() => progress.classList.remove('show'), 600);
+  };
+  reader.onerror = () => { showToast('⚠ Failed to read audio file'); progress.classList.remove('show'); };
+  reader.readAsDataURL(file);
   const name = file.name.replace(/\.[^.]+$/, '').replace(/[_-]/g, ' ');
-  if (!document.getElementById('beatName').value) {
-    document.getElementById('beatName').value = name;
-  }
+  if (!document.getElementById('beatName').value) document.getElementById('beatName').value = name;
 }
 
 // Drag & drop
@@ -1437,6 +1436,7 @@ function saveBeat() {
     status: document.getElementById('beatStatus').value,
     tags: document.getElementById('beatTags').value,
     cover: document.getElementById('beatCoverUrl').value || `https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=400&q=80`,
+    audioUrl: pendingAudioDataUrl || null,
     date: new Date().toLocaleDateString('en-RW', { day: 'numeric', month: 'short', year: 'numeric' })
   };
   adminBeats.unshift(beat);
@@ -1445,6 +1445,7 @@ function saveBeat() {
   updateStats();
   renderPublicBeats();
   clearForm();
+  pendingAudioDataUrl = null;
   showToast('✓ Beat published to catalog');
 }
 
@@ -1553,7 +1554,7 @@ function renderPublicBeats() {
       <div class="beat-producer">${b.producer}</div>
       <div class="beat-footer">
         <div class="beat-price">$${b.price}</div>
-        <button class="beat-play" onclick="playIndicator(this)">▶</button>
+        <button class="beat-play" onclick="playIndicator(this, '${b.audioUrl || ''}')">▶</button>
       </div>
     </div>
   `).join('');
@@ -1592,10 +1593,21 @@ window.addEventListener('scroll', () => {
 });
 
 // Beat play button
-function playIndicator(btn) {
-  const isPlaying = btn.textContent === '■';
-  document.querySelectorAll('.beat-play').forEach(b => b.textContent = '▶');
-  btn.textContent = isPlaying ? '▶' : '■';
+let currentAudio = null;
+let currentBtn = null;
+function playIndicator(btn, audioUrl) {
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+    if (currentBtn) currentBtn.textContent = '▶';
+    if (currentBtn === btn) { currentAudio = null; currentBtn = null; return; }
+  }
+  if (!audioUrl) { showToast('⚠ No audio — upload a beat file first'); return; }
+  const audio = new Audio(audioUrl);
+  currentAudio = audio; currentBtn = btn;
+  btn.textContent = '■';
+  audio.play().catch(() => showToast('⚠ Could not play audio'));
+  audio.onended = () => { btn.textContent = '▶'; currentAudio = null; currentBtn = null; };
 }
 
 // Booking form — sends to WhatsApp
