@@ -4,6 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OutRage Music Records | Kigali's Premier Creative Hub</title>
+
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JJDSJD8M6J"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-JJDSJD8M6J');
+  function trackEvent(action, category, label) {
+    gtag('event', action, { event_category: category, event_label: label });
+  }
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Barlow:wght@300;400;500;600;700;900&family=Barlow+Condensed:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <style>
@@ -589,7 +602,12 @@
     font-size: 13px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
     color: var(--gold); z-index: 10000; transform: translateX(200%); transition: transform 0.4s ease;
   }
-  .success-toast.show { transform: translateX(0); }
+  .analytics-section { margin-top: 3rem; padding: 2.5rem; background: var(--dark); border-top: 3px solid var(--gold); }
+  .analytics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgba(201,168,76,0.08); margin-bottom: 2rem; }
+  .analytics-card { background: var(--dark2); padding: 1.5rem; }
+  .analytics-card canvas { max-height: 220px; }
+  .bpm-badge { display: none; align-items: center; gap: 0.4rem; background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.3); color: var(--gold); padding: 4px 12px; font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; margin-top: 0.5rem; }
+  .bpm-badge.show { display: inline-flex; }
 </style>
 </head>
 <body>
@@ -706,17 +724,69 @@
               <option value="draft">Save as Draft</option>
             </select>
           </div>
-          <div class="beat-form-field beat-form-full">
-            <input class="beat-form-input" type="text" id="beatTags" placeholder="Tags (comma separated): dark, 140bpm, minor..." />
+          <div class="beat-form-field">
+            <input class="beat-form-input" type="text" id="beatTags" placeholder="Tags (comma separated): dark, minor..." />
+          </div>
+          <div class="beat-form-field" style="position:relative;">
+            <input class="beat-form-input" type="number" id="beatBpm" placeholder="BPM (auto-detected on upload)" min="40" max="300" />
+            <span class="bpm-badge" id="bpmBadge">🎵 <span id="bpmVal">—</span> BPM detected</span>
           </div>
           <div class="beat-form-field beat-form-full">
-            <input class="beat-form-input" type="url" id="beatCoverUrl" placeholder="Cover Art URL (optional)" />
+            <input class="beat-form-input" type="url" id="beatCoverUrl" placeholder="Cover Art URL (optional) — or upload below" />
+          </div>
+          <div class="beat-form-field beat-form-full">
+            <div id="coverUploadZone" style="border:1px dashed rgba(201,168,76,0.3);padding:1rem 1.5rem;display:flex;align-items:center;gap:1rem;cursor:pointer;position:relative;background:var(--dark);transition:border-color 0.2s;">
+              <input type="file" id="coverFile" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;" onchange="handleCoverSelect(event)" />
+              <span style="font-size:1.5rem;">🖼</span>
+              <div>
+                <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);" id="coverLabel">Upload Cover Art</div>
+                <div style="font-size:12px;color:rgba(255,255,255,0.35);">JPG, PNG, WEBP · Max 10MB</div>
+              </div>
+              <div id="coverPreview" style="margin-left:auto;display:none;">
+                <img id="coverThumb" style="width:56px;height:56px;object-fit:cover;border:1px solid rgba(201,168,76,0.3);" />
+              </div>
+            </div>
           </div>
         </div>
 
         <div style="display:flex; gap:1rem; align-items:center; margin-top:0.5rem;">
           <button class="beat-upload-btn" onclick="saveBeat()">Publish Beat →</button>
           <button class="beat-upload-btn" style="background:var(--dark3);color:var(--gold);border:1px solid rgba(201,168,76,0.3);" onclick="clearForm()">Clear Form</button>
+        </div>
+      </div>
+
+      <!-- Analytics -->
+      <div class="analytics-section">
+        <p class="admin-eyebrow" style="margin-bottom:1.5rem;">Site Analytics</p>
+        <div style="background:var(--dark3);border:1px solid rgba(201,168,76,0.15);padding:1rem 1.5rem;margin-bottom:1.5rem;font-size:13px;color:rgba(255,255,255,0.45);line-height:1.8;">
+          Real visitor data tracked via Google Analytics (G-JJDSJD8M6J). Charts below show local catalog activity.
+          <a href="https://analytics.google.com" target="_blank" style="color:var(--gold);">analytics.google.com →</a>
+        </div>
+        <div class="analytics-grid">
+          <div class="analytics-card">
+            <div class="admin-eyebrow" style="margin-bottom:1rem;">Catalog by Genre</div>
+            <div style="position:relative;height:220px;">
+              <canvas id="genreChart" role="img" aria-label="Beat catalog breakdown by genre"></canvas>
+            </div>
+          </div>
+          <div class="analytics-card">
+            <div class="admin-eyebrow" style="margin-bottom:1rem;">Published vs Drafts</div>
+            <div style="position:relative;height:220px;">
+              <canvas id="statusChart" role="img" aria-label="Published vs draft beats"></canvas>
+            </div>
+          </div>
+          <div class="analytics-card">
+            <div class="admin-eyebrow" style="margin-bottom:1rem;">Price Distribution</div>
+            <div style="position:relative;height:220px;">
+              <canvas id="priceChart" role="img" aria-label="Beat price distribution"></canvas>
+            </div>
+          </div>
+          <div class="analytics-card">
+            <div class="admin-eyebrow" style="margin-bottom:1rem;">Play Events (this session)</div>
+            <div style="position:relative;height:220px;">
+              <canvas id="playsChart" role="img" aria-label="Beat play events this session"></canvas>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1321,10 +1391,11 @@
   <div class="footer-copy">© 2026 OutRage Music Records. All rights reserved.</div>
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 // ══════════════════════════════════════════════
-//  ADMIN PANEL
-// ══════════════════════════════════════════════
+//  CLOUDINARY CONFIG
+
 // Admin auth — password stored as hash
 const ADMIN_HASH = '8f8d5d3e1f2b4a7c9e0f3a6b5d2c1e4f'; // sha-lite of OutRage2018!
 async function hashPass(str) {
