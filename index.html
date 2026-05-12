@@ -1387,17 +1387,35 @@ function handleFileSelect(e) {
   progress.classList.add('show');
   document.getElementById('fileName').textContent = file.name;
   fill.style.width = '0%';
-  const reader = new FileReader();
-  reader.onprogress = (evt) => {
+
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', 'outrage_beats');
+  formData.append('resource_type', 'video');
+
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', 'https://api.cloudinary.com/v1_1/dc2pkdibz/video/upload');
+
+  xhr.upload.onprogress = (evt) => {
     if (evt.lengthComputable) fill.style.width = (evt.loaded / evt.total * 90) + '%';
   };
-  reader.onload = (evt) => {
-    pendingAudioDataUrl = evt.target.result;
-    fill.style.width = '100%';
-    setTimeout(() => progress.classList.remove('show'), 600);
+
+  xhr.onload = () => {
+    const res = JSON.parse(xhr.responseText);
+    if (res.secure_url) {
+      pendingAudioDataUrl = res.secure_url;
+      fill.style.width = '100%';
+      setTimeout(() => progress.classList.remove('show'), 600);
+      showToast('✓ Audio uploaded to cloud');
+    } else {
+      showToast('⚠ Upload failed — try again');
+      progress.classList.remove('show');
+    }
   };
-  reader.onerror = () => { showToast('⚠ Failed to read audio file'); progress.classList.remove('show'); };
-  reader.readAsDataURL(file);
+
+  xhr.onerror = () => { showToast('⚠ Upload failed — check connection'); progress.classList.remove('show'); };
+  xhr.send(formData);
+
   const name = file.name.replace(/\.[^.]+$/, '').replace(/[_-]/g, ' ');
   if (!document.getElementById('beatName').value) document.getElementById('beatName').value = name;
 }
