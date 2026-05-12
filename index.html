@@ -1545,6 +1545,10 @@ function closeCatalogModal() {
 function renderCatalogPage() {
   const adminPublished = (JSON.parse(localStorage.getItem('outrage_beats') || '[]')).filter(b => b.status === 'published');
   const all = [...adminPublished, ...DEFAULT_BEATS];
+  if (!all.length) {
+    document.getElementById('catalogGrid').innerHTML = '<div style="grid-column:span 3;text-align:center;padding:4rem;color:rgba(255,255,255,0.3);font-family:\'Barlow Condensed\',sans-serif;letter-spacing:0.2em;text-transform:uppercase;">No beats in catalog yet</div>';
+    return;
+  }
   const totalPages = Math.ceil(all.length / BEATS_PER_PAGE);
   const start = (catalogPage - 1) * BEATS_PER_PAGE;
   const pageBeats = all.slice(start, start + BEATS_PER_PAGE);
@@ -1721,13 +1725,52 @@ function clearForm() {
   document.getElementById('beatFile').value = '';
 }
 
-function deleteBeat(id) {
-  adminBeats = adminBeats.filter(b => b.id !== id);
-  saveBeatsToStorage();
-  renderBeats();
-  updateStats();
-  renderPublicBeats();
-  showToast('Beat removed from catalog');
+function editBeat(id) {
+  const beat = adminBeats.find(b => b.id === id);
+  if (!beat) return;
+  document.getElementById('beatName').value = beat.name;
+  document.getElementById('beatProducer').value = beat.producer;
+  document.getElementById('beatGenre').value = beat.genre;
+  document.getElementById('beatPrice').value = beat.price;
+  document.getElementById('beatLicense').value = beat.license;
+  document.getElementById('beatStatus').value = beat.status;
+  document.getElementById('beatTags').value = beat.tags || '';
+  document.getElementById('beatBpm').value = beat.bpm || '';
+  document.getElementById('beatCoverUrl').value = beat.cover || '';
+  pendingAudioUrl = beat.audioUrl || null;
+  pendingAudioDataUrl = beat.audioUrl || null;
+  if (beat.cover) {
+    document.getElementById('coverThumb').src = beat.cover;
+    document.getElementById('coverPreview').style.display = 'block';
+    document.getElementById('coverLabel').textContent = '✓ Cover loaded';
+  }
+  deleteBeat(id);
+  document.getElementById('admin-dashboard').scrollTo({ top: 0, behavior: 'smooth' });
+  showToast('✓ Beat loaded for editing — make changes and republish');
+}
+
+function editBeat(id) {
+  const beat = adminBeats.find(b => b.id === id);
+  if (!beat) return;
+  document.getElementById('beatName').value = beat.name;
+  document.getElementById('beatProducer').value = beat.producer;
+  document.getElementById('beatGenre').value = beat.genre;
+  document.getElementById('beatPrice').value = beat.price;
+  document.getElementById('beatLicense').value = beat.license;
+  document.getElementById('beatStatus').value = beat.status;
+  document.getElementById('beatTags').value = beat.tags || '';
+  document.getElementById('beatBpm').value = beat.bpm || '';
+  document.getElementById('beatCoverUrl').value = beat.cover || '';
+  pendingAudioUrl = beat.audioUrl || null;
+  pendingAudioDataUrl = beat.audioUrl || null;
+  if (beat.cover) {
+    document.getElementById('coverThumb').src = beat.cover;
+    document.getElementById('coverPreview').style.display = 'block';
+    document.getElementById('coverLabel').textContent = '✓ Cover loaded';
+  }
+  deleteBeat(id);
+  document.getElementById('admin-dashboard').scrollTo({ top: 0, behavior: 'smooth' });
+  showToast('✓ Beat loaded for editing — make changes and republish');
 }
 
 function toggleStatus(id) {
@@ -1765,6 +1808,7 @@ function renderBeats() {
         <span style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;padding:4px 10px;border:1px solid ${b.status === 'published' ? 'rgba(201,168,76,0.4)' : 'rgba(255,255,255,0.12)'};color:${b.status === 'published' ? 'var(--gold)' : 'rgba(255,255,255,0.3)'};">${b.status}</span>
       </div>
       <div class="admin-beat-actions">
+        <button class="admin-act-btn" onclick="editBeat(${b.id})">Edit</button>
         <button class="admin-act-btn" onclick="toggleStatus(${b.id})">${b.status === 'published' ? 'Unpublish' : 'Publish'}</button>
         <button class="admin-act-btn danger" onclick="deleteBeat(${b.id})">Delete</button>
       </div>
@@ -1806,7 +1850,8 @@ function renderPublicBeats() {
   if (!grid) return;
   const adminPublished = (JSON.parse(localStorage.getItem('outrage_beats') || '[]')).filter(b => b.status === 'published');
   const all = [...adminPublished, ...DEFAULT_BEATS];
-  grid.innerHTML = all.map(b => `
+  const visible = all.slice(0, 5);
+  grid.innerHTML = visible.map(b => `
     <div class="beat-card fade-up">
       <img class="beat-cover" src="${b.cover}" alt="${b.genre}" />
       <div class="beat-genre">${b.genre}</div>
