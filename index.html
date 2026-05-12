@@ -126,19 +126,12 @@
   .marquee-bar { background: var(--gold); padding: 10px 0; overflow: hidden; white-space: nowrap; }
   .marquee-track { display: inline-block; animation: marquee 25s linear infinite; }
   .marquee-text { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; color: var(--black); padding: 0 2rem; }
-  @keyframes marquee { from { .success-toast.show { transform: translateX(0); }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-  .upload-success-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.92);
-    z-index: 99999; display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none; transition: opacity 0.4s;
-  }
+  .success-toast.show { transform: translateX(0); }
+  .upload-success-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 99999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s; }
   .upload-success-overlay.show { opacity: 1; pointer-events: all; }
-  .upload-success-box {
-    background: var(--dark); border-top: 3px solid var(--gold);
-    padding: 3rem; max-width: 480px; width: 90%; text-align: center;
-    transform: translateY(30px); transition: transform 0.4s;
-  }
+  .upload-success-box { background: var(--dark); border-top: 3px solid var(--gold); padding: 3rem; max-width: 480px; width: 90%; text-align: center; transform: translateY(30px); transition: transform 0.4s; }
   .upload-success-overlay.show .upload-success-box { transform: translateY(0); }
   .upload-success-icon { font-size: 3.5rem; margin-bottom: 1.5rem; }
   .upload-success-title { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 300; margin-bottom: 0.5rem; }
@@ -158,11 +151,10 @@
   #seeMoreWrap.show { display: block; }
   .catalog-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--black); z-index: 9998; overflow-x: hidden; overflow-y: auto; -webkit-overflow-scrolling: touch; transform: translateX(100%); transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94); will-change: transform; }
   .catalog-modal.open { transform: translateX(0); }
-  .catalog-modal.open { transform: translateX(0); }
   .catalog-modal-inner { max-width: 1200px; margin: 0 auto; padding: 5rem 5vw; }
   .catalog-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; flex-wrap: wrap; gap: 1rem; }
   .catalog-close-btn { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(255,255,255,0.4); background: none; border: 1px solid rgba(255,255,255,0.12); padding: 10px 22px; cursor: pointer; transition: all 0.2s; }
-  .catalog-close-btn:hover { color: var(--gold); border-color: var(--gold); } } to { transform: translateX(-50%); } }
+  .catalog-close-btn:hover { color: var(--gold); border-color: var(--gold); }
 
   /* ── SECTION COMMONS ── */
   section { padding: 7rem 5vw; }
