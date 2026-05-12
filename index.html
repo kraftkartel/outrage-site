@@ -126,7 +126,42 @@
   .marquee-bar { background: var(--gold); padding: 10px 0; overflow: hidden; white-space: nowrap; }
   .marquee-track { display: inline-block; animation: marquee 25s linear infinite; }
   .marquee-text { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; color: var(--black); padding: 0 2rem; }
-  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @keyframes marquee { from { .success-toast.show { transform: translateX(0); }
+
+  .upload-success-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.92);
+    z-index: 99999; display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.4s;
+  }
+  .upload-success-overlay.show { opacity: 1; pointer-events: all; }
+  .upload-success-box {
+    background: var(--dark); border-top: 3px solid var(--gold);
+    padding: 3rem; max-width: 480px; width: 90%; text-align: center;
+    transform: translateY(30px); transition: transform 0.4s;
+  }
+  .upload-success-overlay.show .upload-success-box { transform: translateY(0); }
+  .upload-success-icon { font-size: 3.5rem; margin-bottom: 1.5rem; }
+  .upload-success-title { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 300; margin-bottom: 0.5rem; }
+  .upload-success-title em { color: var(--gold); font-style: italic; }
+  .upload-success-sub { font-size: 13px; color: rgba(255,255,255,0.45); margin-bottom: 2rem; line-height: 1.8; }
+  .upload-success-beat { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.25rem; }
+  .upload-success-meta { font-size: 12px; color: rgba(255,255,255,0.3); margin-bottom: 2rem; }
+  .upload-success-close { background: var(--gold); color: var(--black); padding: 14px 40px; font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; border: none; cursor: pointer; transition: background 0.25s; }
+  .upload-success-close:hover { background: var(--gold-light); }
+  .beats-pagination { display: none; justify-content: center; gap: 0.5rem; margin-top: 2.5rem; flex-wrap: wrap; }
+  .beats-pagination.show { display: flex; }
+  .page-btn { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; padding: 10px 18px; border: 1px solid rgba(255,255,255,0.12); background: none; color: rgba(255,255,255,0.45); cursor: pointer; transition: all 0.2s; }
+  .page-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .page-btn.active { background: var(--gold); color: var(--black); border-color: var(--gold); }
+  .page-btn.prev-next { padding: 10px 22px; }
+  #seeMoreWrap { text-align: center; margin-top: 2rem; display: none; }
+  #seeMoreWrap.show { display: block; }
+  .catalog-modal { position: fixed; inset: 0; background: var(--black); z-index: 9998; overflow-y: auto; transform: translateX(100%); transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+  .catalog-modal.open { transform: translateX(0); }
+  .catalog-modal-inner { max-width: 1200px; margin: 0 auto; padding: 5rem 5vw; }
+  .catalog-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; flex-wrap: wrap; gap: 1rem; }
+  .catalog-close-btn { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(255,255,255,0.4); background: none; border: 1px solid rgba(255,255,255,0.12); padding: 10px 22px; cursor: pointer; transition: all 0.2s; }
+  .catalog-close-btn:hover { color: var(--gold); border-color: var(--gold); } } to { transform: translateX(-50%); } }
 
   /* ── SECTION COMMONS ── */
   section { padding: 7rem 5vw; }
@@ -806,6 +841,31 @@
 <!-- ══ SUCCESS TOAST ══ -->
 <div class="success-toast" id="toast"></div>
 
+<div class="upload-success-overlay" id="uploadSuccessOverlay">
+  <div class="upload-success-box">
+    <div class="upload-success-icon">✅</div>
+    <h2 class="upload-success-title">Beat <em>Published!</em></h2>
+    <div class="upload-success-beat" id="successBeatName">—</div>
+    <div class="upload-success-meta" id="successBeatMeta">—</div>
+    <p class="upload-success-sub">Your beat is now live in the catalog and ready for purchase.</p>
+    <button class="upload-success-close" onclick="closeSuccessOverlay()">Back to Dashboard →</button>
+  </div>
+</div>
+
+<div class="catalog-modal" id="catalogModal">
+  <div class="catalog-modal-inner">
+    <div class="catalog-modal-header">
+      <div>
+        <p class="section-eyebrow">Full Catalog</p>
+        <h2 class="section-title">All <em>Beats</em></h2>
+      </div>
+      <button class="catalog-close-btn" onclick="closeCatalogModal()">✕ Close</button>
+    </div>
+    <div class="beats-grid" id="catalogGrid"></div>
+    <div class="beats-pagination" id="catalogPagination"></div>
+  </div>
+</div>
+
 <!-- ── NAVIGATION ── -->
 <nav id="navbar">
   <div class="nav-logo">
@@ -1234,7 +1294,10 @@
   <div class="beats-grid" id="publicBeatsGrid">
     <!-- Populated dynamically by renderPublicBeats() -->
   </div>
-  <div style="text-align:center;margin-top:2.5rem;">
+  <div id="seeMoreWrap">
+    <button class="btn-primary" onclick="openCatalogModal()">See All Beats →</button>
+  </div>
+  <div style="text-align:center;margin-top:1.5rem;">
     <a href="#booking" class="btn-outline">Inquire About Custom Beats →</a>
   </div>
 </section>
@@ -1419,6 +1482,67 @@ function checkAdminRoute() {
 window.addEventListener('hashchange', checkAdminRoute);
 checkAdminRoute();
 
+function showUploadSuccess(beat) {
+  document.getElementById('successBeatName').textContent = beat.name;
+  document.getElementById('successBeatMeta').textContent = beat.genre + ' · $' + beat.price + (beat.bpm ? ' · ' + beat.bpm + ' BPM' : '') + ' · ' + beat.license;
+  document.getElementById('uploadSuccessOverlay').classList.add('show');
+}
+function closeSuccessOverlay() {
+  document.getElementById('uploadSuccessOverlay').classList.remove('show');
+}
+
+const BEATS_PER_PAGE = 20;
+let catalogPage = 1;
+
+function openCatalogModal() {
+  catalogPage = 1;
+  document.getElementById('catalogModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  renderCatalogPage();
+}
+function closeCatalogModal() {
+  document.getElementById('catalogModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function renderCatalogPage() {
+  const adminPublished = (JSON.parse(localStorage.getItem('outrage_beats') || '[]')).filter(b => b.status === 'published');
+  const all = [...adminPublished, ...DEFAULT_BEATS];
+  const totalPages = Math.ceil(all.length / BEATS_PER_PAGE);
+  const start = (catalogPage - 1) * BEATS_PER_PAGE;
+  const pageBeats = all.slice(start, start + BEATS_PER_PAGE);
+  const grid = document.getElementById('catalogGrid');
+  grid.innerHTML = pageBeats.map(b => `
+    <div class="beat-card fade-up">
+      <img class="beat-cover" src="${b.cover}" alt="${b.genre}" />
+      <div class="beat-genre">${b.genre}${b.bpm ? ' · ' + b.bpm + ' BPM' : ''}</div>
+      <div class="beat-name">${b.name}</div>
+      <div class="beat-producer">${b.producer}</div>
+      <div class="beat-footer">
+        <div class="beat-price">$${b.price}</div>
+        <div style="display:flex;gap:0.5rem;align-items:center;">
+          <button class="beat-play" onclick="playBeat(this, this.dataset.audio)" data-audio="${b.audioUrl || ''}">▶</button>
+          <button onclick="openBuyModal('${b.name}','${b.price}')" style="background:transparent;border:1px solid rgba(201,168,76,0.4);color:var(--gold);padding:0 12px;height:38px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;">Buy</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('catalogModal').scrollTo({ top: 0, behavior: 'smooth' });
+  const pagination = document.getElementById('catalogPagination');
+  if (totalPages <= 1) { pagination.classList.remove('show'); return; }
+  pagination.classList.add('show');
+  let html = '';
+  if (catalogPage > 1) html += `<button class="page-btn prev-next" onclick="goToPage(${catalogPage - 1})">← Prev</button>`;
+  for (let i = 1; i <= totalPages; i++) {
+    html += `<button class="page-btn${i === catalogPage ? ' active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+  }
+  if (catalogPage < totalPages) html += `<button class="page-btn prev-next" onclick="goToPage(${catalogPage + 1})">Next →</button>`;
+  pagination.innerHTML = html;
+}
+function goToPage(page) {
+  catalogPage = page;
+  renderCatalogPage();
+}
+
 function closeAdmin() {
   document.getElementById('admin-panel').classList.remove('open');
   document.body.style.overflow = '';
@@ -1535,7 +1659,8 @@ function saveBeat() {
   renderPublicBeats();
   clearForm();
   pendingAudioDataUrl = null;
-  showToast('✓ Beat published to catalog');
+  showUploadSuccess(beat);
+  checkSeeMore();
 }
 
 function clearForm() {
@@ -1649,6 +1774,15 @@ function renderPublicBeats() {
   `).join('');
   // Re-observe fade-up elements
   grid.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+  checkSeeMore();
+}
+
+function checkSeeMore() {
+  const adminPublished = (JSON.parse(localStorage.getItem('outrage_beats') || '[]')).filter(b => b.status === 'published');
+  const total = adminPublished.length + DEFAULT_BEATS.length;
+  const wrap = document.getElementById('seeMoreWrap');
+  if (total > 5) wrap.classList.add('show');
+  else wrap.classList.remove('show');
 }
 
 // Fade-up on scroll
