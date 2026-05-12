@@ -156,7 +156,7 @@
   .page-btn.prev-next { padding: 10px 22px; }
   #seeMoreWrap { text-align: center; margin-top: 2rem; display: none; }
   #seeMoreWrap.show { display: block; }
-  .catalog-modal { position: fixed; inset: 0; background: var(--black); z-index: 9998; overflow-y: auto; transform: translateX(100%); transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+  .catalog-modal { position: fixed; inset: 0; background: var(--black); z-index: 9998; overflow-y: scroll; -webkit-overflow-scrolling: touch; transform: translateX(100%); transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
   .catalog-modal.open { transform: translateX(0); }
   .catalog-modal-inner { max-width: 1200px; margin: 0 auto; padding: 5rem 5vw; }
   .catalog-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; flex-wrap: wrap; gap: 1rem; }
@@ -853,13 +853,16 @@
 </div>
 
 <div class="catalog-modal" id="catalogModal">
+  <div style="position:sticky;top:0;z-index:10;background:var(--black);border-bottom:1px solid rgba(201,168,76,0.2);padding:1rem 5vw;display:flex;align-items:center;justify-content:space-between;">
+    <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);">⬡ Beat Catalog</span>
+    <button onclick="closeCatalogModal()" style="display:flex;align-items:center;gap:0.5rem;background:var(--gold);color:var(--black);border:none;padding:10px 22px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;cursor:pointer;">← Back</button>
+  </div>
   <div class="catalog-modal-inner">
     <div class="catalog-modal-header">
       <div>
         <p class="section-eyebrow">Full Catalog</p>
         <h2 class="section-title">All <em>Beats</em></h2>
       </div>
-      <button class="catalog-close-btn" onclick="closeCatalogModal()">✕ Close</button>
     </div>
     <div class="beats-grid" id="catalogGrid"></div>
     <div class="beats-pagination" id="catalogPagination"></div>
@@ -1483,9 +1486,11 @@ window.addEventListener('hashchange', checkAdminRoute);
 checkAdminRoute();
 
 function showUploadSuccess(beat) {
+  const overlay = document.getElementById('uploadSuccessOverlay');
+  if (!overlay) { showToast('✓ Beat published to catalog'); return; }
   document.getElementById('successBeatName').textContent = beat.name;
   document.getElementById('successBeatMeta').textContent = beat.genre + ' · $' + beat.price + (beat.bpm ? ' · ' + beat.bpm + ' BPM' : '') + ' · ' + beat.license;
-  document.getElementById('uploadSuccessOverlay').classList.add('show');
+  overlay.classList.add('show');
 }
 function closeSuccessOverlay() {
   document.getElementById('uploadSuccessOverlay').classList.remove('show');
@@ -1661,6 +1666,7 @@ function saveBeat() {
   pendingAudioDataUrl = null;
   showUploadSuccess(beat);
   checkSeeMore();
+  renderCharts();
 }
 
 function clearForm() {
