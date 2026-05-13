@@ -2345,29 +2345,38 @@ const DEFAULT_BEATS = [
   { id: 'default-3', name: 'Midnight Gold', genre: 'R&B / Soul', price: 45, producer: 'Prod. Twumve', cover: 'https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=500&q=85', status: 'published' },
 ];
 
-function renderPublicBeats() {
-  const adminPublished = adminBeats.filter(b => b.status === 'published');
-  let all = [...adminPublished, ...DEFAULT_BEATS];
-  if (currentFilter !== 'all') {
-    all = all.filter(b => b.genre === currentFilter);
-  }
+function renderPublicBeats(all) {
   const grid = document.getElementById('publicBeatsGrid');
   if (!grid) return;
+
+  // Only show the first 6 beats
   const show = all.slice(0, 6);
-  grid.innerHTML = show.map(b => `
-    <div class="beat-card fade-up">
-      <img class="beat-cover" src="${b.cover}" alt="${b.genre}" />
-      <div class="beat-genre">${b.genre}${b.bpm ? ' · ' + b.bpm + ' BPM' : ''}</div>
-      <div class="beat-name">${b.name}</div>
-      <div class="beat-producer">${b.producer}</div>
-      <div class="beat-footer">
-        <div class="beat-price">$${b.price}</div>
-        <button class="beat-play" onclick="playBeat(this, '${b.audioUrl || ''}', ${JSON.stringify(b).replace(/'/g, '&apos;')})">▶</button>
+
+  grid.innerHTML = show.map(b => {
+    // Escape the object safely for the onclick attributes
+    const beatData = JSON.stringify(b).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    
+    return `
+      <div class="beat-card fade-up">
+        <img class="beat-cover" src="${b.cover}" alt="${b.genre}" />
+        <div class="beat-genre">${b.genre}${b.bpm ? ' · ' + b.bpm + ' BPM' : ''}</div>
+        <div class="beat-name">${b.name}</div>
+        <div class="beat-producer">${b.producer}</div>
+        <div class="beat-footer">
+          <div class="beat-price">$${b.price}</div>
+          <button class="beat-play" onclick="playBeat(this, '${b.audioUrl || ''}', '${beatData}')">▶</button>
+        </div>
+        <button class="beat-buy" onclick="buyBeat('${beatData}')">💳 Buy — $${b.price}</button>
       </div>
-      <button class="beat-buy" onclick="buyBeat(${JSON.stringify(b).replace(/'/g, '&apos;')})">💳 Buy — $${b.price}</button>
-    </div>
-  `).join('');
-  grid.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+    `;
+  }).join('');
+
+  // Re-run the observer for the fade-in animation
+  grid.querySelectorAll('.fade-up').forEach(el => {
+    if (typeof observer !== 'undefined') observer.observe(el);
+  });
+
+  // Handle the "See More" button visibility
   const wrap = document.getElementById('seeMoreWrap');
   if (wrap) wrap.classList.toggle('show', all.length > 6);
 }
