@@ -413,6 +413,92 @@
   .gallery-item:hover .gallery-overlay { opacity: 1; }
   .gallery-caption { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); }
 
+  /* Lightbox */
+  #lightbox {
+    position: fixed; inset: 0; z-index: 99998;
+    background: rgba(0,0,0,0.95);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+  #lightbox.open { opacity: 1; visibility: visible; }
+  #lightbox img {
+    max-width: 90vw; max-height: 88vh;
+    object-fit: contain;
+    box-shadow: 0 0 80px rgba(0,0,0,0.8);
+    transform: scale(0.95); transition: transform 0.3s ease;
+  }
+  #lightbox.open img { transform: scale(1); }
+  #lightbox-close {
+    position: absolute; top: 1.5rem; right: 2rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px; font-weight: 700; letter-spacing: 0.25em;
+    text-transform: uppercase; color: rgba(255,255,255,0.5);
+    background: none; border: 1px solid rgba(255,255,255,0.15);
+    padding: 8px 18px; cursor: pointer; transition: all 0.2s;
+  }
+  #lightbox-close:hover { color: var(--gold); border-color: var(--gold); }
+  #lightbox-caption {
+    position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+    font-family: 'Barlow Condensed', sans-serif; font-size: 11px;
+    font-weight: 700; letter-spacing: 0.35em; text-transform: uppercase;
+    color: var(--gold);
+  }
+  #lightbox-prev, #lightbox-next {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    font-size: 1.5rem; color: rgba(255,255,255,0.4);
+    background: none; border: 1px solid rgba(255,255,255,0.1);
+    width: 48px; height: 48px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  #lightbox-prev { left: 2rem; }
+  #lightbox-next { right: 2rem; }
+  #lightbox-prev:hover, #lightbox-next:hover { color: var(--gold); border-color: var(--gold); }
+
+  /* Lightbox */
+  #lightbox {
+    position: fixed; inset: 0; z-index: 99998;
+    background: rgba(0,0,0,0.95);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+  #lightbox.open { opacity: 1; visibility: visible; }
+  #lightbox img {
+    max-width: 90vw; max-height: 88vh;
+    object-fit: contain;
+    box-shadow: 0 0 80px rgba(0,0,0,0.8);
+    transform: scale(0.95); transition: transform 0.3s ease;
+  }
+  #lightbox.open img { transform: scale(1); }
+  #lightbox-close {
+    position: absolute; top: 1.5rem; right: 2rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px; font-weight: 700; letter-spacing: 0.25em;
+    text-transform: uppercase; color: rgba(255,255,255,0.5);
+    background: none; border: 1px solid rgba(255,255,255,0.15);
+    padding: 8px 18px; cursor: pointer; transition: all 0.2s;
+  }
+  #lightbox-close:hover { color: var(--gold); border-color: var(--gold); }
+  #lightbox-caption {
+    position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+    font-family: 'Barlow Condensed', sans-serif; font-size: 11px;
+    font-weight: 700; letter-spacing: 0.35em; text-transform: uppercase;
+    color: var(--gold);
+  }
+  #lightbox-prev, #lightbox-next {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    font-size: 1.5rem; color: rgba(255,255,255,0.4);
+    background: none; border: 1px solid rgba(255,255,255,0.1);
+    width: 48px; height: 48px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  #lightbox-prev { left: 2rem; }
+  #lightbox-next { right: 2rem; }
+  #lightbox-prev:hover, #lightbox-next:hover { color: var(--gold); border-color: var(--gold); }
+
   /* YouTube videos grid */
   .youtube-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
   .yt-item { position: relative; aspect-ratio: 16/9; overflow: hidden; background: var(--dark2); }
@@ -453,7 +539,80 @@
   /* Beats grid — 3 cols desktop, 2 tablet, 1 mobile (auto-adapts to more beats) */
   .beats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(201,168,76,0.08); margin-bottom: 2rem; }
   #shop { background: var(--dark); }
-  .shop-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3rem; flex-wrap: wrap; gap: 2rem; }
+  .shop-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 2rem; }
+
+  /* Genre filter */
+  .beats-filter {
+    display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2.5rem;
+  }
+  .filter-btn {
+    font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.25em; text-transform: uppercase;
+    padding: 8px 18px; border: 1px solid rgba(255,255,255,0.12);
+    background: none; color: rgba(255,255,255,0.45); cursor: pointer; transition: all 0.2s;
+  }
+  .filter-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .filter-btn.active { background: var(--gold); color: var(--black); border-color: var(--gold); }
+  [data-theme="light"] .filter-btn { color: rgba(26,18,8,0.5); border-color: rgba(26,18,8,0.15); }
+  [data-theme="light"] .filter-btn.active { background: #8B6914; color: #F0EBE0; border-color: #8B6914; }
+
+  /* Buy button on beat card */
+  .beat-buy {
+    font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    padding: 7px 14px; background: none;
+    border: 1px solid rgba(201,168,76,0.35); color: var(--gold);
+    cursor: pointer; transition: all 0.2s; margin-top: 0.75rem; width: 100%;
+  }
+  .beat-buy:hover { background: var(--gold); color: var(--black); }
+
+  /* Sticky mini player */
+  #mini-player {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 9000;
+    background: rgba(10,10,10,0.97);
+    border-top: 1px solid rgba(201,168,76,0.3);
+    backdrop-filter: blur(20px);
+    padding: 0.75rem 5vw;
+    display: flex; align-items: center; gap: 1.5rem;
+    transform: translateY(100%); transition: transform 0.35s ease;
+  }
+  #mini-player.show { transform: translateY(0); }
+  .mini-cover {
+    width: 44px; height: 44px; object-fit: cover;
+    border: 1px solid rgba(201,168,76,0.3); flex-shrink: 0;
+  }
+  .mini-info { flex: 1; min-width: 0; }
+  .mini-title {
+    font-family: 'Barlow Condensed', sans-serif; font-size: 14px;
+    font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .mini-meta {
+    font-size: 11px; color: var(--gold); letter-spacing: 0.1em;
+    font-family: 'Barlow Condensed', sans-serif; text-transform: uppercase;
+  }
+  .mini-progress-wrap {
+    flex: 2; height: 2px; background: rgba(255,255,255,0.1); cursor: pointer; position: relative;
+  }
+  .mini-progress-fill { height: 100%; background: var(--gold); width: 0%; transition: width 0.5s linear; pointer-events: none; }
+  .mini-time { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; color: rgba(255,255,255,0.4); letter-spacing: 0.1em; white-space: nowrap; }
+  .mini-play-btn {
+    width: 40px; height: 40px; background: var(--gold); border: none;
+    color: var(--black); font-size: 16px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s; flex-shrink: 0;
+  }
+  .mini-play-btn:hover { background: var(--gold-light); }
+  .mini-close {
+    background: none; border: none; color: rgba(255,255,255,0.3);
+    font-size: 18px; cursor: pointer; padding: 4px; transition: color 0.2s; flex-shrink: 0;
+  }
+  .mini-close:hover { color: var(--gold); }
+  [data-theme="light"] #mini-player { background: rgba(240,235,224,0.97); border-top-color: rgba(139,105,20,0.3); }
+  [data-theme="light"] .mini-title { color: #1A1208; }
+  [data-theme="light"] .mini-progress-wrap { background: rgba(26,18,8,0.1); }
+  [data-theme="light"] .mini-time { color: rgba(26,18,8,0.4); }
+  [data-theme="light"] .mini-close { color: rgba(26,18,8,0.3); }
   .beat-card { background: var(--dark2); padding: 1.75rem; transition: background 0.2s; }
   .beat-card:hover { background: var(--dark3); }
   .beat-cover { width: 100%; aspect-ratio: 1; object-fit: cover; margin-bottom: 1rem; filter: brightness(0.88) saturate(0.8); transition: filter 0.2s; }
@@ -571,6 +730,35 @@
   /* ── ANIMATIONS ── */
   .fade-up { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
   .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  /* Page fade-in */
+  #page-loader {
+    position: fixed; inset: 0; z-index: 999999;
+    background: #0A0A0A;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 1.5rem;
+    transition: opacity 0.6s ease, visibility 0.6s ease;
+  }
+  #page-loader.done { opacity: 0; visibility: hidden; }
+  .loader-logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 28px; font-weight: 900; letter-spacing: 0.15em;
+    text-transform: uppercase; color: #fff;
+  }
+  .loader-logo span { color: #C9A84C; }
+  .loader-bar-wrap {
+    width: 160px; height: 1px; background: rgba(201,168,76,0.2);
+  }
+  .loader-bar-fill {
+    height: 1px; width: 0%; background: #C9A84C;
+    animation: loaderFill 1.2s ease forwards;
+  }
+  @keyframes loaderFill { to { width: 100%; } }
+  .loader-sub {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.45em;
+    text-transform: uppercase; color: rgba(201,168,76,0.5);
+  }
 
   /* ══════════════════════════════════
      ADMIN PANEL — hidden at /admin
@@ -801,6 +989,37 @@
 </style>
 </head>
 <body>
+
+<!-- PAGE LOADER -->
+<div id="page-loader">
+  <div class="loader-logo">OutRage <span>Music</span></div>
+  <div class="loader-bar-wrap"><div class="loader-bar-fill"></div></div>
+  <div class="loader-sub">Kigali · Est. 2018</div>
+</div>
+
+<!-- STICKY MINI PLAYER -->
+<div id="mini-player">
+  <img class="mini-cover" id="miniCover" src="" alt="" />
+  <div class="mini-info">
+    <div class="mini-title" id="miniTitle">—</div>
+    <div class="mini-meta" id="miniMeta">—</div>
+  </div>
+  <div class="mini-progress-wrap" id="miniProgressWrap">
+    <div class="mini-progress-fill" id="miniProgressFill"></div>
+  </div>
+  <div class="mini-time" id="miniTime">0:00</div>
+  <button class="mini-play-btn" id="miniPlayBtn" onclick="toggleMiniPlayer()">▶</button>
+  <button class="mini-close" onclick="closeMiniPlayer()">✕</button>
+</div>
+
+<!-- LIGHTBOX -->
+<div id="lightbox">
+  <button id="lightbox-close" onclick="closeLightbox()">✕ Close</button>
+  <button id="lightbox-prev" onclick="lightboxNav(-1)">‹</button>
+  <img id="lightbox-img" src="" alt="" />
+  <button id="lightbox-next" onclick="lightboxNav(1)">›</button>
+  <div id="lightbox-caption"></div>
+</div>
 
 <!-- ── WHATSAPP FLOAT ── -->
 <a href="https://wa.me/250788381120" target="_blank" class="wa-float" aria-label="Chat on WhatsApp">
@@ -1455,6 +1674,16 @@
       </p>
     </div>
   </div>
+  <div class="beats-filter" id="beatsFilter">
+    <button class="filter-btn active" onclick="filterBeats('all', this)">All</button>
+    <button class="filter-btn" onclick="filterBeats('Afrobeat', this)">Afrobeat</button>
+    <button class="filter-btn" onclick="filterBeats('Amapiano', this)">Amapiano</button>
+    <button class="filter-btn" onclick="filterBeats('Trap / Hip-Hop', this)">Trap</button>
+    <button class="filter-btn" onclick="filterBeats('Kinyatrap', this)">Kinyatrap</button>
+    <button class="filter-btn" onclick="filterBeats('R&B / Soul', this)">R&B</button>
+    <button class="filter-btn" onclick="filterBeats('Dancehall', this)">Dancehall</button>
+    <button class="filter-btn" onclick="filterBeats('Drill', this)">Drill</button>
+  </div>
   <div class="beats-grid" id="publicBeatsGrid">
     <!-- Populated dynamically by renderPublicBeats() -->
   </div>
@@ -1742,6 +1971,13 @@ function checkAdminRoute() {
 }
 window.addEventListener('hashchange', checkAdminRoute);
 checkAdminRoute();
+
+// Page loader
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('page-loader').classList.add('done');
+  }, 1400);
+});
 if (sessionStorage.getItem('outrage_admin_auth') === '1') {
   document.getElementById('admin-login').style.display = 'none';
   document.getElementById('admin-dashboard').classList.add('open');
@@ -2110,26 +2346,30 @@ const DEFAULT_BEATS = [
 ];
 
 function renderPublicBeats() {
+  const adminPublished = adminBeats.filter(b => b.status === 'published');
+  let all = [...adminPublished, ...DEFAULT_BEATS];
+  if (currentFilter !== 'all') {
+    all = all.filter(b => b.genre === currentFilter);
+  }
   const grid = document.getElementById('publicBeatsGrid');
   if (!grid) return;
-  const adminPublished = (JSON.parse(localStorage.getItem('outrage_beats') || '[]')).filter(b => b.status === 'published');
-  const all = [...adminPublished, ...DEFAULT_BEATS];
-  const visible = all.slice(0, 5);
-  grid.innerHTML = visible.map(b => `
+  const show = all.slice(0, 6);
+  grid.innerHTML = show.map(b => `
     <div class="beat-card fade-up">
       <img class="beat-cover" src="${b.cover}" alt="${b.genre}" />
-      <div class="beat-genre">${b.genre}</div>
+      <div class="beat-genre">${b.genre}${b.bpm ? ' · ' + b.bpm + ' BPM' : ''}</div>
       <div class="beat-name">${b.name}</div>
       <div class="beat-producer">${b.producer}</div>
       <div class="beat-footer">
         <div class="beat-price">$${b.price}</div>
-        <button class="beat-play" onclick="playIndicator(this, '${b.audioUrl || ''}')">▶</button>
+        <button class="beat-play" onclick="playBeat(this, '${b.audioUrl || ''}', ${JSON.stringify(b).replace(/'/g, '&apos;')})">▶</button>
       </div>
+      <button class="beat-buy" onclick="buyBeat(${JSON.stringify(b).replace(/'/g, '&apos;')})">💳 Buy — $${b.price}</button>
     </div>
   `).join('');
-  // Re-observe fade-up elements
   grid.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
-  checkSeeMore();
+  const wrap = document.getElementById('seeMoreWrap');
+  if (wrap) wrap.classList.toggle('show', all.length > 6);
 }
 
 function checkSeeMore() {
@@ -2168,6 +2408,138 @@ fadeEls.forEach(el => observer.observe(el));
 ['home','about','services','studio','gallery','shop','voiceover','booking','contact'].forEach(id => {
   const el = document.getElementById(id);
   if (el) observer.observe(el);
+});
+
+// Genre filter
+let currentFilter = 'all';
+function filterBeats(genre, btn) {
+  currentFilter = genre;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderPublicBeats();
+}
+
+// Sticky mini player
+let miniAudio = null;
+let miniPlaying = false;
+let miniCurrentBeat = null;
+
+function playBeat(btn, audioUrl, beat) {
+  // Stop any existing
+  if (miniAudio) {
+    miniAudio.pause();
+    miniAudio.currentTime = 0;
+    document.querySelectorAll('.beat-play').forEach(b => b.textContent = '▶');
+    if (miniCurrentBeat && miniCurrentBeat.audioUrl === audioUrl) {
+      closeMiniPlayer();
+      miniAudio = null;
+      miniCurrentBeat = null;
+      return;
+    }
+  }
+  if (!audioUrl) { showToast('⚠ No audio file uploaded yet'); return; }
+  miniAudio = new Audio(audioUrl);
+  miniCurrentBeat = beat;
+  btn.textContent = '■';
+  miniAudio.play().catch(() => showToast('⚠ Could not play audio'));
+
+  // Update mini player UI
+  document.getElementById('miniTitle').textContent = beat.name || 'Unknown';
+  document.getElementById('miniMeta').textContent = (beat.genre || '') + (beat.bpm ? ' · ' + beat.bpm + ' BPM' : '') + ' · $' + (beat.price || '0');
+  document.getElementById('miniCover').src = beat.cover || '';
+  document.getElementById('miniPlayBtn').textContent = '■';
+  document.getElementById('mini-player').classList.add('show');
+  miniPlaying = true;
+
+  // Progress bar
+  miniAudio.addEventListener('timeupdate', () => {
+    if (!miniAudio.duration) return;
+    const pct = (miniAudio.currentTime / miniAudio.duration) * 100;
+    document.getElementById('miniProgressFill').style.width = pct + '%';
+    const m = Math.floor(miniAudio.currentTime / 60);
+    const s = Math.floor(miniAudio.currentTime % 60).toString().padStart(2, '0');
+    document.getElementById('miniTime').textContent = m + ':' + s;
+  });
+  miniAudio.onended = () => {
+    btn.textContent = '▶';
+    document.getElementById('miniPlayBtn').textContent = '▶';
+    document.getElementById('miniProgressFill').style.width = '0%';
+    miniPlaying = false;
+  };
+
+  // Progress bar click to seek
+  document.getElementById('miniProgressWrap').onclick = (e) => {
+    if (!miniAudio) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    miniAudio.currentTime = ((e.clientX - rect.left) / rect.width) * miniAudio.duration;
+  };
+
+  // GA tracking
+  trackEvent('play_beat', 'beats', beat.name);
+}
+
+function toggleMiniPlayer() {
+  if (!miniAudio) return;
+  if (miniPlaying) {
+    miniAudio.pause();
+    miniPlaying = false;
+    document.getElementById('miniPlayBtn').textContent = '▶';
+  } else {
+    miniAudio.play();
+    miniPlaying = true;
+    document.getElementById('miniPlayBtn').textContent = '■';
+  }
+}
+
+function closeMiniPlayer() {
+  if (miniAudio) { miniAudio.pause(); miniAudio = null; }
+  document.getElementById('mini-player').classList.remove('show');
+  document.querySelectorAll('.beat-play').forEach(b => b.textContent = '▶');
+  miniPlaying = false;
+  miniCurrentBeat = null;
+}
+
+function buyBeat(beat) {
+  const text = encodeURIComponent(
+    `Hello OutRage Music Records! 🎵\n\nI want to purchase a beat:\n\n*${beat.name}*\nGenre: ${beat.genre}\nPrice: $${beat.price}\nLicense: ${beat.license || 'Basic Lease'}\n\nPlease send me payment details.`
+  );
+  window.open(`https://wa.me/250788381120?text=${text}`, '_blank');
+  trackEvent('buy_beat', 'beats', beat.name);
+}
+
+// Lightbox
+let lightboxImages = [];
+let lightboxIndex = 0;
+
+function openLightbox(img, caption) {
+  const allImgs = [...document.querySelectorAll('.gallery-item img')];
+  lightboxImages = allImgs.map(i => ({ src: i.src, caption: i.closest('.gallery-item').querySelector('.gallery-caption')?.textContent || '' }));
+  lightboxIndex = allImgs.indexOf(img);
+  showLightboxSlide();
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function showLightboxSlide() {
+  const item = lightboxImages[lightboxIndex];
+  document.getElementById('lightbox-img').src = item.src;
+  document.getElementById('lightbox-caption').textContent = item.caption;
+}
+function lightboxNav(dir) {
+  lightboxIndex = (lightboxIndex + dir + lightboxImages.length) % lightboxImages.length;
+  showLightboxSlide();
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('lightbox')?.addEventListener('click', function(e) {
+  if (e.target === this) closeLightbox();
+});
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('lightbox').classList.contains('open')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') lightboxNav(-1);
+  if (e.key === 'ArrowRight') lightboxNav(1);
 });
 
 // Render public beats (merges admin catalog)
