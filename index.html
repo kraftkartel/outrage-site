@@ -2339,11 +2339,9 @@ function showToast(msg) {
 // ══════════════════════════════════════════════
 
 // Render public beats shop — merges admin beats with the 3 default ones
-const DEFAULT_BEATS = [
-  { id: 'default-1', name: 'Lagos Sunrise', genre: 'Afrobeat', price: 35, producer: 'Prod. Twumve', cover: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=500&q=85', status: 'published' },
-  { id: 'default-2', name: 'Kigali Nights', genre: 'Amapiano', price: 40, producer: 'Prod. Twumve', cover: 'https://images.unsplash.com/photo-1525201548942-d8732f6617a0?w=500&q=85', status: 'published' },
-  { id: 'default-3', name: 'Midnight Gold', genre: 'R&B / Soul', price: 45, producer: 'Prod. Twumve', cover: 'https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=500&q=85', status: 'published' },
-];
+const DEFAULT_BEATS = 
+  
+
 
 function renderPublicBeats() {
   const adminPublished = adminBeats.filter(b => b.status === 'published');
