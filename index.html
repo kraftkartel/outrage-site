@@ -34,6 +34,15 @@
     --red: #C0392B;
   }
 
+  [data-theme="light"] {
+    --black: #F5F2EC;
+    --dark: #E8E4DC;
+    --dark2: #DDD8CE;
+    --dark3: #D0C9BC;
+    --white: #0A0A0A;
+    --gray: #555555;
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
@@ -906,6 +915,12 @@
     <li><a href="#contact">Contact</a></li>
     <li><a href="#booking" class="nav-cta">Book Now</a></li>
   </ul>
+  <button onclick="applyTheme(document.documentElement.getAttribute('data-theme')==='light'?'dark':'light')"
+    style="background:none;border:1px solid rgba(201,168,76,0.3);color:var(--gold);
+           font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;
+           letter-spacing:0.2em;text-transform:uppercase;padding:6px 14px;cursor:pointer;margin-right:0.5rem;">
+    ☀ / ☾
+  </button>
   <button class="menu-toggle" aria-label="Menu" onclick="toggleMobileMenu()">
     <span></span><span></span><span></span>
   </button>
@@ -1489,6 +1504,14 @@ async function hashPass(str) {
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('').slice(0,32);
 }
 let adminBeats = JSON.parse(localStorage.getItem('outrage_beats') || '[]');
+
+// ── USER PREFERENCES ──
+const prefs = JSON.parse(localStorage.getItem('outrage_prefs') || '{}');
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('outrage_prefs', JSON.stringify({ ...prefs, theme }));
+}
+if (prefs.theme) applyTheme(prefs.theme);
 let pendingAudioDataUrl = null;
 
 function saveBeatsToStorage() {
