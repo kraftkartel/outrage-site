@@ -1583,11 +1583,100 @@ let adminBeats = JSON.parse(localStorage.getItem('outrage_beats') || '[]');
 
 // ── USER PREFERENCES ──
 const prefs = JSON.parse(localStorage.getItem('outrage_prefs') || '{}');
+
+// 1. THEME — dark/light
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
-  localStorage.setItem('outrage_prefs', JSON.stringify({ ...prefs, theme }));
+  savePrefs({ theme });
+  document.body.style.transition = 'background 0.4s ease, color 0.4s ease';
 }
 if (prefs.theme) applyTheme(prefs.theme);
+
+// 2. SAVE HELPER
+function savePrefs(updates) {
+  const current = JSON.parse(localStorage.getItem('outrage_prefs') || '{}');
+  localStorage.setItem('outrage_prefs', JSON.stringify({ ...current, ...updates }));
+}
+
+// 3. SCROLL POSITION — restore on return visit
+window.addEventListener('scroll', () => {
+  savePrefs({ scrollY: window.scrollY });
+}, { passive: true });
+window.addEventListener('load', () => {
+  if (prefs.scrollY && prefs.scrollY > 200) {
+    setTimeout(() => window.scrollTo({ top: prefs.scrollY, behavior: 'smooth' }), 300);
+  }
+});
+
+// 4. LAST SECTION VISITED — highlight nav
+const sections = ['home','about','services','studio','gallery','shop','voiceover','booking','contact'];
+
+
+// 5. BOOKING FORM AUTO-FILL — remember name, email, phone
+document.addEventListener('DOMContentLoaded', () => {
+  const inputs = document.querySelectorAll('.booking-input');
+  // Restore saved values
+  if (prefs.bookingName) inputs[0] && (inputs[0].value = prefs.bookingName);
+  if (prefs.bookingEmail) inputs[1] && (inputs[1].value = prefs.bookingEmail);
+  if (prefs.bookingPhone) inputs[2] && (inputs[2].value = prefs.bookingPhone);
+  // Save on input
+  inputs[0] && inputs[0].addEventListener('input', e => savePrefs({ bookingName: e.target.value }));
+  inputs[1] && inputs[1].addEventListener('input', e => savePrefs({ bookingEmail: e.target.value }));
+  inputs[2] && inputs[2].addEventListener('input', e => savePrefs({ bookingPhone: e.target.value }));
+});
+
+// 6. COOKIE CONSENT BANNER — needed for Google Analytics
+document.addEventListener('DOMContentLoaded', () => {
+  if (!prefs.cookiesAccepted) {
+    const banner = document.createElement('div');
+    banner.id = 'cookie-banner';
+    banner.innerHTML = `
+      <div style="position:fixed;bottom:0;left:0;right:0;z-index:99999;
+        background:rgba(10,10,10,0.97);border-top:1px solid rgba(201,168,76,0.3);
+        padding:1.25rem 5vw;display:flex;align-items:center;justify-content:space-between;
+        flex-wrap:wrap;gap:1rem;backdrop-filter:blur(12px);">
+        <p style="font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,0.6);
+          max-width:600px;line-height:1.6;margin:0;">
+          🍪 We use cookies for analytics and to remember your preferences (theme, form data).
+          <a href="#" style="color:var(--gold);">Learn more</a>
+        </p>
+        <div style="display:flex;gap:0.75rem;">
+          <button onclick="acceptCookies()" style="background:var(--gold);color:#0A0A0A;
+            padding:10px 24px;font-family:'Barlow Condensed',sans-serif;font-size:12px;
+            font-weight:700;letter-spacing:0.2em;text-transform:uppercase;border:none;cursor:pointer;">
+            Accept All
+          </button>
+          <button onclick="declineCookies()" style="background:none;color:rgba(255,255,255,0.4);
+            padding:10px 20px;font-family:'Barlow Condensed',sans-serif;font-size:12px;
+            font-weight:700;letter-spacing:0.2em;text-transform:uppercase;
+            border:1px solid rgba(255,255,255,0.15);cursor:pointer;">
+            Decline
+          </button>
+        </div>
+      </div>`;
+    document.body.appendChild(banner);
+  }
+});
+
+function acceptCookies() {
+  savePrefs({ cookiesAccepted: true, cookiesDeclined: false });
+  document.getElementById('cookie-banner')?.remove();
+}
+function declineCookies() {
+  savePrefs({ cookiesAccepted: false, cookiesDeclined: true });
+  document.getElementById('cookie-banner')?.remove();
+  // Disable GA if declined
+  window['ga-disable-G-JJDSJD8M6J'] = true;
+}
+
+// 7. VISITED BEFORE — show subtle "Welcome back" in hero
+document.addEventListener('DOMContentLoaded', () => {
+  if (prefs.visitCount > 1) {
+    const eyebrow = document.querySelector('.hero-eyebrow');
+    if (eyebrow) eyebrow.textContent = '↩ Welcome Back · OutRage Music Records · Kigali';
+  }
+  savePrefs({ visitCount: (prefs.visitCount || 0) + 1 });
+});
 let pendingAudioDataUrl = null;
 
 function saveBeatsToStorage() {
@@ -2002,15 +2091,26 @@ function switchTab(tab, el) {
 }
 
 // Fade-up on scroll
+
+
 const fadeEls = document.querySelectorAll('.fade-up');
 const observer = new IntersectionObserver((entries) => {
-  entries.forEach((e, i) => {
-    if (e.isIntersecting) {
-      setTimeout(() => e.target.classList.add('visible'), i * 100);
+  entries.forEach((e) => {
+    if (e.target.classList.contains('fade-up') && e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+    if (e.isIntersecting && ['home','about','services','studio','gallery','shop','voiceover','booking','contact'].includes(e.target.id)) {
+      savePrefs({ lastSection: e.target.id });
     }
   });
-}, { threshold: 0.1 });
+}, { threshold: 0.15 });
+
 fadeEls.forEach(el => observer.observe(el));
+['home','about','services','studio','gallery','shop','voiceover','booking','contact'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) observer.observe(el);
+});
 
 // Render public beats (merges admin catalog)
 renderPublicBeats();
