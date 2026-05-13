@@ -119,6 +119,56 @@
   [data-theme="light"] .btn-outline:hover { border-color: #8B6914; color: #8B6914; }
   [data-theme="light"] .wa-float-tooltip { background: #E4DDD0; color: #1A1208; }
 
+  /* ── ADMIN LIGHT MODE ── */
+  [data-theme="light"] #admin-panel { background: #F0EBE0; }
+  [data-theme="light"] .admin-nav { background: #E4DDD0; border-bottom: 1px solid rgba(139,105,20,0.25); }
+  [data-theme="light"] .admin-logo { color: #8B6914; }
+  [data-theme="light"] .admin-close { color: rgba(26,18,8,0.45); border-color: rgba(26,18,8,0.15); }
+  [data-theme="light"] .admin-close:hover { color: #8B6914; border-color: #8B6914; }
+  [data-theme="light"] #admin-login { background: #F0EBE0; }
+  [data-theme="light"] .admin-login-box { background: #E4DDD0; border-top-color: #8B6914; }
+  [data-theme="light"] .admin-login-title { color: #1A1208; }
+  [data-theme="light"] .admin-login-sub { color: rgba(26,18,8,0.45); }
+  [data-theme="light"] .admin-field { background: #D8D0C0; border-bottom-color: rgba(139,105,20,0.4); color: #1A1208; }
+  [data-theme="light"] .admin-field::placeholder { color: rgba(26,18,8,0.35); }
+  [data-theme="light"] .admin-field:focus { background: #CCC3B0; }
+  [data-theme="light"] .admin-login-btn { background: #8B6914; color: #F0EBE0; }
+  [data-theme="light"] .admin-login-btn:hover { background: #C9A84C; }
+  [data-theme="light"] #admin-dashboard { background: #F0EBE0; }
+  [data-theme="light"] .admin-stat-card { background: #E4DDD0; }
+  [data-theme="light"] .admin-stat-num { color: #8B6914; }
+  [data-theme="light"] .admin-stat-label { color: rgba(26,18,8,0.4); }
+  [data-theme="light"] .admin-section-title { color: #1A1208; }
+  [data-theme="light"] .admin-eyebrow { color: #8B6914; }
+  [data-theme="light"] .admin-logout-btn { color: rgba(26,18,8,0.45); border-color: rgba(26,18,8,0.15); }
+  [data-theme="light"] .admin-logout-btn:hover { color: #8B6914; border-color: #8B6914; }
+  [data-theme="light"] .upload-zone { background: #E4DDD0; border-color: rgba(139,105,20,0.35); }
+  [data-theme="light"] .upload-zone:hover { background: #D8D0C0; border-color: #8B6914; }
+  [data-theme="light"] .upload-zone-title { color: #1A1208; }
+  [data-theme="light"] .upload-zone-sub { color: rgba(26,18,8,0.4); }
+  [data-theme="light"] .beat-form { background: rgba(139,105,20,0.12); }
+  [data-theme="light"] .beat-form-field { background: #E4DDD0; }
+  [data-theme="light"] .beat-form-input { color: #1A1208; border-bottom-color: rgba(26,18,8,0.1); }
+  [data-theme="light"] .beat-form-input::placeholder { color: rgba(26,18,8,0.35); }
+  [data-theme="light"] .beat-form-input:focus { background: #D8D0C0; }
+  [data-theme="light"] .beat-upload-btn { background: #8B6914; color: #F0EBE0; }
+  [data-theme="light"] .beat-upload-btn:hover { background: #C9A84C; }
+  [data-theme="light"] .admin-beat-row { background: #E4DDD0; }
+  [data-theme="light"] .admin-beat-row:hover { border-left-color: #8B6914; }
+  [data-theme="light"] .admin-beat-name { color: #1A1208; }
+  [data-theme="light"] .admin-beat-meta { color: rgba(26,18,8,0.4); }
+  [data-theme="light"] .admin-act-btn { color: rgba(26,18,8,0.5); border-color: rgba(26,18,8,0.15); }
+  [data-theme="light"] .admin-act-btn:hover { border-color: #8B6914; color: #8B6914; }
+  [data-theme="light"] .analytics-section { background: #E4DDD0; border-top-color: #8B6914; }
+  [data-theme="light"] .analytics-card { background: #D8D0C0; }
+  [data-theme="light"] .progress-label { color: rgba(26,18,8,0.45); }
+  [data-theme="light"] .progress-bar-wrap { background: #CCC3B0; }
+  [data-theme="light"] .success-toast { background: #E4DDD0; border-left-color: #8B6914; color: #8B6914; }
+  [data-theme="light"] .upload-success-box { background: #E4DDD0; }
+  [data-theme="light"] .upload-success-sub { color: rgba(26,18,8,0.5); }
+  [data-theme="light"] .upload-success-meta { color: rgba(26,18,8,0.4); }
+  [data-theme="light"] #cookie-banner > div { background: rgba(240,235,224,0.97) !important; border-top-color: rgba(139,105,20,0.3) !important; }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
@@ -1692,6 +1742,12 @@ function checkAdminRoute() {
 }
 window.addEventListener('hashchange', checkAdminRoute);
 checkAdminRoute();
+if (sessionStorage.getItem('outrage_admin_auth') === '1') {
+  document.getElementById('admin-login').style.display = 'none';
+  document.getElementById('admin-dashboard').classList.add('open');
+  renderBeats();
+  updateStats();
+}
 
 function showUploadSuccess(beat) {
   const overlay = document.getElementById('uploadSuccessOverlay');
@@ -1791,6 +1847,7 @@ async function adminLogin() {
     document.getElementById('admin-dashboard').classList.add('open');
     renderBeats();
     updateStats();
+    sessionStorage.setItem('outrage_admin_auth', '1');
   } else {
     err.classList.add('show');
     document.getElementById('admin-pass').value = '';
@@ -1802,6 +1859,7 @@ function adminLogout() {
   document.getElementById('admin-login').style.display = 'flex';
   document.getElementById('admin-dashboard').classList.remove('open');
   document.getElementById('admin-pass').value = '';
+  sessionStorage.removeItem('outrage_admin_auth');
 }
 
 function handleFileSelect(e) {
