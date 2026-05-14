@@ -1111,7 +1111,23 @@ audio::-webkit-media-controls-panel {
 /* ───────── MOBILE OPTIMIZATION ───────── */
 
 @media (max-width: 768px) {
-
+/* mini player mobile */
+  #mini-player {
+    padding: 0.6rem 1rem;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+  .mini-cover { width: 34px; height: 34px; }
+  .mini-meta { display: none; }
+  .mini-progress-wrap {
+    flex: none;
+    width: 100%;
+    order: 10;
+    margin-top: 0.25rem;
+    height: 3px;
+  }
+  .mini-play-btn { width: 34px; height: 34px; font-size: 13px; }
+  .mini-time { font-size: 10px; }
   nav {
     height: 64px;
     padding: 0 1.2rem;
