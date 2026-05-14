@@ -1981,8 +1981,7 @@ window.addEventListener('load', () => {
 if (sessionStorage.getItem('outrage_admin_auth') === '1') {
   document.getElementById('admin-login').style.display = 'none';
   document.getElementById('admin-dashboard').classList.add('open');
-  renderBeats();
-  updateStats();
+  setTimeout(() => { renderBeats(); updateStats(); renderCharts(); }, 0);
 }
 
 function showUploadSuccess(beat) {
@@ -2042,8 +2041,8 @@ function renderCatalogPage() {
       <div class="beat-footer">
         <div class="beat-price">$${b.price}</div>
         <div style="display:flex;gap:0.5rem;align-items:center;">
-          <button class="beat-play" onclick="playBeat(this, this.dataset.audio)" data-audio="${b.audioUrl || ''}">▶</button>
-          <button onclick="openBuyModal('${b.name}','${b.price}')" style="background:transparent;border:1px solid rgba(201,168,76,0.4);color:var(--gold);padding:0 12px;height:38px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;">Buy</button>
+          <button class="beat-play" onclick="playBeat(this, '${b.audioUrl || ''}', ${JSON.stringify(b).replace(/'/g, '&apos;')})">▶</button>
+          <button onclick="buyBeat(${JSON.stringify(b).replace(/'/g, '&apos;')})" style="background:transparent;border:1px solid rgba(201,168,76,0.4);color:var(--gold);padding:0 12px;height:38px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;">Buy</button>
         </div>
       </div>
     </div>
@@ -2339,11 +2338,7 @@ function showToast(msg) {
 // ══════════════════════════════════════════════
 
 // Render public beats shop — merges admin beats with the 3 default ones
-const DEFAULT_BEATS = [
-  { id: 'default-1', name: 'Lagos Sunrise', genre: 'Afrobeat', price: 35, producer: 'Prod. Twumve', cover: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=500&q=85', status: 'published' },
-  { id: 'default-2', name: 'Kigali Nights', genre: 'Amapiano', price: 40, producer: 'Prod. Twumve', cover: 'https://images.unsplash.com/photo-1525201548942-d8732f6617a0?w=500&q=85', status: 'published' },
-  { id: 'default-3', name: 'Midnight Gold', genre: 'R&B / Soul', price: 45, producer: 'Prod. Twumve', cover: 'https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=500&q=85', status: 'published' },
-];
+const DEFAULT_BEATS = [];
 
 function renderPublicBeats() {
   const adminPublished = adminBeats.filter(b => b.status === 'published');
@@ -2354,6 +2349,13 @@ function renderPublicBeats() {
   const grid = document.getElementById('publicBeatsGrid');
   if (!grid) return;
   const show = all.slice(0, 6);
+  if (!show.length) {
+    grid.innerHTML = `<div style="grid-column:span 3;text-align:center;padding:5rem 2rem;color:rgba(255,255,255,0.25);font-family:'Barlow Condensed',sans-serif;letter-spacing:0.2em;text-transform:uppercase;font-size:13px;">
+      <div style="font-size:2.5rem;margin-bottom:1rem;">🎵</div>
+      New beats dropping soon — check back shortly
+    </div>`;
+    return;
+  }
   grid.innerHTML = show.map(b => `
     <div class="beat-card fade-up">
       <img class="beat-cover" src="${b.cover}" alt="${b.genre}" />
@@ -2637,21 +2639,6 @@ function handleCoverSelect(e) {
   };
   xhr.onerror = () => { document.getElementById('coverLabel').textContent = '⚠ Error'; };
   xhr.send(fd);
-}
-
-function playBeat(btn, audioUrl) {
-  if (currentAudio) {
-    currentAudio.pause();
-    currentAudio.currentTime = 0;
-    if (currentBtn) currentBtn.textContent = '▶';
-    if (currentBtn === btn) { currentAudio = null; currentBtn = null; return; }
-  }
-  if (!audioUrl) { showToast('⚠ No audio — upload a beat file first'); return; }
-  const audio = new Audio(audioUrl);
-  currentAudio = audio; currentBtn = btn;
-  btn.textContent = '■';
-  audio.play().catch(() => showToast('⚠ Could not play audio'));
-  audio.onended = () => { btn.textContent = '▶'; currentAudio = null; currentBtn = null; };
 }
 
 function openBuyModal(beatName, price) {
