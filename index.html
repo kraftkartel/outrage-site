@@ -644,26 +644,21 @@ media-src 'self' https://res.cloudinary.com blob:;
   [data-theme="light"] .mini-close { color: rgba(26,18,8,0.3); }
   .beat-card {
     
-    .beat-card {
-      
+  background: var(--dark2);
+  padding: 1.1rem;
+  border: 1px solid rgba(255,255,255,0.05);
   transition:
+    background 0.3s ease,
     transform 0.3s ease,
     box-shadow 0.3s ease,
     border-color 0.3s ease;
 }
 
 .beat-card:hover {
+  background: var(--dark3);
   transform: translateY(-6px);
   box-shadow: 0 10px 35px rgba(0,0,0,0.35);
-}
-  background: var(--dark2);
-  padding: 1.1rem;
-  transition:
-    background 0.3s ease,
-    transform 0.3s ease,
-    box-shadow 0.3s ease,
-    border-color 0.3s ease;
-  border: 1px solid rgba(255,255,255,0.05);
+  border-color: rgba(201,168,76,0.25);
 }
 
 .beat-card:hover {
@@ -3295,4 +3290,3 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 </script>
 </body>
 </html>
- 
