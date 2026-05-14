@@ -642,8 +642,23 @@ media-src 'self' https://res.cloudinary.com blob:;
   [data-theme="light"] .mini-progress-wrap { background: rgba(26,18,8,0.1); }
   [data-theme="light"] .mini-time { color: rgba(26,18,8,0.4); }
   [data-theme="light"] .mini-close { color: rgba(26,18,8,0.3); }
-  .beat-card { background: var(--dark2); padding: 1.1rem; transition: background 0.2s; }
-  .beat-card:hover { background: var(--dark3); }
+  .beat-card {
+  background: var(--dark2);
+  padding: 1.1rem;
+  transition:
+    background 0.3s ease,
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.beat-card:hover {
+  background: var(--dark3);
+  transform: translateY(-6px);
+  box-shadow: 0 10px 35px rgba(0,0,0,0.35);
+  border-color: rgba(201,168,76,0.25);
+}
   .beat-cover { width: 100%; aspect-ratio: 1; object-fit: cover; margin-bottom: 0.6rem; filter: brightness(0.88) saturate(0.8); transition: filter 0.2s; }
   .beat-card:hover .beat-cover { filter: brightness(1) saturate(1); }
   .beat-genre { font-family: 'Barlow Condensed', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.4rem; }
