@@ -15,6 +15,7 @@
   img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://i1.sndcdn.com https://www.instagram.com;
   frame-src https://www.youtube.com https://www.instagram.com;
   connect-src 'self' https://api.cloudinary.com https://www.google-analytics.com;
+media-src 'self' https://res.cloudinary.com blob:;
 ">
 <title>OutRage Music Records | Kigali's Premier Creative Hub</title>
 
@@ -2568,7 +2569,6 @@ function playBeat(btn, audioUrl, beat) {
   }
   try {
     miniAudio = new Audio(audioUrl);
-    miniAudio.crossOrigin = 'anonymous';
   } catch(e) {
     showToast('⚠ Could not load audio');
     return;
