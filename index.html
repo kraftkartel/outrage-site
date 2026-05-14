@@ -2041,13 +2041,7 @@ function saveBeatsToStorage() {
 // Admin route — obfuscated key required in URL
 // Access via: yourdomain.com/?key=outrage_secure_2026#admin
 function checkAdminRoute() {
-  const params = new URLSearchParams(window.location.search);
-  const key = params.get('key');
-  const validKey = 'outrage_secure_2026'; // change this to something only you know
-  if (
-    (window.location.hash === '#admin' || window.location.hash === '#outrageadmin') &&
-    key === validKey
-  ) {
+  if (window.location.hash === '#admin' || window.location.hash === '#outrageadmin') {
     document.getElementById('admin-panel').classList.add('open');
     document.body.style.overflow = 'hidden';
   }
@@ -2173,6 +2167,7 @@ async function adminLogin() {
     return;
   }
   const pass = document.getElementById('admin-pass').value;
+  if (!pass) return;
   const err = document.getElementById('admin-err');
   const hashed = await hashPass(pass);
   // Compare against stored hash of OutRage2018!
@@ -2560,11 +2555,31 @@ function playBeat(btn, audioUrl, beat) {
       return;
     }
   }
-  if (!audioUrl) { showToast('⚠ No audio file uploaded yet'); return; }
-  miniAudio = new Audio(audioUrl);
+  if (!audioUrl || audioUrl === 'null' || audioUrl === 'undefined' || audioUrl === '') {
+    showToast('⚠ No audio file for this beat yet');
+    return;
+  }
+  try {
+    miniAudio = new Audio(audioUrl);
+    miniAudio.crossOrigin = 'anonymous';
+  } catch(e) {
+    showToast('⚠ Could not load audio');
+    return;
+  }
   miniCurrentBeat = beat;
   btn.textContent = '■';
-  miniAudio.play().catch(() => showToast('⚠ Could not play audio'));
+  miniAudio.addEventListener('canplaythrough', () => {
+    miniAudio.play().catch(() => {
+      showToast('⚠ Playback blocked — tap play again');
+      btn.textContent = '▶';
+    });
+  }, { once: true });
+  miniAudio.addEventListener('error', () => {
+    showToast('⚠ Audio file could not be loaded');
+    btn.textContent = '▶';
+    miniAudio = null;
+  }, { once: true });
+  miniAudio.load();
 
   // Update mini player UI
   document.getElementById('miniTitle').textContent = beat.name || 'Unknown';
