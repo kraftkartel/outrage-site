@@ -1164,6 +1164,25 @@
         </div>
       </div>
 
+      <!-- Gallery Manager -->
+      <div style="background: var(--dark); border-top: 3px solid var(--gold); padding: 2.5rem; margin-bottom: 1px; margin-top: 1px;">
+        <p class="admin-eyebrow" style="margin-bottom: 1.5rem;">Gallery Manager</p>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1px;background:rgba(201,168,76,0.08);margin-bottom:1.5rem;" id="adminGalleryGrid">
+          <!-- populated by renderAdminGallery() -->
+        </div>
+
+        <div style="background:var(--dark2);border:1px dashed rgba(201,168,76,0.3);padding:1.5rem 2rem;display:flex;align-items:center;gap:1.5rem;cursor:pointer;position:relative;transition:border-color 0.2s;margin-bottom:0.5rem;" id="galleryUploadZone">
+          <input type="file" id="galleryFile" accept="image/*" multiple style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;" onchange="handleGalleryUpload(event)" />
+          <span style="font-size:1.8rem;">🖼</span>
+          <div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);">Add Photos to Gallery</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.35);margin-top:2px;">JPG, PNG, WEBP · Upload multiple at once · Stored via Cloudinary</div>
+          </div>
+        </div>
+        <p style="font-size:11px;color:rgba(255,255,255,0.2);letter-spacing:0.05em;">Click any photo below to remove it from the gallery. Changes reflect live on the site.</p>
+      </div>
+
       <!-- Analytics -->
       <div class="analytics-section">
         <p class="admin-eyebrow" style="margin-bottom:1.5rem;">Site Analytics</p>
@@ -1517,39 +1536,39 @@
   <!-- Studio Photos — OutRage Music real studio imagery -->
   <div class="gallery-pane active" id="pane-studio">
     <div class="gallery-grid" style="grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(3,200px);">
-      <div class="gallery-item" style="grid-column:span 2;grid-row:span 2;">
+      <div class="gallery-item" style="grid-column:span 2;grid-row:span 2;" onclick="openLightbox(this.querySelector('img'), 'The Console')">
         <img src="gallery-1.jpg" alt="OutRage Studio — Mixing Console" />
         <div class="gallery-overlay"><span class="gallery-caption">The Console</span></div>
       </div>
-      <div class="gallery-item">
+      <div class="gallery-item" onclick="openLightbox(this.querySelector('img'), 'In The Zone')">
         <img src="gallery-2.jpg" alt="OutRage Studio — Producer at work" />
         <div class="gallery-overlay"><span class="gallery-caption">In The Zone</span></div>
       </div>
-      <div class="gallery-item">
+      <div class="gallery-item" onclick="openLightbox(this.querySelector('img'), 'Production Suite')">
         <img src="gallery-3.jpg" alt="OutRage Studio — Production Session" />
         <div class="gallery-overlay"><span class="gallery-caption">Production Suite</span></div>
       </div>
-      <div class="gallery-item">
+      <div class="gallery-item" onclick="openLightbox(this.querySelector('img'), 'Mastering Suite')">
         <img src="gallery-4.jpg" alt="OutRage Studio — Mastering Setup" />
         <div class="gallery-overlay"><span class="gallery-caption">Mastering Suite</span></div>
       </div>
-      <div class="gallery-item">
+      <div class="gallery-item" onclick="openLightbox(this.querySelector('img'), 'Control Room')">
         <img src="gallery-5.jpg" alt="OutRage Studio — Control Room" />
         <div class="gallery-overlay"><span class="gallery-caption">Control Room</span></div>
       </div>
-      <div class="gallery-item">
+      <div class="gallery-item" onclick="openLightbox(this.querySelector('img'), 'Session Vibes')">
         <img src="gallery-6.jpg" alt="OutRage Studio — Studio Session" />
         <div class="gallery-overlay"><span class="gallery-caption">Session Vibes</span></div>
       </div>
-      <div class="gallery-item">
+      <div class="gallery-item" onclick="openLightbox(this.querySelector('img'), 'Late Night')">
         <img src="gallery-7.jpg" alt="OutRage Studio — Night Session" />
         <div class="gallery-overlay"><span class="gallery-caption">Late Night</span></div>
       </div>
-      <div class="gallery-item">
+      <div class="gallery-item" onclick="openLightbox(this.querySelector('img'), 'Collab Session')">
         <img src="gallery-8.jpg" alt="OutRage Studio — Collab Session" />
         <div class="gallery-overlay"><span class="gallery-caption">Collab Session</span></div>
       </div>
-      <div class="gallery-item">
+      <div class="gallery-item" onclick="openLightbox(this.querySelector('img'), 'The Room')">
         <img src="gallery-9.jpg" alt="OutRage Studio — Red Room" />
         <div class="gallery-overlay"><span class="gallery-caption">The Room</span></div>
       </div>
@@ -1981,7 +2000,7 @@ window.addEventListener('load', () => {
 if (sessionStorage.getItem('outrage_admin_auth') === '1') {
   document.getElementById('admin-login').style.display = 'none';
   document.getElementById('admin-dashboard').classList.add('open');
-  setTimeout(() => { renderBeats(); updateStats(); renderCharts(); }, 0);
+  setTimeout(() => { renderBeats(); updateStats(); renderAdminGallery(); renderCharts(); }, 0);
 }
 
 function showUploadSuccess(beat) {
@@ -2082,6 +2101,7 @@ async function adminLogin() {
     document.getElementById('admin-dashboard').classList.add('open');
     renderBeats();
     updateStats();
+    renderAdminGallery();
     sessionStorage.setItem('outrage_admin_auth', '1');
   } else {
     err.classList.add('show');
@@ -2715,6 +2735,125 @@ function renderCharts() {
     options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: 'rgba(255,255,255,0.5)', maxRotation: 30 }, grid: { color: 'rgba(255,255,255,0.05)' } }, y: { ticks: { color: 'rgba(255,255,255,0.5)', stepSize: 1 }, grid: { color: 'rgba(255,255,255,0.05)' } } } }
   });
 }
+// ══════════════════════════════════════════════
+//  GALLERY MANAGER
+// ══════════════════════════════════════════════
+
+let adminGallery = JSON.parse(localStorage.getItem('outrage_gallery') || '[]');
+
+// Seed with the original static photos if gallery is empty
+const DEFAULT_GALLERY = [
+  { id: 'g1', url: 'gallery-1.jpg', caption: 'The Console' },
+  { id: 'g2', url: 'gallery-2.jpg', caption: 'In The Zone' },
+  { id: 'g3', url: 'gallery-3.jpg', caption: 'Production Suite' },
+  { id: 'g4', url: 'gallery-4.jpg', caption: 'Mastering Suite' },
+  { id: 'g5', url: 'gallery-5.jpg', caption: 'Control Room' },
+  { id: 'g6', url: 'gallery-6.jpg', caption: 'Session Vibes' },
+  { id: 'g7', url: 'gallery-7.jpg', caption: 'Late Night' },
+  { id: 'g8', url: 'gallery-8.jpg', caption: 'Collab Session' },
+  { id: 'g9', url: 'gallery-9.jpg', caption: 'The Room' },
+];
+
+function getFullGallery() {
+  return adminGallery.length ? adminGallery : [...DEFAULT_GALLERY];
+}
+
+function saveGallery() {
+  localStorage.setItem('outrage_gallery', JSON.stringify(adminGallery));
+}
+
+function renderAdminGallery() {
+  const container = document.getElementById('adminGalleryGrid');
+  if (!container) return;
+  const photos = getFullGallery();
+  if (!photos.length) {
+    container.innerHTML = '<div style="grid-column:span 4;text-align:center;padding:3rem;color:rgba(255,255,255,0.25);font-family:\'Barlow Condensed\',sans-serif;letter-spacing:0.2em;text-transform:uppercase;font-size:12px;">No photos yet — upload some above</div>';
+    return;
+  }
+  container.innerHTML = photos.map((p, i) => `
+    <div style="position:relative;aspect-ratio:1;background:var(--dark2);overflow:hidden;cursor:pointer;group" title="Click to remove">
+      <img src="${p.url}" style="width:100%;height:100%;object-fit:cover;filter:brightness(0.85);transition:filter 0.2s;" onmouseover="this.style.filter='brightness(0.4)'" onmouseout="this.style.filter='brightness(0.85)'" />
+      <div onclick="removeGalleryPhoto('${p.id}')" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.5rem;opacity:0;transition:opacity 0.2s;background:rgba(0,0,0,0.5);" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'">
+        <span style="font-size:1.5rem;">🗑</span>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#e74c3c;">Remove</span>
+      </div>
+      <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(0,0,0,0.8),transparent);padding:0.75rem 0.5rem;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);">${p.caption}</div>
+      </div>
+      <div style="position:absolute;top:0.5rem;left:0.5rem;background:rgba(0,0,0,0.6);color:rgba(255,255,255,0.4);font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;padding:2px 8px;">#${i+1}</div>
+    </div>
+  `).join('');
+}
+
+function removeGalleryPhoto(id) {
+  if (adminGallery.length === 0) {
+    // initialize from defaults first, then remove
+    adminGallery = [...DEFAULT_GALLERY];
+  }
+  adminGallery = adminGallery.filter(p => p.id !== id);
+  saveGallery();
+  renderAdminGallery();
+  renderPublicGallery();
+  showToast('Photo removed from gallery');
+}
+
+function handleGalleryUpload(e) {
+  const files = [...e.target.files];
+  if (!files.length) return;
+  showToast('Uploading ' + files.length + ' photo(s)…');
+
+  files.forEach(file => {
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('upload_preset', 'outrage_beats');
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://api.cloudinary.com/v1_1/dc2pkdibz/image/upload');
+    xhr.onload = () => {
+      const res = JSON.parse(xhr.responseText);
+      if (res.secure_url) {
+        if (adminGallery.length === 0) adminGallery = [...DEFAULT_GALLERY];
+        const caption = file.name.replace(/\.[^.]+$/, '').replace(/[_-]/g, ' ');
+        adminGallery.push({ id: 'g' + Date.now() + Math.random(), url: res.secure_url, caption });
+        saveGallery();
+        renderAdminGallery();
+        renderPublicGallery();
+        showToast('✓ Photo added to gallery');
+      } else {
+        showToast('⚠ Upload failed for ' + file.name);
+      }
+    };
+    xhr.onerror = () => showToast('⚠ Upload error');
+    xhr.send(fd);
+  });
+}
+
+function renderPublicGallery() {
+  const photos = getFullGallery();
+  const grid = document.querySelector('#pane-studio .gallery-grid');
+  if (!grid) return;
+  const first = photos[0];
+  const rest = photos.slice(1);
+  grid.innerHTML = (first ? `
+    <div class="gallery-item" style="grid-column:span 2;grid-row:span 2;" onclick="openLightbox(this.querySelector('img'), '${first.caption}')">
+      <img src="${first.url}" alt="${first.caption}" />
+      <div class="gallery-overlay"><span class="gallery-caption">${first.caption}</span></div>
+    </div>
+  ` : '') + rest.map(p => `
+    <div class="gallery-item" onclick="openLightbox(this.querySelector('img'), '${p.caption}')">
+      <img src="${p.url}" alt="${p.caption}" />
+      <div class="gallery-overlay"><span class="gallery-caption">${p.caption}</span></div>
+    </div>
+  `).join('');
+
+  // Re-attach lightbox to new images
+  grid.querySelectorAll('.gallery-item img').forEach(img => {
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;transition:transform 0.5s ease;filter:brightness(0.85) contrast(1.05) saturate(0.9);';
+  });
+}
+
+// Run on page load
+renderPublicGallery();
+
 document.querySelectorAll('a[href^="#"]').forEach(a => {
   a.addEventListener('click', (e) => {
     const href = a.getAttribute('href');
