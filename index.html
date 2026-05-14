@@ -2172,7 +2172,7 @@ async function adminLogin() {
   const hashed = await hashPass(pass);
   // Compare against stored hash of OutRage2018!
   // To reset: run hashPass('YourNewPass') in console and update ADMIN_HASH
-  const storedHash = '8e3d6c2f1b4a9e7d0f5c3b8a2d6e1f4c';
+  const storedHash = '68fcb70ce62609bd52924ac264eff104';
   if (hashed === storedHash) {
     loginAttempts = 0;
     document.getElementById('admin-login').style.display = 'none';
