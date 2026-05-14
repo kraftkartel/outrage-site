@@ -2896,7 +2896,8 @@ const DEFAULT_GALLERY = [
 ];
 
 function getFullGallery() {
-  return adminGallery.length ? adminGallery : [...DEFAULT_GALLERY];
+  const all = adminGallery.length ? adminGallery : [...DEFAULT_GALLERY];
+  return all.filter(p => !p.hidden);
 }
 
 function saveGallery() {
@@ -2911,13 +2912,23 @@ function renderAdminGallery() {
     container.innerHTML = '<div style="grid-column:span 4;text-align:center;padding:3rem;color:rgba(255,255,255,0.25);font-family:\'Barlow Condensed\',sans-serif;letter-spacing:0.2em;text-transform:uppercase;font-size:12px;">No photos yet — upload some above</div>';
     return;
   }
-  container.innerHTML = photos.map((p, i) => `
-    <div style="position:relative;aspect-ratio:1;background:var(--dark2);overflow:hidden;cursor:pointer;group" title="Click to remove">
+  const allPhotos = adminGallery.length ? adminGallery : [...DEFAULT_GALLERY];
+  container.innerHTML = allPhotos.map((p, i) => `
+    <div style="position:relative;aspect-ratio:1;background:var(--dark2);overflow:hidden;cursor:pointer;${p.hidden ? 'opacity:0.4;' : ''}">
       <img src="${p.url}" style="width:100%;height:100%;object-fit:cover;filter:brightness(0.85);transition:filter 0.2s;" onmouseover="this.style.filter='brightness(0.4)'" onmouseout="this.style.filter='brightness(0.85)'" />
-      <div onclick="removeGalleryPhoto('${p.id}')" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.5rem;opacity:0;transition:opacity 0.2s;background:rgba(0,0,0,0.5);" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'">
-        <span style="font-size:1.5rem;">🗑</span>
-        <span style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#e74c3c;">Remove</span>
-      </div>
+      ${p.hidden ? `
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.5rem;background:rgba(0,0,0,0.7);">
+          <span style="font-size:1.2rem;">👁‍🗨</span>
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.5);">Hidden</span>
+          <button onclick="restoreGalleryPhoto('${p.id}')" style="margin-top:0.25rem;background:var(--gold);color:#000;border:none;padding:4px 10px;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;">Restore</button>
+          <button onclick="deleteGalleryPhotoForever('${p.id}')" style="background:none;color:#e74c3c;border:1px solid rgba(231,76,60,0.4);padding:4px 10px;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;">Delete Forever</button>
+        </div>
+      ` : `
+        <div onclick="removeGalleryPhoto('${p.id}')" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.5rem;opacity:0;transition:opacity 0.2s;background:rgba(0,0,0,0.5);" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'">
+          <span style="font-size:1.5rem;">🗑</span>
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#e74c3c;">Hide</span>
+        </div>
+      `}
       <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(0,0,0,0.8),transparent);padding:0.75rem 0.5rem;">
         <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);">${p.caption}</div>
       </div>
@@ -2927,15 +2938,31 @@ function renderAdminGallery() {
 }
 
 function removeGalleryPhoto(id) {
-  if (adminGallery.length === 0) {
-    // initialize from defaults first, then remove
-    adminGallery = [...DEFAULT_GALLERY];
-  }
+  if (adminGallery.length === 0) adminGallery = [...DEFAULT_GALLERY];
+  const photo = adminGallery.find(p => p.id === id);
+  if (photo) photo.hidden = true;
+  saveGallery();
+  renderAdminGallery();
+  renderPublicGallery();
+  showToast('Photo hidden — restore it below');
+}
+
+function restoreGalleryPhoto(id) {
+  const photo = adminGallery.find(p => p.id === id);
+  if (photo) { photo.hidden = false; }
+  saveGallery();
+  renderAdminGallery();
+  renderPublicGallery();
+  showToast('✓ Photo restored to gallery');
+}
+
+function deleteGalleryPhotoForever(id) {
+  if (!confirm('Delete this photo forever? This cannot be undone.')) return;
   adminGallery = adminGallery.filter(p => p.id !== id);
   saveGallery();
   renderAdminGallery();
   renderPublicGallery();
-  showToast('Photo removed from gallery');
+  showToast('Photo permanently deleted');
 }
 
 function handleGalleryUpload(e) {
