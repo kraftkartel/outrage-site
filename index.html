@@ -3,6 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+<meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+<meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
+<meta http-equiv="Content-Security-Policy" content="
+  default-src 'self';
+  script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://cdnjs.cloudflare.com https://www.instagram.com https://fonts.googleapis.com;
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+  font-src https://fonts.gstatic.com;
+  img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://i1.sndcdn.com https://www.instagram.com;
+  frame-src https://www.youtube.com https://www.instagram.com;
+  connect-src 'self' https://api.cloudinary.com https://www.google-analytics.com;
+">
 <title>OutRage Music Records | Kigali's Premier Creative Hub</title>
 
 <!-- Google Analytics -->
@@ -1578,103 +1591,131 @@
     </div>
   </div>
 
-  <!-- YouTube Videos — real OutRage Music channel -->
+  <!-- YouTube — dark cinematic with redesigned channel banner -->
   <div class="gallery-pane" id="pane-youtube">
-    <div style="background:var(--dark2);border-left:3px solid var(--gold);padding:1.5rem 2rem;margin-bottom:2rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;">
-      <img src="https://i1.sndcdn.com/avatars-RhdYjsdRbwGfv9dm-X7CuJw-t500x500.jpg" alt="OutRage Music" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);" />
-      <div>
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;">OutRage Music</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.45);margin-top:2px;">Redefining sound with innovation · East African Trap & Hip-Hop · Kigali, Rwanda</div>
+
+    <!-- Cinematic channel banner -->
+    <div style="position:relative;overflow:hidden;margin-bottom:4px;min-height:160px;display:flex;align-items:center;background:#000;">
+      <div style="position:absolute;inset:0;background:url('gallery-2.jpg') center/cover no-repeat;filter:brightness(0.18) saturate(0.4);transform:scale(1.05);"></div>
+      <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,0.95) 0%,rgba(0,0,0,0.4) 60%,transparent 100%);"></div>
+      <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--gold),transparent);"></div>
+      <div style="position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--gold),transparent);"></div>
+      <div style="position:relative;z-index:2;display:flex;align-items:center;gap:2rem;padding:2rem 2.5rem;flex-wrap:wrap;width:100%;">
+        <div style="position:relative;flex-shrink:0;">
+          <img src="https://i1.sndcdn.com/avatars-RhdYjsdRbwGfv9dm-X7CuJw-t500x500.jpg"
+            style="width:72px;height:72px;border-radius:50%;object-fit:cover;display:block;filter:brightness(0.95);" />
+          <div style="position:absolute;inset:-3px;border-radius:50%;border:1px solid var(--gold);pointer-events:none;"></div>
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.45em;text-transform:uppercase;color:var(--gold);margin-bottom:0.4rem;">Official Channel</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:300;color:#fff;line-height:1;margin-bottom:0.3rem;">OutRage <em style="color:var(--gold);font-style:italic;">Music</em></div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.35);letter-spacing:0.08em;font-family:'Barlow',sans-serif;">East African Trap & Hip-Hop · Kigali, Rwanda</div>
+        </div>
+        <a href="https://www.youtube.com/@OutRageM" target="_blank"
+          style="flex-shrink:0;display:inline-flex;align-items:center;gap:0.6rem;
+                 background:#FF0000;color:#fff;padding:13px 28px;
+                 font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;
+                 letter-spacing:0.25em;text-transform:uppercase;text-decoration:none;
+                 transition:background 0.2s,transform 0.2s;"
+          onmouseover="this.style.background='#cc0000';this.style.transform='translateY(-2px)'"
+          onmouseout="this.style.background='#FF0000';this.style.transform='translateY(0)'">
+          ▶ Subscribe
+        </a>
       </div>
-      <a href="https://www.youtube.com/@OutRageM" target="_blank" style="margin-left:auto;display:inline-flex;align-items:center;gap:0.5rem;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#FF0000;border:1px solid #FF0000;padding:8px 18px;text-decoration:none;transition:background 0.2s;">▶ Subscribe</a>
     </div>
-    <div class="youtube-grid">
-      <!-- Real OutRage Music video found -->
-      <div class="yt-item">
+
+    <!-- Video grid -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
+      <div style="position:relative;aspect-ratio:16/9;overflow:hidden;background:#000;">
         <iframe
           src="https://www.youtube.com/embed/zWHWiAPmcSo"
-          title="Lil Puppy - KICU to N.Y.A feat. Kraft Kartel — OutRage Music"
+          title="Lil Puppy - KICU to N.Y.A feat. Kraft Kartel"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-          loading="lazy"
-        ></iframe>
+          allowfullscreen loading="lazy"
+          style="width:100%;height:100%;border:none;">
+        </iframe>
+        <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(0,0,0,0.9),transparent);padding:1rem 1.25rem;pointer-events:none;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.35em;text-transform:uppercase;color:var(--gold);margin-bottom:0.2rem;">Featured Video</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#fff;">Lil Puppy — KICU to N.Y.A</div>
+        </div>
       </div>
-      <!-- Channel playlist — loads latest uploads automatically -->
-      <div class="yt-item">
+      <div style="position:relative;aspect-ratio:16/9;overflow:hidden;background:#000;">
         <iframe
           src="https://www.youtube.com/embed/videoseries?list=UCIh3oMGCFUHlr9Vtdvsj5jA&index=0"
           title="OutRage Music — Full Channel"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-          loading="lazy"
-        ></iframe>
+          allowfullscreen loading="lazy"
+          style="width:100%;height:100%;border:none;">
+        </iframe>
+        <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(0,0,0,0.9),transparent);padding:1rem 1.25rem;pointer-events:none;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.35em;text-transform:uppercase;color:var(--gold);margin-bottom:0.2rem;">Full Channel</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#fff;">OutRage Music — All Videos</div>
+        </div>
       </div>
     </div>
-    <!-- Artist roster chips -->
-    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:1.5rem;justify-content:center;">
-      <span style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(201,168,76,0.3);padding:5px 14px;">Kraft Kartel</span>
-      <span style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(201,168,76,0.3);padding:5px 14px;">Yannick MYK</span>
-      <span style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(201,168,76,0.3);padding:5px 14px;">K Clamp</span>
-      <span style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(201,168,76,0.3);padding:5px 14px;">Gurin</span>
-      <span style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(201,168,76,0.3);padding:5px 14px;">Triple Kingdom$</span>
-      <span style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(201,168,76,0.3);padding:5px 14px;">Lil Puppy</span>
-    </div>
-  </div>
 
-  <!-- Instagram — embedded live feed widget -->
+    <!-- Artist chips -->
+    <div style="display:flex;gap:3px;flex-wrap:wrap;margin-top:4px;">
+      <div style="flex:1;min-width:0;background:var(--dark2);padding:1rem
+
+  <!-- Instagram — dark cinematic with restyled banner + embed -->
   <div class="gallery-pane" id="pane-instagram">
-    <!-- Instagram does not allow third-party image hotlinking. We use their official embed approach. -->
-    <div style="background:var(--dark2);border-left:3px solid var(--gold);padding:1.5rem 2rem;margin-bottom:2rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;">
-      <img src="https://i1.sndcdn.com/avatars-RhdYjsdRbwGfv9dm-X7CuJw-t500x500.jpg" alt="OutRage Music Records" style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);" />
-      <div>
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;">@outragemusicrecords</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.45);margin-top:2px;">OutRage Music Records · Kigali, Rwanda</div>
+
+    <!-- Cinematic banner -->
+    <div style="position:relative;overflow:hidden;margin-bottom:4px;min-height:160px;display:flex;align-items:center;background:#000;">
+      <div style="position:absolute;inset:0;background:url('gallery-6.jpg') center/cover no-repeat;filter:brightness(0.15) saturate(0.3);transform:scale(1.05);"></div>
+      <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,0.96) 0%,rgba(0,0,0,0.5) 60%,transparent 100%);"></div>
+      <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--gold),transparent);"></div>
+      <div style="position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--gold),transparent);"></div>
+      <div style="position:absolute;right:2rem;top:50%;transform:translateY(-50%);font-family:'Cormorant Garamond',serif;font-size:8rem;font-weight:300;color:rgba(201,168,76,0.05);pointer-events:none;user-select:none;line-height:1;">IG</div>
+      <div style="position:relative;z-index:2;display:flex;align-items:center;gap:2rem;padding:2rem 2.5rem;flex-wrap:wrap;width:100%;">
+        <div style="position:relative;flex-shrink:0;">
+          <img src="https://i1.sndcdn.com/avatars-RhdYjsdRbwGfv9dm-X7CuJw-t500x500.jpg"
+            style="width:72px;height:72px;border-radius:50%;object-fit:cover;display:block;filter:brightness(0.9) saturate(0.85);" />
+          <div style="position:absolute;inset:-3px;border-radius:50%;border:1px solid var(--gold);pointer-events:none;"></div>
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.45em;text-transform:uppercase;color:var(--gold);margin-bottom:0.4rem;">Instagram · Official</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:300;color:#fff;line-height:1;margin-bottom:0.3rem;">@outragemusicrecords</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.35);letter-spacing:0.08em;font-family:'Barlow',sans-serif;">Behind the scenes · Kigali, Rwanda</div>
+        </div>
+        <a href="https://www.instagram.com/outragemusicrecords/" target="_blank"
+          style="flex-shrink:0;display:inline-flex;align-items:center;gap:0.6rem;
+                 background:var(--gold);color:#0A0A0A;padding:13px 28px;
+                 font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;
+                 letter-spacing:0.25em;text-transform:uppercase;text-decoration:none;
+                 transition:background 0.2s,transform 0.2s;"
+          onmouseover="this.style.background='#E8C97A';this.style.transform='translateY(-2px)'"
+          onmouseout="this.style.background='var(--gold)';this.style.transform='translateY(0)'">
+          📷 Follow
+        </a>
       </div>
-      <a href="https://www.instagram.com/outragemusicrecords/" target="_blank" style="margin-left:auto;display:inline-flex;align-items:center;gap:0.5rem;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);padding:8px 18px;text-decoration:none;transition:background 0.2s;">Follow</a>
     </div>
 
-    <!-- Instagram oEmbed cards — these load the actual posts in iframes -->
-    <div class="ig-embed-grid">
-      <blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/outragemusicrecords/" data-instgrm-version="14" style="background:#000;border:1px solid rgba(201,168,76,0.2);border-radius:0;box-shadow:none;margin:0;max-width:100%;min-width:200px;padding:0;width:100%;"></blockquote>
+    <!-- Instagram embed -->
+    <div style="background:#000;padding:2rem;display:flex;justify-content:center;">
+      <blockquote class="instagram-media" data-instgrm-captioned
+        data-instgrm-permalink="https://www.instagram.com/outragemusicrecords/"
+        data-instgrm-version="14"
+        style="background:#111;border:1px solid rgba(201,168,76,0.2);border-radius:0;
+               box-shadow:none;margin:0;max-width:540px;min-width:280px;
+               padding:0;width:100%;">
+      </blockquote>
     </div>
 
-    <!-- Fallback grid shown if IG script doesn't load -->
-    <div class="ig-grid" id="ig-fallback">
-      <a href="https://www.instagram.com/outragemusicrecords/" target="_blank" class="ig-item" style="background:var(--dark2);display:flex;align-items:center;justify-content:center;aspect-ratio:1;">
-        <div style="text-align:center;padding:2rem;">
-          <div style="font-size:2.5rem;margin-bottom:1rem;">📷</div>
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);">@outragemusicrecords</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:0.5rem;">View on Instagram</div>
-        </div>
-      </a>
-      <a href="https://www.instagram.com/outragemusicrecords/" target="_blank" class="ig-item" style="background:var(--dark3);display:flex;align-items:center;justify-content:center;aspect-ratio:1;">
-        <div style="text-align:center;padding:2rem;">
-          <div style="font-size:2.5rem;margin-bottom:1rem;">🎵</div>
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);">Studio Shots</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:0.5rem;">Live on our IG page</div>
-        </div>
-      </a>
-      <a href="https://www.instagram.com/outragemusicrecords/" target="_blank" class="ig-item" style="background:var(--dark2);display:flex;align-items:center;justify-content:center;aspect-ratio:1;">
-        <div style="text-align:center;padding:2rem;">
-          <div style="font-size:2.5rem;margin-bottom:1rem;">🎤</div>
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);">Artist Sessions</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:0.5rem;">Live on our IG page</div>
-        </div>
-      </a>
-      <a href="https://www.instagram.com/outragemusicrecords/" target="_blank" class="ig-item" style="background:var(--dark3);display:flex;align-items:center;justify-content:center;aspect-ratio:1;">
-        <div style="text-align:center;padding:2rem;">
-          <div style="font-size:2.5rem;margin-bottom:1rem;">🔥</div>
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);">Latest Drops</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:0.5rem;">Live on our IG page</div>
-        </div>
+    <!-- Bottom follow bar -->
+    <div style="margin-top:4px;padding:1.25rem 2rem;background:var(--dark2);border-top:1px solid rgba(201,168,76,0.12);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+      <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:rgba(255,255,255,0.25);">More content on our page</span>
+      <a href="https://www.instagram.com/outragemusicrecords/" target="_blank"
+        style="font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;
+               letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);
+               text-decoration:none;display:inline-flex;align-items:center;gap:0.5rem;
+               transition:color 0.2s;"
+        onmouseover="this.style.color='#E8C97A'" onmouseout="this.style.color='var(--gold)'">
+        instagram.com/outragemusicrecords →
       </a>
     </div>
 
-    <div class="ig-cta">
-      <a href="https://www.instagram.com/outragemusicrecords/" target="_blank" class="ig-follow">
-        📷 Follow @outragemusicrecords on Instagram
-      </a>
-    </div>
   </div>
 
   <script async src="//www.instagram.com/embed.js"></script>
@@ -1755,9 +1796,13 @@
   <h2 class="section-title">Book Your <em>Session</em></h2>
   <p>Ready to make something extraordinary? Fill out the form below and our team will get back to you within 24 hours with availability and a custom quote.</p>
   <form class="booking-form" onsubmit="handleBooking(event)">
+    <!-- Honeypot field — hidden from humans, bots fill it in -->
+    <input type="text" name="website" autocomplete="off"
+      style="position:absolute;left:-9999px;opacity:0;pointer-events:none;tab-index:-1;"
+      tabindex="-1" aria-hidden="true" />
     <div class="form-row">
-      <input class="booking-input" type="text" placeholder="Full Name" required />
-      <input class="booking-input" type="email" placeholder="Email Address" required />
+      <input class="booking-input" type="text" placeholder="Full Name" required maxlength="100" />
+      <input class="booking-input" type="email" placeholder="Email Address" required maxlength="150" />
     </div>
     <div class="form-row">
       <input class="booking-input" type="tel" placeholder="Phone / WhatsApp" />
@@ -1982,8 +2027,16 @@ function saveBeatsToStorage() {
 }
 
 // Open admin if hash is #admin
+// Admin route — obfuscated key required in URL
+// Access via: yourdomain.com/?key=outrage_secure_2026#admin
 function checkAdminRoute() {
-  if (window.location.hash === '#admin' || window.location.hash === '#outrageadmin') {
+  const params = new URLSearchParams(window.location.search);
+  const key = params.get('key');
+  const validKey = 'outrage_secure_2026'; // change this to something only you know
+  if (
+    (window.location.hash === '#admin' || window.location.hash === '#outrageadmin') &&
+    key === validKey
+  ) {
     document.getElementById('admin-panel').classList.add('open');
     document.body.style.overflow = 'hidden';
   }
@@ -1997,11 +2050,19 @@ window.addEventListener('load', () => {
     document.getElementById('page-loader').classList.add('done');
   }, 1400);
 });
-if (sessionStorage.getItem('outrage_admin_auth') === '1') {
-  document.getElementById('admin-login').style.display = 'none';
-  document.getElementById('admin-dashboard').classList.add('open');
-  setTimeout(() => { renderBeats(); updateStats(); renderAdminGallery(); renderCharts(); }, 0);
-}
+(function checkAdminSession() {
+  const auth = sessionStorage.getItem('outrage_admin_auth');
+  const expiry = parseInt(sessionStorage.getItem('outrage_admin_expiry') || '0');
+  if (auth === '1' && Date.now() < expiry) {
+    document.getElementById('admin-login').style.display = 'none';
+    document.getElementById('admin-dashboard').classList.add('open');
+    setTimeout(() => { renderBeats(); updateStats(); renderAdminGallery(); renderCharts(); }, 0);
+  } else {
+    // Clear expired session
+    sessionStorage.removeItem('outrage_admin_auth');
+    sessionStorage.removeItem('outrage_admin_expiry');
+  }
+})();
 
 function showUploadSuccess(beat) {
   const overlay = document.getElementById('uploadSuccessOverlay');
@@ -2089,24 +2150,46 @@ function closeAdmin() {
   history.pushState('', document.title, window.location.pathname);
 }
 
+let loginAttempts = 0;
+let loginLockedUntil = 0;
+
 async function adminLogin() {
+  const now = Date.now();
+  if (now < loginLockedUntil) {
+    const secsLeft = Math.ceil((loginLockedUntil - now) / 1000);
+    document.getElementById('admin-err').textContent = `⚠ Too many attempts. Try again in ${secsLeft}s.`;
+    document.getElementById('admin-err').classList.add('show');
+    return;
+  }
   const pass = document.getElementById('admin-pass').value;
   const err = document.getElementById('admin-err');
   const hashed = await hashPass(pass);
   // Compare against stored hash of OutRage2018!
   // To reset: run hashPass('YourNewPass') in console and update ADMIN_HASH
   const storedHash = '8e3d6c2f1b4a9e7d0f5c3b8a2d6e1f4c';
-  if (pass === 'OutRage2018!' || hashed === storedHash) {
+  if (hashed === storedHash) {
+    loginAttempts = 0;
     document.getElementById('admin-login').style.display = 'none';
     document.getElementById('admin-dashboard').classList.add('open');
     renderBeats();
     updateStats();
     renderAdminGallery();
+    const expiry = Date.now() + (4 * 60 * 60 * 1000);
     sessionStorage.setItem('outrage_admin_auth', '1');
+    sessionStorage.setItem('outrage_admin_expiry', expiry.toString());
   } else {
-    err.classList.add('show');
+    loginAttempts++;
     document.getElementById('admin-pass').value = '';
-    setTimeout(() => err.classList.remove('show'), 3000);
+    if (loginAttempts >= 5) {
+      loginLockedUntil = Date.now() + (60 * 1000);
+      loginAttempts = 0;
+      err.textContent = '⚠ Too many failed attempts. Locked for 60 seconds.';
+    } else {
+      const remaining = 5 - loginAttempts;
+      err.textContent = `⚠ Incorrect passphrase. ${remaining} attempt${remaining !== 1 ? 's' : ''} remaining.`;
+    }
+    err.classList.add('show');
+    setTimeout(() => err.classList.remove('show'), 4000);
   }
 }
 
@@ -2115,6 +2198,7 @@ function adminLogout() {
   document.getElementById('admin-dashboard').classList.remove('open');
   document.getElementById('admin-pass').value = '';
   sessionStorage.removeItem('outrage_admin_auth');
+  sessionStorage.removeItem('outrage_admin_expiry');
 }
 
 function handleFileSelect(e) {
@@ -2176,9 +2260,15 @@ if (zone) {
   });
 }
 
+function sanitize(str) {
+  const div = document.createElement('div');
+  div.appendChild(document.createTextNode(str));
+  return div.innerHTML;
+}
+
 function saveBeat() {
-  const name = document.getElementById('beatName').value.trim();
-  const genre = document.getElementById('beatGenre').value;
+  const name = sanitize(document.getElementById('beatName').value.trim());
+  const genre = sanitize(document.getElementById('beatGenre').value);
   const price = document.getElementById('beatPrice').value;
   if (!name || !genre || !price) { showToast('⚠ Please fill in Title, Genre and Price'); return; }
   if (!pendingAudioDataUrl) {
@@ -2597,7 +2687,12 @@ function playIndicator(btn, audioUrl) {
 function handleBooking(e) {
   e.preventDefault();
   const form = e.target;
-  const name = form.querySelector('[placeholder="Full Name"]').value;
+
+  // Honeypot check — if filled, it's a bot
+  const honeypot = form.querySelector('[name="website"]');
+  if (honeypot && honeypot.value) return;
+
+  const name = form.querySelector('[placeholder="Full Name"]').value.slice(0, 100);
   const email = form.querySelector('[placeholder="Email Address"]').value;
   const phone = form.querySelector('[placeholder="Phone / WhatsApp"]').value;
   const service = form.querySelector('select').value || 'General Inquiry';
