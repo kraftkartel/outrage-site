@@ -642,7 +642,8 @@ media-src 'self' https://res.cloudinary.com blob:;
   [data-theme="light"] .mini-progress-wrap { background: rgba(26,18,8,0.1); }
   [data-theme="light"] .mini-time { color: rgba(26,18,8,0.4); }
   [data-theme="light"] .mini-close { color: rgba(26,18,8,0.3); }
-  .beat-card {
+
+.beat-card {
   background: var(--dark2);
   padding: 1.1rem;
   border: 1px solid rgba(255,255,255,0.05);
@@ -1066,13 +1067,18 @@ media-src 'self' https://res.cloudinary.com blob:;
 
 @keyframes waveAnim {
   0%,100% {
-    transform: scaleY(1);
-    opacity: 0.7;
+    transform: scaleY(0.4);
+    opacity: 0.5;
   }
   50% {
-    transform: scaleY(1.35);
+    transform: scaleY(1);
     opacity: 1;
   }
+}
+
+.wave-bars span {
+  transition: transform 0.08s ease, opacity 0.08s ease;
+  transform-origin: bottom;
 }
 
 .beat-meta {
@@ -1181,7 +1187,6 @@ audio::-webkit-media-controls-panel {
   }
 
   .beat-card {
-    
     width: 100%;
   }
 
@@ -2746,7 +2751,11 @@ function renderPublicBeats() {
       <div class="beat-producer">${b.producer}</div>
       <div class="beat-footer">
         <div class="beat-price">$${b.price}</div>
-        <button class="beat-play" onclick="playBeat(this, '${b.audioUrl || ''}', JSON.parse(this.dataset.beat))" data-beat='${JSON.stringify(b).replace(/'/g, "&apos;")}'>▶</button>
+        <button class="beat-play" id="playbtn-${b.id}" onclick="playBeat(this, '${b.audioUrl || ''}', JSON.parse(this.dataset.beat))" data-beat='${JSON.stringify(b).replace(/'/g, "&apos;")}'>▶</button>
+      </div>
+      <div class="wave-bars" id="wave-${b.id}" style="display:none;">
+        <span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span>
       </div>
       <button class="beat-buy" onclick="buyBeat(JSON.parse(this.dataset.beat))" data-beat='${JSON.stringify(b).replace(/'/g, "&apos;")}'>💳 Buy — $${b.price}</button>
     </div>
@@ -2808,6 +2817,45 @@ let miniAudio = null;
 let miniPlaying = false;
 let miniCurrentBeat = null;
 
+let audioCtxGlobal = null;
+let analyserGlobal = null;
+let animFrameId = null;
+let sourceNodeGlobal = null;
+
+function stopWaveAnimation() {
+  if (animFrameId) { cancelAnimationFrame(animFrameId); animFrameId = null; }
+  document.querySelectorAll('.wave-bars').forEach(w => {
+    w.style.display = 'none';
+    w.querySelectorAll('span').forEach(s => {
+      s.style.transform = 'scaleY(0.4)';
+      s.style.opacity = '0.5';
+    });
+  });
+}
+
+function startWaveAnimation(beatId) {
+  if (!analyserGlobal) return;
+  const waveEl = document.getElementById('wave-' + beatId);
+  if (!waveEl) return;
+  waveEl.style.display = 'flex';
+  const bars = waveEl.querySelectorAll('span');
+  const bufferLength = analyserGlobal.frequencyBinCount;
+  const dataArray = new Uint8Array(bufferLength);
+  function draw() {
+    animFrameId = requestAnimationFrame(draw);
+    analyserGlobal.getByteFrequencyData(dataArray);
+    const step = Math.floor(bufferLength / bars.length);
+    bars.forEach((bar, i) => {
+      const value = dataArray[i * step] / 255;
+      const scale = 0.2 + value * 1.8;
+      const opacity = 0.3 + value * 0.7;
+      bar.style.transform = `scaleY(${scale})`;
+      bar.style.opacity = opacity;
+    });
+  }
+  draw();
+}
+
 function playBeat(btn, audioUrl, beat) {
   // Stop any existing
   if (miniAudio) {
@@ -2827,12 +2875,27 @@ function playBeat(btn, audioUrl, beat) {
   }
   try {
     miniAudio = new Audio(audioUrl);
+    miniAudio.crossOrigin = 'anonymous';
   } catch(e) {
     showToast('⚠ Could not load audio');
     return;
   }
+
+  stopWaveAnimation();
+  if (sourceNodeGlobal) { try { sourceNodeGlobal.disconnect(); } catch(e){} }
+  if (audioCtxGlobal) { try { audioCtxGlobal.close(); } catch(e){} }
+  audioCtxGlobal = new (window.AudioContext || window.webkitAudioContext)();
+  analyserGlobal = audioCtxGlobal.createAnalyser();
+  analyserGlobal.fftSize = 64;
+  sourceNodeGlobal = audioCtxGlobal.createMediaElementSource(miniAudio);
+  sourceNodeGlobal.connect(analyserGlobal);
+  analyserGlobal.connect(audioCtxGlobal.destination);
+
   miniCurrentBeat = beat;
   btn.textContent = '■';
+  miniAudio.addEventListener('canplaythrough', () => {
+    startWaveAnimation(beat.id);
+  }, { once: true });
   miniAudio.addEventListener('canplaythrough', () => {
     miniAudio.play().catch(() => {
       showToast('⚠ Playback blocked — tap play again');
@@ -2868,6 +2931,7 @@ function playBeat(btn, audioUrl, beat) {
     document.getElementById('miniPlayBtn').textContent = '▶';
     document.getElementById('miniProgressFill').style.width = '0%';
     miniPlaying = false;
+    stopWaveAnimation();
   };
 
   // Progress bar click to seek
@@ -2896,6 +2960,9 @@ function toggleMiniPlayer() {
 
 function closeMiniPlayer() {
   if (miniAudio) { miniAudio.pause(); miniAudio = null; }
+  stopWaveAnimation();
+  if (sourceNodeGlobal) { try { sourceNodeGlobal.disconnect(); } catch(e){} sourceNodeGlobal = null; }
+  if (audioCtxGlobal) { try { audioCtxGlobal.close(); } catch(e){} audioCtxGlobal = null; }
   document.getElementById('mini-player').classList.remove('show');
   document.querySelectorAll('.beat-play').forEach(b => b.textContent = '▶');
   miniPlaying = false;
