@@ -2032,6 +2032,7 @@ document.addEventListener('DOMContentLoaded', () => {
   savePrefs({ visitCount: (prefs.visitCount || 0) + 1 });
 });
 let pendingAudioDataUrl = null;
+let pendingAudioUrl = null;
 
 function saveBeatsToStorage() {
   localStorage.setItem('outrage_beats', JSON.stringify(adminBeats));
@@ -2041,7 +2042,12 @@ function saveBeatsToStorage() {
 // Admin route — obfuscated key required in URL
 // Access via: yourdomain.com/?key=outrage_secure_2026#admin
 function checkAdminRoute() {
-  if (window.location.hash === '#admin' || window.location.hash === '#outrageadmin') {
+  const params = new URLSearchParams(window.location.search);
+  const key = params.get('key');
+  if (
+    (window.location.hash === '#admin' || window.location.hash === '#outrageadmin') &&
+    key === 'outrage_secure_2026'
+  ) {
     document.getElementById('admin-panel').classList.add('open');
     document.body.style.overflow = 'hidden';
   }
@@ -2180,6 +2186,7 @@ async function adminLogin() {
     renderBeats();
     updateStats();
     renderAdminGallery();
+    renderCharts();
     const expiry = Date.now() + (4 * 60 * 60 * 1000);
     sessionStorage.setItem('outrage_admin_auth', '1');
     sessionStorage.setItem('outrage_admin_expiry', expiry.toString());
@@ -2294,7 +2301,7 @@ function saveBeat() {
     status: document.getElementById('beatStatus').value,
     tags: document.getElementById('beatTags').value,
     cover: document.getElementById('beatCoverUrl').value || `https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=400&q=80`,
-    audioUrl: pendingAudioDataUrl || pendingAudioUrl || null,
+    audioUrl: pendingAudioDataUrl || null,
     date: new Date().toLocaleDateString('en-RW', { day: 'numeric', month: 'short', year: 'numeric' })
   };
   adminBeats.unshift(beat);
