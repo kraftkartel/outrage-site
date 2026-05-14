@@ -1656,9 +1656,20 @@
 
     <!-- Artist chips -->
     <div style="display:flex;gap:3px;flex-wrap:wrap;margin-top:4px;">
-      <div style="flex:1;min-width:0;background:var(--dark2);padding:1rem
+      <div style="flex:1;min-width:0;background:var(--dark2);padding:1rem 1.5rem;display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.35em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-right:0.5rem;">Artists</span>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(201,168,76,0.25);padding:4px 12px;">Kraft Kartel</span>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(201,168,76,0.25);padding:4px 12px;">Yannick MYK</span>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(201,168,76,0.25);padding:4px 12px;">K Clamp</span>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(201,168,76,0.25);padding:4px 12px;">Gurin</span>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(201,168,76,0.25);padding:4px 12px;">Triple Kingdom$</span>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(201,168,76,0.25);padding:4px 12px;">Lil Puppy</span>
+      </div>
+    </div>
 
-  <!-- Instagram — dark cinematic with restyled banner + embed -->
+  </div>
+
+  <!-- Instagram - dark cinematic with restyled banner + embed -->
   <div class="gallery-pane" id="pane-instagram">
 
     <!-- Cinematic banner -->
@@ -1796,9 +1807,9 @@
   <h2 class="section-title">Book Your <em>Session</em></h2>
   <p>Ready to make something extraordinary? Fill out the form below and our team will get back to you within 24 hours with availability and a custom quote.</p>
   <form class="booking-form" onsubmit="handleBooking(event)">
-    <!-- Honeypot field — hidden from humans, bots fill it in -->
+    <!-- Honeypot field - hidden from humans, bots fill it in -->
     <input type="text" name="website" autocomplete="off"
-      style="position:absolute;left:-9999px;opacity:0;pointer-events:none;tab-index:-1;"
+      style="position:absolute;left:-9999px;opacity:0;pointer-events:none;"
       tabindex="-1" aria-hidden="true" />
     <div class="form-row">
       <input class="booking-input" type="text" placeholder="Full Name" required maxlength="100" />
