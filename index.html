@@ -2041,8 +2041,8 @@ function renderCatalogPage() {
       <div class="beat-footer">
         <div class="beat-price">$${b.price}</div>
         <div style="display:flex;gap:0.5rem;align-items:center;">
-          <button class="beat-play" onclick="playBeat(this, '${b.audioUrl || ''}', ${JSON.stringify(b).replace(/'/g, '&apos;')})">▶</button>
-          <button onclick="buyBeat(${JSON.stringify(b).replace(/'/g, '&apos;')})" style="background:transparent;border:1px solid rgba(201,168,76,0.4);color:var(--gold);padding:0 12px;height:38px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;">Buy</button>
+          <button class="beat-play" onclick="playBeat(this, '${b.audioUrl || ''}', JSON.parse(this.dataset.beat))" data-beat='${JSON.stringify(b).replace(/'/g, "'")}'>▶</button>
+          <button onclick="buyBeat(JSON.parse(this.dataset.beat))" data-beat='${JSON.stringify(b).replace(/'/g, "'")}' style="background:transparent;border:1px solid rgba(201,168,76,0.4);color:var(--gold);padding:0 12px;height:38px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;">Buy</button>
         </div>
       </div>
     </div>
@@ -2364,9 +2364,9 @@ function renderPublicBeats() {
       <div class="beat-producer">${b.producer}</div>
       <div class="beat-footer">
         <div class="beat-price">$${b.price}</div>
-        <button class="beat-play" onclick="playBeat(this, '${b.audioUrl || ''}', ${JSON.stringify(b).replace(/'/g, '&apos;')})">▶</button>
+        <button class="beat-play" onclick="playBeat(this, '${b.audioUrl || ''}', JSON.parse(this.dataset.beat))" data-beat='${JSON.stringify(b).replace(/'/g, "'")}'>▶</button>
       </div>
-      <button class="beat-buy" onclick="buyBeat(${JSON.stringify(b).replace(/'/g, '&apos;')})">💳 Buy — $${b.price}</button>
+      <button class="beat-buy" onclick="buyBeat(JSON.parse(this.dataset.beat))" data-beat='${JSON.stringify(b).replace(/'/g, "'")}'>💳 Buy — $${b.price}</button>
     </div>
   `).join('');
   grid.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
