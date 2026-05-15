@@ -14,7 +14,7 @@
   font-src https://fonts.gstatic.com;
   img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://i1.sndcdn.com https://www.instagram.com;
   frame-src https://www.youtube.com https://www.instagram.com;
-  connect-src 'self' https://api.cloudinary.com https://res.cloudinary.com https://www.google-analytics.com;
+  connect-src 'self' https://api.cloudinary.com https://res.cloudinary.com https://www.google-analytics.com https://api.jsonbin.io;
 media-src 'self' https://res.cloudinary.com blob:;
 ">
 <title>OutRage Music Records | Kigali's Premier Creative Hub</title>
@@ -2259,6 +2259,7 @@ let pendingAudioUrl = null;
 
 function saveBeatsToStorage() {
   localStorage.setItem('outrage_beats', JSON.stringify(adminBeats));
+  saveBeatsToCloud(adminBeats);
 }
 
 // Open admin if hash is #admin
@@ -2290,7 +2291,13 @@ window.addEventListener('load', () => {
   if (auth === '1' && Date.now() < expiry) {
     document.getElementById('admin-login').style.display = 'none';
     document.getElementById('admin-dashboard').classList.add('open');
-    setTimeout(() => { renderBeats(); updateStats(); renderAdminGallery(); renderCharts(); }, 0);
+    loadBeatsFromCloud().then(cloudBeats => {
+      if (cloudBeats.length) {
+        adminBeats = cloudBeats;
+        localStorage.setItem('outrage_beats', JSON.stringify(cloudBeats));
+      }
+      renderBeats(); updateStats(); renderAdminGallery(); renderCharts();
+    });
   } else {
     // Clear expired session
     sessionStorage.removeItem('outrage_admin_auth');
@@ -2406,10 +2413,16 @@ async function adminLogin() {
     loginAttempts = 0;
     document.getElementById('admin-login').style.display = 'none';
     document.getElementById('admin-dashboard').classList.add('open');
-    renderBeats();
-    updateStats();
-    renderAdminGallery();
-    renderCharts();
+    loadBeatsFromCloud().then(cloudBeats => {
+      if (cloudBeats.length) {
+        adminBeats = cloudBeats;
+        localStorage.setItem('outrage_beats', JSON.stringify(cloudBeats));
+      }
+      renderBeats();
+      updateStats();
+      renderAdminGallery();
+      renderCharts();
+    });
     const expiry = Date.now() + (4 * 60 * 60 * 1000);
     sessionStorage.setItem('outrage_admin_auth', '1');
     sessionStorage.setItem('outrage_admin_expiry', expiry.toString());
@@ -2753,6 +2766,28 @@ function showToast(msg) {
 
 // Render public beats shop — merges admin beats with the 3 default ones
 const DEFAULT_BEATS = [];
+const JSONBIN_ID  = '6a079798c0954111d82ce3b4';
+const JSONBIN_KEY = '$2a$10$WTF/.coy39zehJv5BTytleME2ITaYjc0MFDcvRjZ7sGYf.Wv5HGvq';
+
+async function loadBeatsFromCloud() {
+  try {
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`, {
+      headers: { 'X-Master-Key': JSONBIN_KEY }
+    });
+    const data = await res.json();
+    return Array.isArray(data.record) ? data.record : [];
+  } catch(e) { return []; }
+}
+
+async function saveBeatsToCloud(beats) {
+  try {
+    await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_KEY },
+      body: JSON.stringify(beats)
+    });
+  } catch(e) { showToast('⚠ Could not sync to cloud'); }
+}
 
 function renderPublicBeats() {
   adminBeats = JSON.parse(localStorage.getItem('outrage_beats') || '[]');
@@ -3041,7 +3076,13 @@ document.addEventListener('keydown', e => {
 });
 
 // Render public beats (merges admin catalog)
-renderPublicBeats();
+loadBeatsFromCloud().then(cloudBeats => {
+  if (cloudBeats.length) {
+    adminBeats = cloudBeats;
+    localStorage.setItem('outrage_beats', JSON.stringify(cloudBeats));
+  }
+  renderPublicBeats();
+});
 
 // Nav scroll effect
 const navbar = document.getElementById('navbar');
