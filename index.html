@@ -2776,6 +2776,34 @@ const JSONBIN_KEY = '$2a$10$WTF/.coy39zehJv5BTytleME2ITaYjc0MFDcvRjZ7sGYf.Wv5HGv
 const GALLERY_BIN_KEY = '$2a$10$WTF/.coy39zehJv5BTytleME2ITaYjc0MFDcvRjZ7sGYf.Wv5HGvq';
 let GALLERY_BIN_ID = localStorage.getItem('outrage_gallery_bin_id') || '6a07ae09250b1311c35821e5';
 
+async function loadBeatsFromCloud() {
+  try {
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`, {
+      headers: { 'X-Master-Key': JSONBIN_KEY }
+    });
+    const data = await res.json();
+    return Array.isArray(data.record) ? data.record : [];
+  } catch(e) {
+    console.error('Cloud load error:', e);
+    return [];
+  }
+}
+
+async function saveBeatsToCloud(beats) {
+  try {
+    await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': JSONBIN_KEY
+      },
+      body: JSON.stringify(beats)
+    });
+  } catch(e) {
+    console.error('Cloud save error:', e);
+  }
+}
+
 async function loadGalleryFromCloud() {
   if (!GALLERY_BIN_ID) return null;
   try {
