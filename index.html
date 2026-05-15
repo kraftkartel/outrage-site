@@ -1199,6 +1199,7 @@ audio::-webkit-media-controls-panel {
   }
 
   .beats-grid {
+    grid-template-columns: 1fr;
     gap: 1.2rem;
   }
 
@@ -2744,6 +2745,7 @@ function showToast(msg) {
 const DEFAULT_BEATS = [];
 
 function renderPublicBeats() {
+  adminBeats = JSON.parse(localStorage.getItem('outrage_beats') || '[]');
   const adminPublished = adminBeats.filter(b => b.status === 'published');
   let all = [...adminPublished, ...DEFAULT_BEATS];
   if (currentFilter !== 'all') {
@@ -3384,6 +3386,10 @@ async function renderPublicGallery() {
   });
 }
 
+// Run on page load
+renderPublicGallery();
+// Keep public beats grid fresh with latest localStorage
+adminBeats = JSON.parse(localStorage.getItem('outrage_beats') || '[]');
 // Run on page load
 renderPublicGallery();
 
