@@ -2776,22 +2776,36 @@ const JSONBIN_KEY = '$2a$10$WTF/.coy39zehJv5BTytleME2ITaYjc0MFDcvRjZ7sGYf.Wv5HGv
 
 async function loadBeatsFromCloud() {
   try {
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`, {
-      headers: { 'X-Master-Key': JSONBIN_KEY }
+    const res = await fetch('https://api.jsonbin.io/v3/b/6a079798c0954111d82ce3b4/latest', {
+      headers: {
+        'X-Master-Key': '$2a$10$WTF/.coy39zehJv5BTytleME2ITaYjc0MFDcvRjZ7sGYf.Wv5HGvq'
+      }
     });
     const data = await res.json();
+    console.log('Cloud beats:', data);
     return Array.isArray(data.record) ? data.record : [];
-  } catch(e) { return []; }
+  } catch(e) {
+    console.error('Cloud fetch error:', e);
+    return [];
+  }
 }
 
 async function saveBeatsToCloud(beats) {
   try {
-    await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}`, {
+    const res = await fetch('https://api.jsonbin.io/v3/b/6a079798c0954111d82ce3b4', {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_KEY },
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': '$2a$10$WTF/.coy39zehJv5BTytleME2ITaYjc0MFDcvRjZ7sGYf.Wv5HGvq'
+      },
       body: JSON.stringify(beats)
     });
-  } catch(e) { showToast('⚠ Could not sync to cloud'); }
+    const data = await res.json();
+    console.log('Save result:', data);
+  } catch(e) {
+    console.error('Cloud save error:', e);
+    showToast('⚠ Could not sync to cloud');
+  }
 }
 
 function renderPublicBeats() {
@@ -3083,7 +3097,7 @@ document.addEventListener('keydown', e => {
 // Render public beats (merges admin catalog)
 loadBeatsFromCloud().then(cloudBeats => {
   if (cloudBeats.length) {
-    adminBeats = cloudBeats;
+    adminBeats = cloudBeats.filter(b => b.status === 'published');
     localStorage.setItem('outrage_beats', JSON.stringify(cloudBeats));
   }
   renderPublicBeats();
