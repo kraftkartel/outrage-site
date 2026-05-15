@@ -2599,7 +2599,11 @@ function saveBeat() {
   saveBeatsToStorage();
   renderBeats();
   updateStats();
-  renderPublicBeats();
+  showToast('⏳ Syncing to cloud...');
+  saveBeatsToCloud(adminBeats).then(() => {
+    showToast('✓ Beat saved and synced!');
+    renderPublicBeats();
+  });
   clearForm();
   pendingAudioDataUrl = null;
   pendingAudioUrl = null;
@@ -2679,12 +2683,13 @@ function saveEditBeat(id) {
   beat.status = document.getElementById('edit-status').value;
   beat.cover = document.getElementById('edit-cover').value || beat.cover;
   saveBeatsToStorage();
+  saveBeatsToCloud(adminBeats);
   renderBeats();
   updateStats();
   renderPublicBeats();
   renderCharts();
   document.getElementById('editModal').remove();
-  showToast('✓ Beat updated');
+  showToast('✓ Beat updated and synced');
 }
 
 
@@ -3437,8 +3442,6 @@ async function renderPublicGallery() {
   });
 }
 
-// Keep public beats grid fresh with latest localStorage
-adminBeats = JSON.parse(localStorage.getItem('outrage_beats') || '[]');
 // Run on page load
 renderPublicGallery();
 
