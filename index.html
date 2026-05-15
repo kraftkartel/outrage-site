@@ -14,7 +14,7 @@
   font-src https://fonts.gstatic.com;
   img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://i1.sndcdn.com https://www.instagram.com;
   frame-src https://www.youtube.com https://www.instagram.com;
-  connect-src 'self' https://api.cloudinary.com https://www.google-analytics.com;
+  connect-src 'self' https://api.cloudinary.com https://res.cloudinary.com https://www.google-analytics.com;
 media-src 'self' https://res.cloudinary.com blob:;
 ">
 <title>OutRage Music Records | Kigali's Premier Creative Hub</title>
@@ -1201,6 +1201,8 @@ audio::-webkit-media-controls-panel {
   .beats-grid {
     grid-template-columns: 1fr;
     gap: 1.2rem;
+    min-height: 100px;
+    background: transparent;
   }
 
   .beat-card {
@@ -2755,7 +2757,7 @@ function renderPublicBeats() {
   if (!grid) return;
   const show = all.slice(0, 6);
   if (!show.length) {
-    grid.innerHTML = `<div style="grid-column:span 3;text-align:center;padding:5rem 2rem;color:rgba(255,255,255,0.25);font-family:'Barlow Condensed',sans-serif;letter-spacing:0.2em;text-transform:uppercase;font-size:13px;">
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:5rem 2rem;color:rgba(255,255,255,0.25);font-family:'Barlow Condensed',sans-serif;letter-spacing:0.2em;text-transform:uppercase;font-size:13px;">
       <div style="font-size:2.5rem;margin-bottom:1rem;">🎵</div>
       New beats dropping soon — check back shortly
     </div>`;
@@ -3386,8 +3388,6 @@ async function renderPublicGallery() {
   });
 }
 
-// Run on page load
-renderPublicGallery();
 // Keep public beats grid fresh with latest localStorage
 adminBeats = JSON.parse(localStorage.getItem('outrage_beats') || '[]');
 // Run on page load
