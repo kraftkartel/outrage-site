@@ -2773,38 +2773,79 @@ function showToast(msg) {
 const DEFAULT_BEATS = [];
 const JSONBIN_ID  = '6a079798c0954111d82ce3b4';
 const JSONBIN_KEY = '$2a$10$WTF/.coy39zehJv5BTytleME2ITaYjc0MFDcvRjZ7sGYf.Wv5HGvq';
+const GALLERY_BIN_KEY = '$2a$10$WTF/.coy39zehJv5BTytleME2ITaYjc0MFDcvRjZ7sGYf.Wv5HGvq';
+let GALLERY_BIN_ID = localStorage.getItem('outrage_gallery_bin_id') || '6a07ae09250b1311c35821e5';
 
-async function loadBeatsFromCloud() {
+async function loadGalleryFromCloud() {
+  if (!GALLERY_BIN_ID) return null;
   try {
-    const res = await fetch('https://api.jsonbin.io/v3/b/6a079798c0954111d82ce3b4/latest', {
-      headers: {
-        'X-Master-Key': '$2a$10$WTF/.coy39zehJv5BTytleME2ITaYjc0MFDcvRjZ7sGYf.Wv5HGvq'
-      }
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${GALLERY_BIN_ID}/latest`, {
+      headers: { 'X-Master-Key': GALLERY_BIN_KEY }
     });
     const data = await res.json();
-    console.log('Cloud beats:', data);
-    return Array.isArray(data.record) ? data.record : [];
+    return Array.isArray(data.record) ? data.record : null;
+  } catch(e) { return null; }
+}
+
+async function saveGalleryToCloud(photos) {
+  if (!GALLERY_BIN_ID) return;
+  try {
+    await fetch(`https://api.jsonbin.io/v3/b/${GALLERY_BIN_ID}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': GALLERY_BIN_KEY },
+      body: JSON.stringify(photos)
+    });
+  } catch(e) {}
+}
+
+async function loadGalleryFromCloud() {
+  if (!GALLERY_BIN_ID) return null;
+  try {
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${GALLERY_BIN_ID}/latest`, {
+      headers: { 'X-Master-Key': GALLERY_BIN_KEY }
+    });
+    const data = await res.json();
+    return Array.isArray(data.record) ? data.record : null;
   } catch(e) {
-    console.error('Cloud fetch error:', e);
-    return [];
+    console.error('Gallery cloud fetch error:', e);
+    return null;
   }
 }
 
-async function saveBeatsToCloud(beats) {
+async function saveGalleryToCloud(photos) {
   try {
-    const res = await fetch('https://api.jsonbin.io/v3/b/6a079798c0954111d82ce3b4', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Master-Key': '$2a$10$WTF/.coy39zehJv5BTytleME2ITaYjc0MFDcvRjZ7sGYf.Wv5HGvq'
-      },
-      body: JSON.stringify(beats)
-    });
-    const data = await res.json();
-    console.log('Save result:', data);
+    if (!GALLERY_BIN_ID) {
+      // Create a new bin on first save
+      const res = await fetch('https://api.jsonbin.io/v3/b', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Master-Key': GALLERY_BIN_KEY,
+          'X-Bin-Name': 'outrage-gallery',
+          'X-Bin-Private': 'false'
+        },
+        body: JSON.stringify(photos)
+      });
+      const data = await res.json();
+      GALLERY_BIN_ID = data.metadata?.id || '';
+      if (GALLERY_BIN_ID) {
+        localStorage.setItem('outrage_gallery_bin_id', GALLERY_BIN_ID);
+        showToast('✓ Gallery bin created: ' + GALLERY_BIN_ID);
+        console.log('New Gallery Bin ID:', GALLERY_BIN_ID, '← Save this in your code!');
+      }
+    } else {
+      await fetch(`https://api.jsonbin.io/v3/b/${GALLERY_BIN_ID}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Master-Key': GALLERY_BIN_KEY
+        },
+        body: JSON.stringify(photos)
+      });
+    }
   } catch(e) {
-    console.error('Cloud save error:', e);
-    showToast('⚠ Could not sync to cloud');
+    console.error('Gallery cloud save error:', e);
+    showToast('⚠ Could not sync gallery to cloud');
   }
 }
 
@@ -3304,6 +3345,7 @@ function getFullGallery() {
 
 function saveGallery() {
   localStorage.setItem('outrage_gallery', JSON.stringify(adminGallery));
+  saveGalleryToCloud(adminGallery);
 }
 
 function renderAdminGallery() {
@@ -3367,10 +3409,17 @@ function deleteGalleryPhotoForever(id) {
   showToast('Photo permanently deleted');
 }
 
-function handleGalleryUpload(e) {
+async function handleGalleryUpload(e) {
   const files = [...e.target.files];
   if (!files.length) return;
   showToast('Uploading ' + files.length + ' photo(s)…');
+
+  // Merge with cloud before adding new photos
+  const cloudGallery = await loadGalleryFromCloud();
+  if (cloudGallery && cloudGallery.length && adminGallery.length === 0) {
+    adminGallery = cloudGallery;
+    localStorage.setItem('outrage_gallery', JSON.stringify(cloudGallery));
+  }
 
   files.forEach(file => {
     const fd = new FormData();
@@ -3401,30 +3450,38 @@ async function renderPublicGallery() {
   const grid = document.querySelector('#pane-studio .gallery-grid');
   if (!grid) return;
   let photos;
-  try {
-    const res = await fetch(
-      'https://res.cloudinary.com/dc2pkdibz/image/list/outrage_gallery.json'
-    );
-    if (res.ok) {
-      const data = await res.json();
-      const hidden = JSON.parse(
-        localStorage.getItem('outrage_gallery_hidden') || '[]'
-      );
-      photos = (data.resources || [])
-        .filter(r => !hidden.includes(r.public_id))
-        .map(r => ({
-          id: r.public_id,
-          url: `https://res.cloudinary.com/dc2pkdibz/image/upload/q_80,w_800/${r.public_id}.${r.format}`,
-          caption: r.public_id.split('/').pop().replace(/[_-]/g, ' ')
-        }));
-    }
-  } catch(e) {}
 
-  // Fallback to local/defaults
+  // 1. Try cloud JSONBin gallery first
+  const cloudGallery = await loadGalleryFromCloud();
+  if (cloudGallery && cloudGallery.length) {
+    adminGallery = cloudGallery;
+    localStorage.setItem('outrage_gallery', JSON.stringify(cloudGallery));
+    photos = cloudGallery.filter(p => !p.hidden);
+  }
+
+  // 2. Fallback: try Cloudinary tag list
   if (!photos || !photos.length) {
-    const local = JSON.parse(
-      localStorage.getItem('outrage_gallery_urls') || '[]'
-    );
+    try {
+      const res = await fetch(
+        'https://res.cloudinary.com/dc2pkdibz/image/list/outrage_gallery.json'
+      );
+      if (res.ok) {
+        const data = await res.json();
+        const hidden = JSON.parse(localStorage.getItem('outrage_gallery_hidden') || '[]');
+        photos = (data.resources || [])
+          .filter(r => !hidden.includes(r.public_id))
+          .map(r => ({
+            id: r.public_id,
+            url: `https://res.cloudinary.com/dc2pkdibz/image/upload/q_80,w_800/${r.public_id}.${r.format}`,
+            caption: r.public_id.split('/').pop().replace(/[_-]/g, ' ')
+          }));
+      }
+    } catch(e) {}
+  }
+
+  // 3. Fallback: localStorage / default photos
+  if (!photos || !photos.length) {
+    const local = JSON.parse(localStorage.getItem('outrage_gallery') || '[]');
     photos = local.filter(p => !p.hidden).length
       ? local.filter(p => !p.hidden)
       : DEFAULT_GALLERY;
