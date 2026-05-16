@@ -2110,22 +2110,23 @@ audio::-webkit-media-controls-panel {
 </section>
 
 <!-- ── GALLERY ── -->
-<section id="gallery">
-  <div class="gallery-header fade-up">
+<section id="gallery" style="padding:0;">
+  <div style="padding:7rem 5vw 3rem;text-align:center;" class="fade-up">
     <p class="section-eyebrow" style="justify-content:center;">Media</p>
     <h2 class="section-title">Inside <em>OutRage</em></h2>
+    <p style="color:rgba(255,255,255,0.4);font-size:14px;max-width:440px;margin:0.5rem auto 0;line-height:1.9;letter-spacing:0.03em;">Behind the sessions, inside the booth — a raw look at where the music is made.</p>
   </div>
 
 <!-- Tabs -->
-  <div class="gallery-tabs">
-    <button class="gallery-tab active" onclick="switchTab('studio', this)">Studio</button>
-    <button class="gallery-tab" onclick="switchTab('youtube', this)">YouTube</button>
-    <button class="gallery-tab" onclick="switchTab('instagram', this)">Instagram</button>
+  <div style="display:flex;justify-content:center;gap:0;padding:0 5vw 2.5rem;">
+    <button class="gallery-tab active" onclick="switchTab('studio', this)" style="flex:1;max-width:180px;">📷 Studio</button>
+    <button class="gallery-tab" onclick="switchTab('youtube', this)" style="flex:1;max-width:180px;">▶ YouTube</button>
+    <button class="gallery-tab" onclick="switchTab('instagram', this)" style="flex:1;max-width:180px;">◈ Instagram</button>
   </div>
 
-  <!-- Studio Photos — OutRage Music real studio imagery -->
-  <div class="gallery-pane active" id="pane-studio">
-    <div class="gallery-grid" style="grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(3,200px);">
+  <!-- Studio Photos -->
+  <div class="gallery-pane active" id="pane-studio" style="padding:0 5vw 5rem;">
+    <div class="gallery-grid" style="grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(3,220px);border-radius:0;overflow:hidden;">
       <div class="gallery-item" style="grid-column:span 2;grid-row:span 2;" onclick="openLightbox(this.querySelector('img'), 'The Console')">
         <img src="gallery-1.jpg" alt="OutRage Studio — Mixing Console" />
         <div class="gallery-overlay"><span class="gallery-caption">The Console</span></div>
@@ -2163,8 +2164,12 @@ audio::-webkit-media-controls-panel {
         <div class="gallery-overlay"><span class="gallery-caption">The Room</span></div>
       </div>
     </div>
-    <div style="text-align:center; margin-top:2rem;">
-      <a href="https://www.instagram.com/outragemusicrecords/" target="_blank" class="ig-follow">📷 Follow Us on Instagram →</a>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-top:2.5rem;padding-top:2rem;border-top:1px solid rgba(201,168,76,0.15);">
+      <div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:var(--gold);margin-bottom:0.3rem;">📍 Kigali, Rwanda</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;color:var(--white);">OutRage Music Records Studio</div>
+      </div>
+      <a href="https://www.instagram.com/outragemusicrecords/" target="_blank" class="ig-follow" style="gap:0.6rem;">📷 Follow on Instagram →</a>
     </div>
   </div>
 
