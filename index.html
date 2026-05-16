@@ -4890,7 +4890,625 @@ const statObserver = new IntersectionObserver(entries => {
 }, { threshold: 0.5 });
 const heroStats = document.querySelector('.hero-stats');
 if (heroStats) statObserver.observe(heroStats);
+// ══════════════════════════════════════════════
+//  ANIMATION ENGINE — inject before </script>
+// ══════════════════════════════════════════════
 
+// ── CURSOR DOT ──
+(function() {
+  if (window.innerWidth <= 768) return;
+  const dot = document.createElement('div');
+  dot.id = 'cursor-dot';
+  document.body.appendChild(dot);
+  let mouseX = 0, mouseY = 0;
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX; mouseY = e.clientY;
+    dot.style.left = mouseX + 'px';
+    dot.style.top = mouseY + 'px';
+  }, { passive: true });
+  // Hover effect on interactive elements
+  const hoverEls = 'a, button, .beat-card, .m-item, .service-card, .testi-card, .gallery-item';
+  document.addEventListener('mouseover', e => {
+    if (e.target.closest(hoverEls)) dot.classList.add('hovering');
+  });
+  document.addEventListener('mouseout', e => {
+    if (e.target.closest(hoverEls)) dot.classList.remove('hovering');
+  });
+})();
+
+// ── MAGNETIC BUTTONS ──
+document.querySelectorAll('.btn-primary, .btn-gold, .btn-outline').forEach(btn => {
+  btn.classList.add('btn-magnetic');
+  btn.addEventListener('mousemove', function(e) {
+    const rect = this.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    this.style.transform = `translateY(-2px) translate(${x * 0.18}px, ${y * 0.18}px)`;
+  });
+  btn.addEventListener('mouseleave', function() {
+    this.style.transform = '';
+  });
+});
+
+// ── SERVICE CARD RIPPLE ──
+document.querySelectorAll('.service-card').forEach(card => {
+  card.addEventListener('click', function(e) {
+    const r = document.createElement('span');
+    r.classList.add('ripple');
+    const rect = this.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height) * 1.5;
+    r.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - rect.left - size/2}px;top:${e.clientY - rect.top - size/2}px;`;
+    this.appendChild(r);
+    r.addEventListener('animationend', () => r.remove());
+  });
+});
+
+// ── 3D TILT on beat cards and testi cards ──
+function addTilt(selector, intensity = 8) {
+  document.querySelectorAll(selector).forEach(card => {
+    card.addEventListener('mousemove', function(e) {
+      const rect = this.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      this.style.transform = `perspective(800px) rotateY(${x * intensity}deg) rotateX(${-y * intensity}deg) translateY(-4px)`;
+    });
+    card.addEventListener('mouseleave', function() {
+      this.style.transform = '';
+    });
+  });
+}
+addTilt('.beat-card', 6);
+addTilt('.testi-card', 4);
+
+// ── SECTION EYEBROW LINE DRAW ──
+const eyebrowObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('line-drawn');
+      eyebrowObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('.section-eyebrow').forEach(el => {
+  eyebrowObserver.observe(el);
+});
+
+// ── SLIDE-LEFT / SLIDE-RIGHT elements ──
+const aboutImages = document.querySelector('.about-images');
+const aboutText = document.querySelector('.about-text');
+if (aboutImages) aboutImages.classList.add('slide-left');
+if (aboutText) aboutText.classList.add('slide-right');
+
+const voInner = document.querySelector('.vo-inner > div:first-child');
+const voImage = document.querySelector('.vo-image');
+if (voInner) voInner.classList.add('slide-left');
+if (voImage) voImage.classList.add('slide-right');
+
+const contactInfo = document.querySelector('#contact > div:first-child');
+const contactRight = document.querySelector('#contact > div:last-child');
+if (contactInfo) contactInfo.classList.add('slide-left');
+if (contactRight) contactRight.classList.add('slide-right');
+
+const slideObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      slideObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.15 });
+document.querySelectorAll('.slide-left, .slide-right').forEach(el => slideObserver.observe(el));
+
+// ── HERO TITLE LINE SPLIT ──
+(function() {
+  const title = document.querySelector('.hero-title');
+  if (!title) return;
+  // Wrap each br-separated line
+  title.innerHTML = title.innerHTML
+    .split('<br>')
+    .map(line => `<span class="hero-title-line">${line}</span>`)
+    .join('<br>');
+})();
+
+// ── GALLERY ITEM COUNTER BADGES ──
+document.querySelectorAll('#studioGrid .m-item').forEach((item, i) => {
+  const badge = document.createElement('div');
+  badge.className = 'm-item-counter';
+  badge.textContent = String(i + 1).padStart(2, '0');
+  item.appendChild(badge);
+});
+
+// ── PROCESS STEPS enter animation ──
+(function() {
+  const processGrid = document.querySelector('#process [style*="grid-template-columns:repeat(4"]');
+  if (!processGrid) return;
+  const processObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        [...e.target.children].forEach((child, i) => {
+          child.classList.add('process-step-anim');
+          child.style.animationDelay = (i * 0.12) + 's';
+        });
+        processObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  processObserver.observe(processGrid);
+})();
+
+// ── BEAT CARD stagger on grid render ──
+// Patch renderPublicBeats to add enter animation
+const _origRenderPublicBeats = window.renderPublicBeats || null;
+if (typeof renderPublicBeats === 'function') {
+  const origFn = renderPublicBeats;
+  window.renderPublicBeats = function() {
+    origFn.apply(this, arguments);
+    // Stagger new beat cards
+    setTimeout(() => {
+      document.querySelectorAll('#publicBeatsGrid .beat-card:not(.entered)').forEach((card, i) => {
+        card.classList.add('enter');
+        card.style.animationDelay = (i * 0.06) + 's';
+        card.classList.add('entered');
+      });
+    }, 50);
+  };
+}
+
+// ── FAQ ICON rotate on open ──
+const origToggleFaq = window.toggleFaq;
+if (typeof toggleFaq === 'function') {
+  window.toggleFaq = function(btn) {
+    const item = btn.closest('.faq-item');
+    const wasOpen = item.querySelector('.faq-body').style.display === 'block';
+    // Remove all open classes first
+    document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+    origToggleFaq.apply(this, arguments);
+    if (!wasOpen) item.classList.add('open');
+  };
+}
+
+// ── GOLD MARQUEE pause on hover ──
+const marqueeBar = document.querySelector('.marquee-bar');
+if (marqueeBar) {
+  marqueeBar.addEventListener('mouseenter', () => {
+    document.querySelector('.marquee-track').style.animationPlayState = 'paused';
+  });
+  marqueeBar.addEventListener('mouseleave', () => {
+    document.querySelector('.marquee-track').style.animationPlayState = 'running';
+  });
+}
+
+// ── LANGUAGE LIST stagger ──
+(function() {
+  const langObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        [...document.querySelectorAll('.lang-item')].forEach((item, i) => {
+          item.style.opacity = '0';
+          item.style.transform = 'translateX(-16px)';
+          item.style.transition = `opacity 0.4s ease ${i * 0.05}s, transform 0.4s ease ${i * 0.05}s, color 0.2s, padding-left 0.25s`;
+          setTimeout(() => {
+            item.style.opacity = '';
+            item.style.transform = '';
+          }, 50 + i * 50);
+        });
+        langObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  const langSection = document.querySelector('.lang-list');
+  if (langSection) langObserver.observe(langSection);
+})();
+
+// ── CONTACT DETAIL hover letter-spacing ── (CSS handles it)
+
+// ── PARTNER CARD glow ──
+document.querySelectorAll('#partners [style*="background:var(--dark2)"]').forEach(card => {
+  card.classList.add('partner-card-glow');
+});
+
+// ── STUDIO FEATURE stagger ──
+(function() {
+  const featObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        [...document.querySelectorAll('.studio-feature')].forEach((feat, i) => {
+          feat.style.opacity = '0';
+          feat.style.transform = 'translateX(20px)';
+          feat.style.transition = `opacity 0.5s ease ${i * 0.1}s, transform 0.5s cubic-bezier(0.16,1,0.3,1) ${i * 0.1}s`;
+          setTimeout(() => {
+            feat.style.opacity = '';
+            feat.style.transform = '';
+          }, 50 + i * 100);
+        });
+        featObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  const featsWrap = document.querySelector('.studio-features');
+  if (featsWrap) featObserver.observe(featsWrap);
+})();
+
+// ── HERO BADGE continuous ring ── (CSS handles animation)
+// ── WAVE BARS playing class ──
+// When a beat plays, add .playing to its wave-bars
+const origPlayBeat = window.playBeat;
+if (typeof playBeat === 'function') {
+  window.playBeat = function(btn, audioUrl, beat) {
+    document.querySelectorAll('.wave-bars').forEach(w => w.classList.remove('playing'));
+    origPlayBeat.apply(this, arguments);
+    const waveEl = document.getElementById('wave-' + beat.id);
+    if (waveEl) waveEl.classList.add('playing');
+  };
+}
+/* ══════════════════════════════════════════════
+   ANIMATION ENHANCEMENTS — inject before </style>
+═══════════════════════════════════════════════ */
+
+/* ── TEXT REVEAL (split chars) ── */
+.reveal-text {
+  overflow: hidden;
+  display: inline-block;
+}
+.reveal-text .char {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(110%) rotate(4deg);
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16,1,0.3,1);
+}
+.reveal-text.active .char {
+  opacity: 1;
+  transform: translateY(0) rotate(0deg);
+}
+
+/* ── STAGGER DELAY for chars ── */
+.reveal-text .char:nth-child(1){transition-delay:0.00s}
+.reveal-text .char:nth-child(2){transition-delay:0.03s}
+.reveal-text .char:nth-child(3){transition-delay:0.06s}
+.reveal-text .char:nth-child(4){transition-delay:0.09s}
+.reveal-text .char:nth-child(5){transition-delay:0.12s}
+.reveal-text .char:nth-child(6){transition-delay:0.15s}
+.reveal-text .char:nth-child(7){transition-delay:0.18s}
+.reveal-text .char:nth-child(8){transition-delay:0.21s}
+.reveal-text .char:nth-child(9){transition-delay:0.24s}
+.reveal-text .char:nth-child(10){transition-delay:0.27s}
+.reveal-text .char:nth-child(11){transition-delay:0.30s}
+.reveal-text .char:nth-child(12){transition-delay:0.33s}
+
+/* ── MAGNETIC BUTTON ── */
+.btn-magnetic {
+  position: relative;
+  transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+
+/* ── GOLD SHIMMER on hover ── */
+@keyframes goldShimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.btn-primary:hover::after,
+.btn-gold:hover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255,255,255,0.18) 40%,
+    rgba(255,255,255,0.28) 50%,
+    rgba(255,255,255,0.18) 60%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: goldShimmer 0.7s ease forwards;
+  pointer-events: none;
+}
+
+/* ── SECTION TITLE UNDERLINE DRAW ── */
+.section-title-anim {
+  position: relative;
+  display: inline-block;
+}
+.section-title-anim::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0%;
+  height: 1px;
+  background: var(--gold);
+  transition: width 0.8s cubic-bezier(0.16,1,0.3,1);
+}
+.section-title-anim.active::after {
+  width: 100%;
+}
+
+/* ── SERVICE CARD RIPPLE ── */
+.service-card {
+  position: relative;
+  overflow: hidden;
+}
+.service-card .ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(201,168,76,0.1);
+  transform: scale(0);
+  animation: rippleAnim 0.7s linear;
+  pointer-events: none;
+}
+@keyframes rippleAnim {
+  to { transform: scale(4); opacity: 0; }
+}
+
+/* ── COUNTER number ── */
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.stat-num.animating {
+  animation: countUp 0.4s ease forwards;
+}
+
+/* ── TILT CARD (3D) ── */
+.tilt-card {
+  transform-style: preserve-3d;
+  transform: perspective(1000px);
+  transition: transform 0.1s ease;
+}
+
+/* ── GOLD LINE DRAW for eyebrow ── */
+.section-eyebrow::before {
+  transition: width 0.6s cubic-bezier(0.16,1,0.3,1) 0.2s;
+  width: 0;
+}
+.section-eyebrow.line-drawn::before {
+  width: 28px;
+}
+
+/* ── BEAT CARD enter animation ── */
+@keyframes beatCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.beat-card.enter {
+  animation: beatCardIn 0.45s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+
+/* ── FLOATING label on contact detail ── */
+.contact-detail-label {
+  transition: letter-spacing 0.3s ease;
+}
+.contact-detail:hover .contact-detail-label {
+  letter-spacing: 0.55em;
+}
+
+/* ── NAV link underline grow ── */
+.nav-links a {
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--gold);
+  transition: width 0.3s ease;
+}
+.nav-links a:hover::after {
+  width: 100%;
+}
+
+/* ── HERO title line reveal ── */
+@keyframes heroLineIn {
+  from { opacity: 0; clip-path: inset(0 100% 0 0); }
+  to { opacity: 1; clip-path: inset(0 0% 0 0); }
+}
+.hero-title-line {
+  display: block;
+  animation: heroLineIn 0.9s cubic-bezier(0.16,1,0.3,1) forwards;
+  opacity: 0;
+}
+.hero-title-line:nth-child(1) { animation-delay: 0.3s; }
+.hero-title-line:nth-child(2) { animation-delay: 0.55s; }
+
+/* ── MARQUEE PAUSE on hover (already has it on track) ── */
+.marquee-bar:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* ── PARTNER CARD glow on hover ── */
+.partner-card-glow {
+  transition: box-shadow 0.4s ease;
+}
+.partner-card-glow:hover {
+  box-shadow: 0 0 0 1px rgba(201,168,76,0.3), 0 12px 40px rgba(201,168,76,0.08);
+}
+
+/* ── SCROLL REVEAL SLIDE-LEFT / SLIDE-RIGHT ── */
+.slide-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.16,1,0.3,1);
+}
+.slide-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.16,1,0.3,1);
+}
+.slide-left.visible,
+.slide-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ── STAGGERED FADE for service cards ── */
+.service-card:nth-child(1) { transition-delay: 0.00s; }
+.service-card:nth-child(2) { transition-delay: 0.08s; }
+.service-card:nth-child(3) { transition-delay: 0.16s; }
+.service-card:nth-child(4) { transition-delay: 0.24s; }
+.service-card:nth-child(5) { transition-delay: 0.32s; }
+.service-card:nth-child(6) { transition-delay: 0.40s; }
+
+/* ── PROCESS STEP stagger ── */
+@keyframes processStepIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.process-step-anim {
+  opacity: 0;
+  animation: processStepIn 0.6s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+.process-step-anim:nth-child(1) { animation-delay: 0.0s; }
+.process-step-anim:nth-child(2) { animation-delay: 0.12s; }
+.process-step-anim:nth-child(3) { animation-delay: 0.24s; }
+.process-step-anim:nth-child(4) { animation-delay: 0.36s; }
+
+/* ── GOLD BORDER TRACE on focus/hover ── */
+@keyframes borderTrace {
+  0%   { clip-path: inset(0 100% 100% 0); }
+  25%  { clip-path: inset(0 0% 100% 0); }
+  50%  { clip-path: inset(0 0% 0% 100%); }
+  75%  { clip-path: inset(100% 0% 0% 0); }
+  100% { clip-path: inset(0 0 0 0); }
+}
+.booking-input:focus {
+  outline: none;
+  border-bottom-color: var(--gold) !important;
+}
+
+/* ── WAVE BARS always animate when visible ── */
+.wave-bars.playing span {
+  animation: waveAnim 1.1s ease-in-out infinite;
+}
+.wave-bars.playing span:nth-child(1) { animation-delay: 0.0s; }
+.wave-bars.playing span:nth-child(2) { animation-delay: 0.15s; }
+.wave-bars.playing span:nth-child(3) { animation-delay: 0.30s; }
+.wave-bars.playing span:nth-child(4) { animation-delay: 0.45s; }
+.wave-bars.playing span:nth-child(5) { animation-delay: 0.10s; }
+.wave-bars.playing span:nth-child(6) { animation-delay: 0.25s; }
+.wave-bars.playing span:nth-child(7) { animation-delay: 0.40s; }
+.wave-bars.playing span:nth-child(8) { animation-delay: 0.55s; }
+
+/* ── GOLD CURSOR DOT ── */
+#cursor-dot {
+  position: fixed;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(-50%, -50%);
+  transition: left 0.05s linear, top 0.05s linear, transform 0.2s ease, width 0.2s ease, height 0.2s ease, opacity 0.2s ease;
+  mix-blend-mode: difference;
+}
+#cursor-dot.hovering {
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: 1px solid var(--gold);
+  opacity: 0.7;
+}
+@media (max-width: 768px) { #cursor-dot { display: none; } }
+
+/* ── LOADING SKELETON PULSE for beats ── */
+@keyframes skeletonPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+.beat-loading-skeleton {
+  background: var(--dark2);
+  animation: skeletonPulse 1.4s ease infinite;
+  border-radius: 0;
+}
+
+/* ── GALLERY item counter badge ── */
+.m-item-counter {
+  position: absolute;
+  bottom: 0.6rem;
+  right: 0.6rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  z-index: 4;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.m-item:hover .m-item-counter {
+  opacity: 1;
+}
+
+/* ── SMOOTH SECTION TRANSITIONS ── */
+section {
+  transition: background-color 0.4s ease;
+}
+
+/* ── HERO BADGE pulse ring ── */
+.hero-badge {
+  position: relative;
+}
+.hero-badge::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border: 1px solid rgba(201,168,76,0.2);
+  animation: badgePulse 2.5s ease-in-out infinite;
+}
+@keyframes badgePulse {
+  0%, 100% { opacity: 0; transform: scale(0.95); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+/* ── TYPEWRITER for hero eyebrow on return visit ── */
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 100%; }
+}
+@keyframes blinkCaret {
+  from, to { border-right-color: transparent; }
+  50% { border-right-color: var(--gold); }
+}
+.typewriter-text {
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 1px solid var(--gold);
+  animation:
+    typewriter 1.2s steps(40) 0.5s both,
+    blinkCaret 0.75s step-end 1.7s 3;
+}
+
+/* ── FAQ item animated icon ── */
+.faq-icon {
+  transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), color 0.2s;
+}
+.faq-item.open .faq-icon {
+  transform: rotate(45deg);
+  color: var(--gold);
+}
+
+/* ── VOICEOVER language item enter ── */
+.lang-item {
+  transition: color 0.2s, padding-left 0.25s ease, border-bottom-color 0.2s;
+}
+.lang-item:hover {
+  padding-left: 0.4rem;
+}
+
+/* ── TESTIMONIAL card tilt ── */
+.testi-card {
+  transform-style: preserve-3d;
+  transition: transform 0.15s ease, background 0.3s, border-color 0.3s;
+}
 </script>
 </body>
 </html>
