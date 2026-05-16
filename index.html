@@ -2785,10 +2785,14 @@ const CLOUDINARY_UPLOAD_PRESET = 'outrage_beats';
 
 async function loadBeatsFromCloud() {
   try {
-    const res = await fetch(
-      `https://res.cloudinary.com/${CLOUDINARY_CLOUD}/raw/upload/outrage_data/beats.json?t=${Date.now()}`,
-      { cache: 'no-store' }
-    );
+    const bust = Date.now() + '-' + Math.random().toString(36).slice(2);
+    const versionedBeatsUrl = localStorage.getItem('outrage_beats_url');
+    const beatsUrl = versionedBeatsUrl
+      ? versionedBeatsUrl + '?nocache=' + bust
+      : `https://res.cloudinary.com/${CLOUDINARY_CLOUD}/raw/upload/outrage_data/beats.json?nocache=${bust}`;
+    const res = await fetch(beatsUrl, {
+      cache: 'no-store', headers: { 'Cache-Control': 'no-cache, no-store' }
+    });
     if (!res.ok) {
       // fallback: try with version prefix stripped
       const res2 = await fetch(
@@ -2816,11 +2820,15 @@ async function saveBeatsToCloud(beats) {
     fd.append('public_id', 'outrage_data/beats.json');
     fd.append('overwrite', 'true');
     fd.append('invalidate', 'true');
-    await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/raw/upload`, {
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/raw/upload`, {
       method: 'POST',
       body: fd
     });
-    console.log('Beats synced to Cloudinary');
+    const result = await res.json();
+    if (result.secure_url) {
+      localStorage.setItem('outrage_beats_url', result.secure_url);
+      console.log('Beats synced to Cloudinary:', result.secure_url);
+    }
   } catch(e) {
     console.error('Cloud save error:', e);
   }
@@ -2828,10 +2836,16 @@ async function saveBeatsToCloud(beats) {
 
 async function loadGalleryFromCloud() {
   try {
-    const res = await fetch(
-      `https://res.cloudinary.com/${CLOUDINARY_CLOUD}/raw/upload/outrage_data/gallery.json?t=${Date.now()}`,
-      { cache: 'no-store' }
-    );
+    const bust = Date.now() + '-' + Math.random().toString(36).slice(2);
+    // Try versioned URL first (set after last save — bypasses CDN cache)
+    const versionedUrl = localStorage.getItem('outrage_gallery_url');
+    const urlToFetch = versionedUrl
+      ? versionedUrl + '?nocache=' + bust
+      : `https://res.cloudinary.com/${CLOUDINARY_CLOUD}/raw/upload/outrage_data/gallery.json?nocache=${bust}`;
+    const res = await fetch(urlToFetch, {
+      cache: 'no-store',
+      headers: { 'Cache-Control': 'no-cache, no-store' }
+    });
     if (!res.ok) return null;
     const data = await res.json();
     return Array.isArray(data) ? data : null;
@@ -2850,11 +2864,17 @@ async function saveGalleryToCloud(photos) {
     fd.append('public_id', 'outrage_data/gallery.json');
     fd.append('overwrite', 'true');
     fd.append('invalidate', 'true');
-    await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/raw/upload`, {
+    fd.append('tags', 'gallery_data');
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/raw/upload`, {
       method: 'POST',
       body: fd
     });
-    console.log('Gallery synced to Cloudinary');
+    const result = await res.json();
+    if (result.secure_url) {
+      // Store the versioned URL so we can fetch it directly next time
+      localStorage.setItem('outrage_gallery_url', result.secure_url);
+      console.log('Gallery synced to Cloudinary:', result.secure_url);
+    }
   } catch(e) {
     console.error('Gallery save error:', e);
     showToast('⚠ Gallery sync failed: ' + e.message);
