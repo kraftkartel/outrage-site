@@ -574,7 +574,7 @@ media-src 'self' https://res.cloudinary.com blob:;
   .wa-float:hover .wa-float-tooltip { opacity: 1; }
 
   /* Beats grid — 3 cols desktop, 2 tablet, 1 mobile (auto-adapts to more beats) */
-  .beats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; background: transparent; margin-bottom: 2rem; }
+  .beats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; background: transparent; margin-bottom: 2rem; max-width: 100%; }
   #shop { background: var(--dark); }
   .shop-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 2rem; }
 
@@ -668,7 +668,8 @@ media-src 'self' https://res.cloudinary.com blob:;
   box-shadow: 0 10px 35px rgba(0,0,0,0.35);
   border-color: rgba(201,168,76,0.25);
 }
-  .beat-cover { width: 100%; aspect-ratio: 1; object-fit: cover; margin-bottom: 0.6rem; filter: brightness(0.88) saturate(0.8); transition: filter 0.2s; }
+  .beat-cover { width: 100%; aspect-ratio: 1; object-fit: cover; margin-bottom: 0.5rem; filter: brightness(0.88) saturate(0.8); transition: filter 0.2s; }
+  @media (max-width: 768px) { .beat-cover { aspect-ratio: 1; max-height: 160px; } }
   .beat-card:hover .beat-cover { filter: brightness(1) saturate(1); }
   .beat-genre { font-family: 'Barlow Condensed', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.4rem; }
   .beat-name { font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--white); margin-bottom: 0.25rem; }
@@ -1208,14 +1209,15 @@ audio::-webkit-media-controls-panel {
 
   .beats-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.2rem;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
     min-height: 100px;
     background: transparent;
   }
 
   .beat-card {
     width: 100%;
+    padding: 0.75rem;
   }
 
   .waveform-player {
