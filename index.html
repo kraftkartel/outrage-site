@@ -2280,12 +2280,18 @@ function checkAdminRoute() {
 window.addEventListener('hashchange', checkAdminRoute);
 checkAdminRoute();
 
-// Page loader
+// Page loader — always dismiss after max 2.5s regardless of cloud status
 window.addEventListener('load', () => {
   setTimeout(() => {
-    document.getElementById('page-loader').classList.add('done');
-  }, 1400);
+    const loader = document.getElementById('page-loader');
+    if (loader) loader.classList.add('done');
+  }, 2500);
 });
+// Safety fallback — force dismiss after 4s no matter what
+setTimeout(() => {
+  const loader = document.getElementById('page-loader');
+  if (loader) loader.classList.add('done');
+}, 4000);
 (function checkAdminSession() {
   const auth = sessionStorage.getItem('outrage_admin_auth');
   const expiry = parseInt(sessionStorage.getItem('outrage_admin_expiry') || '0');
@@ -2293,14 +2299,15 @@ window.addEventListener('load', () => {
     document.getElementById('admin-login').style.display = 'none';
     document.getElementById('admin-dashboard').classList.add('open');
     loadBeatsFromCloud().then(cloudBeats => {
-      if (cloudBeats.length) {
+      if (cloudBeats && cloudBeats.length) {
         adminBeats = cloudBeats;
         localStorage.setItem('outrage_beats', JSON.stringify(cloudBeats));
       }
       renderBeats(); updateStats(); renderAdminGallery(); renderCharts();
+    }).catch(() => {
+      renderBeats(); updateStats(); renderAdminGallery(); renderCharts();
     });
   } else {
-    // Clear expired session
     sessionStorage.removeItem('outrage_admin_auth');
     sessionStorage.removeItem('outrage_admin_expiry');
   }
@@ -3166,10 +3173,12 @@ document.addEventListener('keydown', e => {
 
 // Render public beats (merges admin catalog)
 loadBeatsFromCloud().then(cloudBeats => {
-  if (cloudBeats.length) {
-    adminBeats = cloudBeats.filter(b => b.status === 'published');
+  if (cloudBeats && cloudBeats.length) {
+    adminBeats = cloudBeats;
     localStorage.setItem('outrage_beats', JSON.stringify(cloudBeats));
   }
+  renderPublicBeats();
+}).catch(() => {
   renderPublicBeats();
 });
 
