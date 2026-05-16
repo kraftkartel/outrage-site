@@ -2331,6 +2331,74 @@ function closeSuccessOverlay() {
 }
 
 const BEATS_PER_PAGE = 20;
+
+const CLOUDINARY_CLOUD = 'dc2pkdibz';
+const CLOUDINARY_UPLOAD_PRESET = 'outrage_beats';
+let _galleryLoaded = false;
+
+async function loadBeatsFromCloud() {
+  const endpoints = [];
+  const versionedUrl = localStorage.getItem('outrage_beats_url');
+  if (versionedUrl) endpoints.push(versionedUrl + '?v=' + Date.now());
+  endpoints.push(`https://res.cloudinary.com/${CLOUDINARY_CLOUD}/raw/upload/fl_attachment/outrage_data/beats.json?t=${Date.now()}`);
+  for (const url of endpoints) {
+    try {
+      const res = await fetch(url, { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } });
+      if (!res.ok) continue;
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) return data;
+    } catch(e) {}
+  }
+  return [];
+}
+
+async function saveBeatsToCloud(beats) {
+  try {
+    const blob = new Blob([JSON.stringify(beats)], { type: 'application/json' });
+    const fd = new FormData();
+    fd.append('file', blob, 'beats.json');
+    fd.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+    fd.append('public_id', 'outrage_data/beats.json');
+    fd.append('overwrite', 'true');
+    fd.append('invalidate', 'true');
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/raw/upload`, { method: 'POST', body: fd });
+    const result = await res.json();
+    if (result.secure_url) localStorage.setItem('outrage_beats_url', result.secure_url);
+    return result.secure_url || null;
+  } catch(e) { return null; }
+}
+
+async function loadGalleryFromCloud() {
+  const endpoints = [];
+  const versionedUrl = localStorage.getItem('outrage_gallery_url');
+  if (versionedUrl) endpoints.push(versionedUrl + '?v=' + Date.now());
+  endpoints.push(`https://res.cloudinary.com/${CLOUDINARY_CLOUD}/raw/upload/fl_attachment/outrage_data/gallery.json?t=${Date.now()}`);
+  for (const url of endpoints) {
+    try {
+      const res = await fetch(url, { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } });
+      if (!res.ok) continue;
+      const data = await res.json();
+      if (Array.isArray(data)) return data;
+    } catch(e) {}
+  }
+  return null;
+}
+
+async function saveGalleryToCloud(photos) {
+  try {
+    const blob = new Blob([JSON.stringify(photos)], { type: 'application/json' });
+    const fd = new FormData();
+    fd.append('file', blob, 'gallery.json');
+    fd.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+    fd.append('public_id', 'outrage_data/gallery.json');
+    fd.append('overwrite', 'true');
+    fd.append('invalidate', 'true');
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/raw/upload`, { method: 'POST', body: fd });
+    const result = await res.json();
+    if (result.secure_url) localStorage.setItem('outrage_gallery_url', result.secure_url);
+    return result.secure_url || null;
+  } catch(e) { return null; }
+}
 let catalogPage = 1;
 
 function openCatalogModal() {
@@ -2779,9 +2847,7 @@ function showToast(msg) {
 
 // Render public beats shop — merges admin beats with the 3 default ones
 const DEFAULT_BEATS = [];
-const CLOUDINARY_CLOUD = 'dc2pkdibz';
-const CLOUDINARY_UPLOAD_PRESET = 'outrage_beats';
-// Storage: Cloudinary raw uploads (JSONBin blocked by GitHub Pages CSP)
+
 
 async function loadBeatsFromCloud() {
   try {
@@ -2882,7 +2948,6 @@ async function saveGalleryToCloud(photos) {
 }
 
 function renderPublicBeats() {
-  adminBeats = JSON.parse(localStorage.getItem('outrage_beats') || '[]');
   const adminPublished = adminBeats.filter(b => b.status === 'published');
   let all = [...adminPublished, ...DEFAULT_BEATS];
   if (currentFilter !== 'all') {
@@ -3061,14 +3126,16 @@ function playBeat(btn, audioUrl, beat) {
   }
 
   stopWaveAnimation();
-  if (sourceNodeGlobal) { try { sourceNodeGlobal.disconnect(); } catch(e){} }
-  if (audioCtxGlobal) { try { audioCtxGlobal.close(); } catch(e){} }
-  audioCtxGlobal = new (window.AudioContext || window.webkitAudioContext)();
-  analyserGlobal = audioCtxGlobal.createAnalyser();
-  analyserGlobal.fftSize = 64;
-  sourceNodeGlobal = audioCtxGlobal.createMediaElementSource(miniAudio);
-  sourceNodeGlobal.connect(analyserGlobal);
-  analyserGlobal.connect(audioCtxGlobal.destination);
+  try {
+    if (sourceNodeGlobal) { try { sourceNodeGlobal.disconnect(); } catch(e){} }
+    if (audioCtxGlobal) { try { audioCtxGlobal.close(); } catch(e){} }
+    audioCtxGlobal = new (window.AudioContext || window.webkitAudioContext)();
+    analyserGlobal = audioCtxGlobal.createAnalyser();
+    analyserGlobal.fftSize = 64;
+    sourceNodeGlobal = audioCtxGlobal.createMediaElementSource(miniAudio);
+    sourceNodeGlobal.connect(analyserGlobal);
+    analyserGlobal.connect(audioCtxGlobal.destination);
+  } catch(e) { audioCtxGlobal = null; analyserGlobal = null; }
 
   miniCurrentBeat = beat;
   btn.textContent = '■';
@@ -3191,16 +3258,34 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight') lightboxNav(1);
 });
 
-// Render public beats (merges admin catalog)
-loadBeatsFromCloud().then(cloudBeats => {
-  if (cloudBeats && cloudBeats.length) {
-    adminBeats = cloudBeats;
-    localStorage.setItem('outrage_beats', JSON.stringify(cloudBeats));
+// Init beats and gallery — both load from cloud then render
+async function initBeats() {
+  try {
+    const cloudBeats = await loadBeatsFromCloud();
+    if (cloudBeats && cloudBeats.length) {
+      adminBeats = cloudBeats;
+      localStorage.setItem('outrage_beats', JSON.stringify(cloudBeats));
+    }
+  } catch(e) {}
+  renderPublicBeats();
+  checkSeeMore();
+}
+
+async function initGallery() {
+  const cloudGallery = await loadGalleryFromCloud();
+  if (cloudGallery && cloudGallery.length) {
+    adminGallery = cloudGallery;
+    localStorage.setItem('outrage_gallery', JSON.stringify(cloudGallery));
+  } else {
+    const local = JSON.parse(localStorage.getItem('outrage_gallery') || '[]');
+    adminGallery = local.length ? local : [...DEFAULT_GALLERY];
   }
-  renderPublicBeats();
-}).catch(() => {
-  renderPublicBeats();
-});
+  _galleryLoaded = true;
+  renderPublicGallery();
+}
+
+initBeats();
+initGallery();
 
 // Nav scroll effect
 const navbar = document.getElementById('navbar');
@@ -3403,7 +3488,8 @@ function getFullGallery() {
 
 function saveGallery() {
   localStorage.setItem('outrage_gallery', JSON.stringify(adminGallery));
-  saveGalleryToCloud(adminGallery);
+  saveGalleryToCloud(adminGallery).then(() => showToast('✓ Gallery synced')).catch(() => showToast('⚠ Saved locally only'));
+  renderPublicGallery();
 }
 
 function renderAdminGallery() {
@@ -3472,11 +3558,11 @@ async function handleGalleryUpload(e) {
   if (!files.length) return;
   showToast('Uploading ' + files.length + ' photo(s)…');
 
-  // Merge with cloud before adding new photos
-  const cloudGallery = await loadGalleryFromCloud();
-  if (cloudGallery && cloudGallery.length && adminGallery.length === 0) {
-    adminGallery = cloudGallery;
-    localStorage.setItem('outrage_gallery', JSON.stringify(cloudGallery));
+  if (!_galleryLoaded) {
+    const cloudGallery = await loadGalleryFromCloud();
+    if (cloudGallery && cloudGallery.length) adminGallery = cloudGallery;
+    else if (!adminGallery.length) adminGallery = [...DEFAULT_GALLERY];
+    _galleryLoaded = true;
   }
 
   files.forEach(file => {
@@ -3513,46 +3599,12 @@ async function handleGalleryUpload(e) {
   });
 }
 
-async function renderPublicGallery() {
+function renderPublicGallery() {
   const grid = document.querySelector('#pane-studio .gallery-grid');
   if (!grid) return;
-  let photos;
 
-  // 1. Try cloud JSONBin gallery first
-  const cloudGallery = await loadGalleryFromCloud();
-  if (cloudGallery && cloudGallery.length) {
-    adminGallery = cloudGallery;
-    localStorage.setItem('outrage_gallery', JSON.stringify(cloudGallery));
-    photos = cloudGallery.filter(p => !p.hidden);
-  }
-
-  // 2. Fallback: try Cloudinary tag list
-  if (!photos || !photos.length) {
-    try {
-      const res = await fetch(
-        'https://res.cloudinary.com/dc2pkdibz/image/list/outrage_gallery.json'
-      );
-      if (res.ok) {
-        const data = await res.json();
-        const hidden = JSON.parse(localStorage.getItem('outrage_gallery_hidden') || '[]');
-        photos = (data.resources || [])
-          .filter(r => !hidden.includes(r.public_id))
-          .map(r => ({
-            id: r.public_id,
-            url: `https://res.cloudinary.com/dc2pkdibz/image/upload/q_80,w_800/${r.public_id}.${r.format}`,
-            caption: r.public_id.split('/').pop().replace(/[_-]/g, ' ')
-          }));
-      }
-    } catch(e) {}
-  }
-
-  // 3. Fallback: localStorage / default photos
-  if (!photos || !photos.length) {
-    const local = JSON.parse(localStorage.getItem('outrage_gallery') || '[]');
-    photos = local.filter(p => !p.hidden).length
-      ? local.filter(p => !p.hidden)
-      : DEFAULT_GALLERY;
-  }
+  let photos = adminGallery.filter(p => !p.hidden);
+  if (!photos.length) photos = DEFAULT_GALLERY;
 
   if (!photos.length) return;
 
@@ -3614,9 +3666,6 @@ async function renderPublicGallery() {
 
   renderGalleryPage();
 }
-
-// Run on page load
-renderPublicGallery();
 
 document.querySelectorAll('a[href^="#"]').forEach(a => {
   a.addEventListener('click', (e) => {
