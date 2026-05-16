@@ -2337,17 +2337,34 @@ const CLOUDINARY_UPLOAD_PRESET = 'outrage_beats';
 let _galleryLoaded = false;
 
 async function loadBeatsFromCloud() {
-  const endpoints = [];
-  const versionedUrl = localStorage.getItem('outrage_beats_url');
-  if (versionedUrl) endpoints.push(versionedUrl + '?v=' + Date.now());
-  endpoints.push(`https://res.cloudinary.com/${CLOUDINARY_CLOUD}/raw/upload/outrage_data/beats.json?t=${Date.now()}`);
-  endpoints.push(`https://res.cloudinary.com/${CLOUDINARY_CLOUD}/raw/upload/fl_attachment/outrage_data/beats.json?t=${Date.now()}`);
-  for (const url of endpoints) {
+  const ptrUrls = [
+    localStorage.getItem('outrage_beats_ptr_url'),
+    `https://res.cloudinary.com/${CLOUDINARY_CLOUD}/raw/upload/outrage_data/beats_ptr.json`,
+  ].filter(Boolean);
+  for (const ptrUrl of ptrUrls) {
     try {
-      const res = await fetch(url, { cache: 'no-store', headers: { 'Cache-Control': 'no-cache' } });
-      if (!res.ok) continue;
-      const data = await res.json();
-      if (Array.isArray(data) && data.length > 0) return data;
+      const pres = await fetch(ptrUrl + '?nocache=' + Date.now(), { cache: 'no-store' });
+      if (!pres.ok) continue;
+      const ptr = await pres.json();
+      if (ptr && ptr.url) {
+        const bres = await fetch(ptr.url, { cache: 'no-store' });
+        if (!bres.ok) continue;
+        const data = await bres.json();
+        if (Array.isArray(data) && data.length > 0) {
+          localStorage.setItem('outrage_beats_ptr_url', ptrUrl.split('?')[0]);
+          return data;
+        }
+      }
+    } catch(e) {}
+  }
+  const lastUrl = localStorage.getItem('outrage_beats_url');
+  if (lastUrl) {
+    try {
+      const res = await fetch(lastUrl, { cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) return data;
+      }
     } catch(e) {}
   }
   return [];
@@ -2355,18 +2372,29 @@ async function loadBeatsFromCloud() {
 
 async function saveBeatsToCloud(beats) {
   try {
+    const version = Date.now();
     const blob = new Blob([JSON.stringify(beats)], { type: 'application/json' });
     const fd = new FormData();
     fd.append('file', blob, 'beats.json');
     fd.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-    fd.append('public_id', 'outrage_data/beats.json');
-    fd.append('overwrite', 'true');
-    fd.append('invalidate', 'true');
+    fd.append('public_id', `outrage_data/beats_v${version}`);
+    fd.append('overwrite', 'false');
     const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/raw/upload`, { method: 'POST', body: fd });
     const result = await res.json();
-    if (result.secure_url) localStorage.setItem('outrage_beats_url', result.secure_url);
-    return result.secure_url || null;
-  } catch(e) { return null; }
+    if (!result.secure_url) return null;
+    const ptrBlob = new Blob([JSON.stringify({ url: result.secure_url, v: version })], { type: 'application/json' });
+    const pfd = new FormData();
+    pfd.append('file', ptrBlob, 'beats_ptr.json');
+    pfd.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+    pfd.append('public_id', 'outrage_data/beats_ptr');
+    pfd.append('overwrite', 'true');
+    pfd.append('invalidate', 'true');
+    const pres = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/raw/upload`, { method: 'POST', body: pfd });
+    const presult = await pres.json();
+    localStorage.setItem('outrage_beats_url', result.secure_url);
+    if (presult.secure_url) localStorage.setItem('outrage_beats_ptr_url', presult.secure_url);
+    return result.secure_url;
+  } catch(e) { console.error('saveBeatsToCloud:', e); return null; }
 }
 
 async function loadGalleryFromCloud() {
@@ -3163,14 +3191,19 @@ document.addEventListener('keydown', e => {
 
 // Init beats and gallery — both load from cloud then render
 async function initBeats() {
+  const cached = JSON.parse(localStorage.getItem('outrage_beats') || '[]');
+  if (cached.length) {
+    adminBeats = cached;
+    renderPublicBeats();
+  }
   try {
     const cloudBeats = await loadBeatsFromCloud();
     if (cloudBeats && cloudBeats.length) {
       adminBeats = cloudBeats;
       localStorage.setItem('outrage_beats', JSON.stringify(cloudBeats));
+      renderPublicBeats();
     }
   } catch(e) {}
-  renderPublicBeats();
   checkSeeMore();
 }
 
