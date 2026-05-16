@@ -1,1 +1,45 @@
-[]
+[
+  {
+    "id": "g1",
+    "url": "gallery-1.jpg",
+    "caption": "The Console",
+    "hidden": false
+  },
+  {
+    "id": "g17788892822220.9771422825948817",
+    "url": "https://res.cloudinary.com/dc2pkdibz/image/upload/v1778889281/qhxcv9gdxzwcshagkaws.jpg",
+    "caption": "gallery 5"
+  },
+  {
+    "id": "g17788898921130.39017181987034477",
+    "url": "https://res.cloudinary.com/dc2pkdibz/image/upload/v1778889891/ub0xxcquqfpewazr9jrh.jpg",
+    "caption": "studio 2"
+  },
+  {
+    "id": "g17788898922030.4766460382715684",
+    "url": "https://res.cloudinary.com/dc2pkdibz/image/upload/v1778889891/u6hk4oj33pzlbeppxxyr.jpg",
+    "caption": "gallery 4"
+  },
+  {
+    "id": "g17788898923680.3876363854366349",
+    "url": "https://res.cloudinary.com/dc2pkdibz/image/upload/v1778889891/ykitxifabdortqg22dvu.jpg",
+    "caption": "studio 1"
+  },
+  {
+    "id": "g17788898924060.24980299303461717",
+    "url": "https://res.cloudinary.com/dc2pkdibz/image/upload/v1778889892/itfyrdmowdycovxampke.jpg",
+    "caption": "studio 3"
+  },
+  {
+    "id": "g17789221267990.6127595802362438",
+    "url": "https://res.cloudinary.com/dc2pkdibz/image/upload/v1778922126/jpxk9fdglss4fxefa5a4.jpg",
+    "caption": "gallery 8",
+    "type": "image"
+  },
+  {
+    "id": "g17789469502350.297365550034287",
+    "url": "https://res.cloudinary.com/dc2pkdibz/image/upload/v1778946950/vxynqanzwnz3yfr9ex4n.jpg",
+    "caption": "WhatsApp Image 2026 05 09 at 9.40.22 AM",
+    "type": "image"
+  }
+]
