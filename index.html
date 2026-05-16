@@ -15,7 +15,7 @@
   img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://i1.sndcdn.com https://www.instagram.com;
   media-src 'self' https://res.cloudinary.com blob:;
   frame-src https://www.youtube.com https://www.instagram.com https://res.cloudinary.com;
-  connect-src 'self' https://api.cloudinary.com https://res.cloudinary.com https://*.cloudinary.com https://www.google-analytics.com;
+  connect-src 'self' https://api.cloudinary.com https://res.cloudinary.com https://*.cloudinary.com https://www.google-analytics.com https://api.github.com https://raw.githubusercontent.com;
 media-src 'self' https://res.cloudinary.com blob:;
 ">
 <title>OutRage Music Records | Kigali's Premier Creative Hub</title>
@@ -2432,13 +2432,39 @@ const CLOUDINARY_CLOUD = 'dc2pkdibz';
 const CLOUDINARY_UPLOAD_PRESET = 'outrage_beats';
 let _galleryLoaded = false;
 
-async function loadBeatsFromCloud() {
-  const url = `https://res.cloudinary.com/${CLOUDINARY_CLOUD}/raw/upload/outrage_data/beats_db.json`;
+const GITHUB_TOKEN = window.__GH_TOKEN__ || '';
+const GITHUB_REPO  = 'kraftkartel/outrage-site';
+const GITHUB_BRANCH = 'main';
+
+async function githubWriteFile(filename, data) {
+  const apiUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${filename}`;
+  const headers = {
+    'Authorization': `token ${GITHUB_TOKEN}`,
+    'Content-Type': 'application/json',
+    'Accept': 'application/vnd.github.v3+json'
+  };
   try {
-    const res = await fetch(url + '?t=' + Date.now(), {
-      cache: 'no-store',
-      headers: { 'Cache-Control': 'no-cache, no-store' }
-    });
+    let sha = null;
+    try {
+      const getRes = await fetch(apiUrl + `?ref=${GITHUB_BRANCH}`, { headers });
+      if (getRes.ok) { const j = await getRes.json(); sha = j.sha; }
+    } catch(e) {}
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+    const body = { message: `sync: update ${filename}`, content, branch: GITHUB_BRANCH, ...(sha ? { sha } : {}) };
+    const putRes = await fetch(apiUrl, { method: 'PUT', headers, body: JSON.stringify(body) });
+    const putJson = await putRes.json();
+    return putJson.content ? putJson.content.download_url : null;
+  } catch(e) {
+    console.error('githubWriteFile error:', e);
+    showToast('⚠ Cloud sync error — check connection');
+    return null;
+  }
+}
+
+async function loadBeatsFromCloud() {
+  const url = `https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH}/beats_db.json?t=${Date.now()}`;
+  try {
+    const res = await fetch(url, { cache: 'no-store' });
     if (!res.ok) return [];
     const data = await res.json();
     return Array.isArray(data) ? data : [];
@@ -2449,42 +2475,13 @@ async function loadBeatsFromCloud() {
 }
 
 async function saveBeatsToCloud(beats) {
-  try {
-    const blob = new Blob([JSON.stringify(beats)], { type: 'application/json' });
-    const fd = new FormData();
-    fd.append('file', blob, 'beats_db.json');
-    fd.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-    fd.append('public_id', 'outrage_data/beats_db');
-    fd.append('overwrite', 'true');
-    fd.append('invalidate', 'true');
-    const res = await fetch(
-      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/raw/upload`,
-      { method: 'POST', body: fd }
-    );
-    const result = await res.json();
-    if (result.secure_url) {
-      localStorage.removeItem('outrage_beats_url');
-      localStorage.removeItem('outrage_beats_ptr_url');
-      return result.secure_url;
-    } else {
-      console.error('saveBeatsToCloud failed:', result);
-      showToast('⚠ Cloud sync failed — beats saved locally only');
-      return null;
-    }
-  } catch(e) {
-    console.error('saveBeatsToCloud error:', e);
-    showToast('⚠ Cloud sync error — check connection');
-    return null;
-  }
+  return githubWriteFile('beats_db.json', beats);
 }
 
 async function loadGalleryFromCloud() {
-  const url = `https://res.cloudinary.com/${CLOUDINARY_CLOUD}/raw/upload/outrage_data/gallery_db.json`;
+  const url = `https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH}/gallery_db.json?t=${Date.now()}`;
   try {
-    const res = await fetch(url + '?t=' + Date.now(), {
-      cache: 'no-store',
-      headers: { 'Cache-Control': 'no-cache, no-store' }
-    });
+    const res = await fetch(url, { cache: 'no-store' });
     if (!res.ok) return null;
     const data = await res.json();
     return Array.isArray(data) ? data : null;
@@ -2495,19 +2492,7 @@ async function loadGalleryFromCloud() {
 }
 
 async function saveGalleryToCloud(photos) {
-  try {
-    const blob = new Blob([JSON.stringify(photos)], { type: 'application/json' });
-    const fd = new FormData();
-    fd.append('file', blob, 'gallery_db.json');
-    fd.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-    fd.append('public_id', 'outrage_data/gallery_db');
-    fd.append('overwrite', 'true');
-    fd.append('invalidate', 'true');
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/raw/upload`, { method: 'POST', body: fd });
-    const result = await res.json();
-    localStorage.removeItem('outrage_gallery_url');
-    return result.secure_url || null;
-  } catch(e) { return null; }
+  return githubWriteFile('gallery_db.json', photos);
 }
 let catalogPage = 1;
 
