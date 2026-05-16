@@ -3175,10 +3175,10 @@ async function initBeats() {
 }
 
 async function initGallery() {
-  // Show default gallery immediately while cloud loads
+  // Show default/local gallery immediately while cloud loads
   const local = JSON.parse(localStorage.getItem('outrage_gallery') || '[]');
   adminGallery = local.length ? local : [...DEFAULT_GALLERY];
-  renderPublicGallery();
+  renderPublicGallery(true);
 
   // Then try cloud and update if better data exists
   try {
@@ -3186,7 +3186,7 @@ async function initGallery() {
     if (cloudGallery && cloudGallery.length) {
       adminGallery = cloudGallery;
       localStorage.setItem('outrage_gallery', JSON.stringify(cloudGallery));
-      renderPublicGallery();
+      renderPublicGallery(true);
     }
   } catch(e) {}
   _galleryLoaded = true;
@@ -3507,9 +3507,13 @@ async function handleGalleryUpload(e) {
   });
 }
 
-function renderPublicGallery() {
+let galleryPage = 1;
+
+function renderPublicGallery(resetPage = true) {
   const grid = document.querySelector('#pane-studio .gallery-grid');
   if (!grid) return;
+
+  if (resetPage) galleryPage = 1;
 
   let photos = adminGallery.filter(p => !p.hidden);
   if (!photos.length) {
@@ -3517,7 +3521,6 @@ function renderPublicGallery() {
   }
   if (!photos.length) return;
 
-  let galleryPage = 1;
   const GALLERY_PER_PAGE = 9;
 
   function renderGalleryPage() {
@@ -3562,7 +3565,8 @@ function renderPublicGallery() {
       grid.parentNode.insertBefore(loadMoreWrap, grid.nextSibling);
     }
     if (visible.length < photos.length) {
-      loadMoreWrap.innerHTML = `<button onclick="galleryLoadMore()" class="btn-outline" style="min-width:220px;">Load More Photos (${photos.length - visible.length} remaining)</button>`;
+      const remaining = photos.length - visible.length;
+      loadMoreWrap.innerHTML = `<button onclick="galleryPage++;window._renderGalleryPageFn&&window._renderGalleryPageFn()" class="btn-outline" style="min-width:220px;">Load More Photos (${remaining} remaining)</button>`;
     } else {
       loadMoreWrap.innerHTML = '';
     }
@@ -3572,6 +3576,8 @@ function renderPublicGallery() {
     galleryPage++;
     renderGalleryPage();
   };
+  // expose for external calls
+  window._renderGalleryPageFn = renderGalleryPage;
 
   renderGalleryPage();
 }
