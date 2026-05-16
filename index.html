@@ -39,6 +39,9 @@ media-src 'self' https://res.cloudinary.com blob:;
     --gold: #C9A84C;
     --gold-light: #E8C97A;
     --gold-dark: #8B6914;
+    --crimson: #7A1515;
+    --crimson-mid: #A52020;
+    --crimson-light: #C0392B;
     --black: #0A0A0A;
     --dark: #111111;
     --dark2: #1A1A1A;
@@ -134,6 +137,13 @@ media-src 'self' https://res.cloudinary.com blob:;
   [data-theme="light"] .btn-outline:hover { border-color: #8B6914; color: #8B6914; }
   [data-theme="light"] .wa-float-tooltip { background: #E4DDD0; color: #1A1208; }
   [data-theme="light"] #partners { background: #E4DDD0; }
+  [data-theme="light"] #process { background: #F0EBE0; }
+  [data-theme="light"] #process [style*="background:var(--dark)"] { background: rgba(255,250,242,0.9) !important; }
+  [data-theme="light"] #process [style*="background:var(--dark2)"] { background: #FFF8F0 !important; }
+  [data-theme="light"] #process [style*="color:rgba(255,255,255,0.45)"] { color: rgba(26,18,8,0.55) !important; }
+  [data-theme="light"] #process [style*="color:var(--white)"] { color: #1A1208 !important; }
+  [data-theme="light"] #process [style*="background:rgba(201,168,76,0.08)"] { background: rgba(139,105,20,0.12) !important; }
+  [data-theme="light"] .service-card:nth-child(even) .service-price { color: #8B1010 !important; }
 
   /* ── ADMIN LIGHT MODE ── */
   [data-theme="light"] #admin-panel { background: #F0EBE0; }
@@ -187,6 +197,13 @@ media-src 'self' https://res.cloudinary.com blob:;
 
   /* ── PARTNERS LIGHT MODE ── */
   [data-theme="light"] #partners { background: #E4DDD0; }
+  [data-theme="light"] #process { background: #F0EBE0; }
+  [data-theme="light"] #process [style*="background:var(--dark)"] { background: rgba(255,250,242,0.9) !important; }
+  [data-theme="light"] #process [style*="background:var(--dark2)"] { background: #FFF8F0 !important; }
+  [data-theme="light"] #process [style*="color:rgba(255,255,255,0.45)"] { color: rgba(26,18,8,0.55) !important; }
+  [data-theme="light"] #process [style*="color:var(--white)"] { color: #1A1208 !important; }
+  [data-theme="light"] #process [style*="background:rgba(201,168,76,0.08)"] { background: rgba(139,105,20,0.12) !important; }
+  [data-theme="light"] .service-card:nth-child(even) .service-price { color: #8B1010 !important; }
   [data-theme="light"] #partners p { color: rgba(26,18,8,0.55) !important; }
   [data-theme="light"] #partners .section-title { color: #1A1208; }
   [data-theme="light"] #partners > div > div { background: rgba(255,250,242,0.9) !important; }
@@ -496,6 +513,10 @@ media-src 'self' https://res.cloudinary.com blob:;
   .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(201,168,76,0.1); }
   .service-card { background: var(--dark); padding: 2.5rem; position: relative; overflow: hidden; transition: background 0.3s; cursor: default; }
   .service-card::before { content: ''; position: absolute; top: 0; left: 0; width: 0; height: 2px; background: var(--gold); transition: width 0.4s ease; }
+  .service-card:nth-child(even)::before { background: var(--crimson-mid); }
+  .service-card:nth-child(even) .service-num { color: rgba(165,32,32,0.12); }
+  .service-card:nth-child(even):hover .service-num { color: rgba(165,32,32,0.2); }
+  .service-card:nth-child(even) .service-price { color: var(--crimson-mid); }
   .service-card:hover { background: var(--dark2); }
   .service-card:hover::before { width: 100%; }
   .service-num { font-family: 'Cormorant Garamond', serif; font-size: 3.5rem; font-weight: 300; color: rgba(201,168,76,0.12); line-height: 1; margin-bottom: 1rem; transition: color 0.3s; }
@@ -848,6 +869,7 @@ media-src 'self' https://res.cloudinary.com blob:;
 
   /* ── RESPONSIVE ── */
   @media (max-width: 1024px) {
+    #process > div:nth-child(2) { grid-template-columns: 1fr 1fr; }
     #about { grid-template-columns: 1fr; gap: 3rem; }
     .about-images { height: 380px; }
     .services-grid { grid-template-columns: 1fr 1fr; }
@@ -862,6 +884,7 @@ media-src 'self' https://res.cloudinary.com blob:;
     .ig-grid { grid-template-columns: repeat(3, 1fr); }
   }
   @media (max-width: 768px) {
+    #process > div:nth-child(2) { grid-template-columns: 1fr; }
     nav { padding: 0 4vw; }
     .nav-links { display: none; }
     .menu-toggle { display: flex; }
@@ -2283,6 +2306,51 @@ audio::-webkit-media-controls-panel {
   </div>
 
   <script async src="//www.instagram.com/embed.js"></script>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section id="process" style="background:var(--black);padding:7rem 5vw;">
+  <div style="text-align:center;margin-bottom:4rem;" class="fade-up">
+    <p class="section-eyebrow" style="justify-content:center;">Your Journey</p>
+    <h2 class="section-title">How It <em>Works</em></h2>
+    <p style="color:rgba(255,255,255,0.4);font-size:14px;max-width:440px;margin:0.5rem auto 0;line-height:1.9;letter-spacing:0.03em;">From first contact to final delivery — a seamless creative process built entirely around your vision.</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(201,168,76,0.08);max-width:1100px;margin:0 auto 3rem;">
+
+    <div class="fade-up" style="background:var(--dark);padding:2.5rem 2rem;position:relative;border-top:2px solid var(--gold);transition:background 0.3s;" onmouseover="this.style.background='var(--dark2)'" onmouseout="this.style.background='var(--dark)'">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:4rem;font-weight:300;color:rgba(201,168,76,0.09);line-height:1;margin-bottom:1rem;">01</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--white);margin-bottom:0.75rem;">Reach Out</div>
+      <p style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.8;margin-bottom:1.25rem;">Book via WhatsApp, email, or the form below. Share your vision, timeline, and budget — we respond within 24 hours with a custom plan.</p>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);">WhatsApp · Email · Form</div>
+    </div>
+
+    <div class="fade-up" style="background:var(--dark);padding:2.5rem 2rem;position:relative;border-top:2px solid var(--crimson);transition:background 0.3s;" onmouseover="this.style.background='var(--dark2)'" onmouseout="this.style.background='var(--dark)'">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:4rem;font-weight:300;color:rgba(122,21,21,0.12);line-height:1;margin-bottom:1rem;">02</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--white);margin-bottom:0.75rem;">We Plan</div>
+      <p style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.8;margin-bottom:1.25rem;">We schedule your session, assign the right engineer or producer, and brief the entire team. Zero guesswork — everything is ready the moment you arrive.</p>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:var(--crimson-mid);">Session · Team · Brief</div>
+    </div>
+
+    <div class="fade-up" style="background:var(--dark);padding:2.5rem 2rem;position:relative;border-top:2px solid var(--gold);transition:background 0.3s;" onmouseover="this.style.background='var(--dark2)'" onmouseout="this.style.background='var(--dark)'">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:4rem;font-weight:300;color:rgba(201,168,76,0.09);line-height:1;margin-bottom:1rem;">03</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--white);margin-bottom:0.75rem;">We Create</div>
+      <p style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.8;margin-bottom:1.25rem;">Record, mix, master, dub — whatever your project demands. Revisions included. You are in the room and in control from the first take to the last.</p>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);">Record · Mix · Master</div>
+    </div>
+
+    <div class="fade-up" style="background:var(--dark);padding:2.5rem 2rem;position:relative;border-top:2px solid var(--crimson);transition:background 0.3s;" onmouseover="this.style.background='var(--dark2)'" onmouseout="this.style.background='var(--dark)'">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:4rem;font-weight:300;color:rgba(122,21,21,0.12);line-height:1;margin-bottom:1rem;">04</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--white);margin-bottom:0.75rem;">You Deliver</div>
+      <p style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.8;margin-bottom:1.25rem;">Files delivered as WAV, MP3, and full stems within the agreed timeline. Release-ready, platform-optimized, and built to compete globally.</p>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:var(--crimson-mid);">WAV · MP3 · Stems</div>
+    </div>
+
+  </div>
+
+  <div style="text-align:center;">
+    <a href="#booking" class="btn-primary">Start Your Project →</a>
+  </div>
 </section>
 
 <!-- ── BEATS / SHOP ── -->
