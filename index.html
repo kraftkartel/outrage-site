@@ -15,7 +15,7 @@
   img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://i1.sndcdn.com https://www.instagram.com;
   media-src 'self' https://res.cloudinary.com blob:;
   frame-src https://www.youtube.com https://www.instagram.com https://res.cloudinary.com;
-  connect-src 'self' https://api.cloudinary.com https://res.cloudinary.com https://www.google-analytics.com https://api.jsonbin.io https://*.jsonbin.io;
+  connect-src 'self' https://api.cloudinary.com https://res.cloudinary.com https://*.cloudinary.com https://www.google-analytics.com;
 media-src 'self' https://res.cloudinary.com blob:;
 ">
 <title>OutRage Music Records | Kigali's Premier Creative Hub</title>
@@ -2340,6 +2340,7 @@ async function loadBeatsFromCloud() {
   const endpoints = [];
   const versionedUrl = localStorage.getItem('outrage_beats_url');
   if (versionedUrl) endpoints.push(versionedUrl + '?v=' + Date.now());
+  endpoints.push(`https://res.cloudinary.com/${CLOUDINARY_CLOUD}/raw/upload/outrage_data/beats.json?t=${Date.now()}`);
   endpoints.push(`https://res.cloudinary.com/${CLOUDINARY_CLOUD}/raw/upload/fl_attachment/outrage_data/beats.json?t=${Date.now()}`);
   for (const url of endpoints) {
     try {
@@ -2372,6 +2373,7 @@ async function loadGalleryFromCloud() {
   const endpoints = [];
   const versionedUrl = localStorage.getItem('outrage_gallery_url');
   if (versionedUrl) endpoints.push(versionedUrl + '?v=' + Date.now());
+  endpoints.push(`https://res.cloudinary.com/${CLOUDINARY_CLOUD}/raw/upload/outrage_data/gallery.json?t=${Date.now()}`);
   endpoints.push(`https://res.cloudinary.com/${CLOUDINARY_CLOUD}/raw/upload/fl_attachment/outrage_data/gallery.json?t=${Date.now()}`);
   for (const url of endpoints) {
     try {
@@ -3173,16 +3175,21 @@ async function initBeats() {
 }
 
 async function initGallery() {
-  const cloudGallery = await loadGalleryFromCloud();
-  if (cloudGallery && cloudGallery.length) {
-    adminGallery = cloudGallery;
-    localStorage.setItem('outrage_gallery', JSON.stringify(cloudGallery));
-  } else {
-    const local = JSON.parse(localStorage.getItem('outrage_gallery') || '[]');
-    adminGallery = local.length ? local : [...DEFAULT_GALLERY];
-  }
-  _galleryLoaded = true;
+  // Show default gallery immediately while cloud loads
+  const local = JSON.parse(localStorage.getItem('outrage_gallery') || '[]');
+  adminGallery = local.length ? local : [...DEFAULT_GALLERY];
   renderPublicGallery();
+
+  // Then try cloud and update if better data exists
+  try {
+    const cloudGallery = await loadGalleryFromCloud();
+    if (cloudGallery && cloudGallery.length) {
+      adminGallery = cloudGallery;
+      localStorage.setItem('outrage_gallery', JSON.stringify(cloudGallery));
+      renderPublicGallery();
+    }
+  } catch(e) {}
+  _galleryLoaded = true;
 }
 
 initBeats();
@@ -3505,8 +3512,9 @@ function renderPublicGallery() {
   if (!grid) return;
 
   let photos = adminGallery.filter(p => !p.hidden);
-  if (!photos.length) photos = DEFAULT_GALLERY;
-
+  if (!photos.length) {
+    photos = [...DEFAULT_GALLERY];
+  }
   if (!photos.length) return;
 
   let galleryPage = 1;
