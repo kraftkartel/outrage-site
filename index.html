@@ -2886,7 +2886,7 @@ function renderPublicBeats() {
   }
   const grid = document.getElementById('publicBeatsGrid');
   if (!grid) return;
-  const show = all.slice(0, 8);
+  const show = all.slice(0, publicBeatsPage * 8);
   if (!show.length) {
     grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:5rem 2rem;color:rgba(255,255,255,0.25);font-family:'Barlow Condensed',sans-serif;letter-spacing:0.2em;text-transform:uppercase;font-size:13px;">
       <div style="font-size:2.5rem;margin-bottom:1rem;">🎵</div>
@@ -2912,8 +2912,24 @@ function renderPublicBeats() {
     </div>
   `).join('');
   grid.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // Load more beats button
+  let beatsLoadMoreWrap = document.getElementById('beatsLoadMoreWrap');
+  if (!beatsLoadMoreWrap) {
+    beatsLoadMoreWrap = document.createElement('div');
+    beatsLoadMoreWrap.id = 'beatsLoadMoreWrap';
+    beatsLoadMoreWrap.style.cssText = 'text-align:center;margin-top:2rem;';
+    grid.parentNode.insertBefore(beatsLoadMoreWrap, grid.nextSibling);
+  }
+  if (all.length > publicBeatsPage * 8) {
+    const remaining = all.length - publicBeatsPage * 8;
+    beatsLoadMoreWrap.innerHTML = `<button onclick="loadMoreBeats()" class="btn-outline" style="min-width:220px;">Load More Beats (${remaining} remaining)</button>`;
+  } else {
+    beatsLoadMoreWrap.innerHTML = '';
+  }
+
   const wrap = document.getElementById('seeMoreWrap');
-  if (wrap) wrap.classList.toggle('show', all.length > 6);
+  if (wrap) wrap.classList.toggle('show', all.length > 8);
 }
 
 function checkSeeMore() {
@@ -2956,8 +2972,16 @@ fadeEls.forEach(el => observer.observe(el));
 
 // Genre filter
 let currentFilter = 'all';
+let publicBeatsPage = 1;
+
+window.loadMoreBeats = function() {
+  publicBeatsPage++;
+  renderPublicBeats();
+};
+
 function filterBeats(genre, btn) {
   currentFilter = genre;
+  publicBeatsPage = 1;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderPublicBeats();
@@ -3516,29 +3540,57 @@ async function renderPublicGallery() {
   }
 
   if (!photos.length) return;
-  const first = photos[0];
-  const rest = photos.slice(1);
-  grid.innerHTML = (first ? `
-    <div class="gallery-item" style="grid-column:span 2;grid-row:span 2;"
-         onclick="openLightbox(this.querySelector('img'),'${first.caption}')">
-      <img src="${first.url}" alt="${first.caption}" />
-      <div class="gallery-overlay">
-        <span class="gallery-caption">${first.caption}</span>
+
+  let galleryPage = 1;
+  const GALLERY_PER_PAGE = 9;
+
+  function renderGalleryPage() {
+    const visible = photos.slice(0, galleryPage * GALLERY_PER_PAGE);
+    const first = visible[0];
+    const rest = visible.slice(1);
+    grid.innerHTML = (first ? `
+      <div class="gallery-item" style="grid-column:span 2;grid-row:span 2;"
+           onclick="openLightbox(this.querySelector('img'),'${first.caption}')">
+        <img src="${first.url}" alt="${first.caption}" />
+        <div class="gallery-overlay">
+          <span class="gallery-caption">${first.caption}</span>
+        </div>
       </div>
-    </div>
-  ` : '') + rest.map(p => `
-    <div class="gallery-item"
-         onclick="openLightbox(this.querySelector('img'),'${p.caption}')">
-      <img src="${p.url}" alt="${p.caption}" />
-      <div class="gallery-overlay">
-        <span class="gallery-caption">${p.caption}</span>
+    ` : '') + rest.map(p => `
+      <div class="gallery-item"
+           onclick="openLightbox(this.querySelector('img'),'${p.caption}')">
+        <img src="${p.url}" alt="${p.caption}" />
+        <div class="gallery-overlay">
+          <span class="gallery-caption">${p.caption}</span>
+        </div>
       </div>
-    </div>
-  `).join('');
-  grid.querySelectorAll('.gallery-item img').forEach(img => {
-    img.style.cssText =
-      'width:100%;height:100%;object-fit:cover;transition:transform 0.5s;filter:brightness(0.85)';
-  });
+    `).join('');
+    grid.querySelectorAll('.gallery-item img').forEach(img => {
+      img.style.cssText =
+        'width:100%;height:100%;object-fit:cover;transition:transform 0.5s;filter:brightness(0.85)';
+    });
+
+    // Load more button
+    let loadMoreWrap = document.getElementById('galleryLoadMoreWrap');
+    if (!loadMoreWrap) {
+      loadMoreWrap = document.createElement('div');
+      loadMoreWrap.id = 'galleryLoadMoreWrap';
+      loadMoreWrap.style.cssText = 'text-align:center;margin-top:2rem;';
+      grid.parentNode.insertBefore(loadMoreWrap, grid.nextSibling);
+    }
+    if (visible.length < photos.length) {
+      loadMoreWrap.innerHTML = `<button onclick="galleryLoadMore()" class="btn-outline" style="min-width:220px;">Load More Photos (${photos.length - visible.length} remaining)</button>`;
+    } else {
+      loadMoreWrap.innerHTML = '';
+    }
+  }
+
+  window.galleryLoadMore = function() {
+    galleryPage++;
+    renderGalleryPage();
+  };
+
+  renderGalleryPage();
 }
 
 // Run on page load
