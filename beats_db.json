@@ -1,5 +1,19 @@
 [
   {
+    "id": 1778950023748,
+    "name": "SPLASH",
+    "producer": "Produced by Kraft Twumve",
+    "genre": "Trap / Hip-Hop",
+    "price": 30,
+    "license": "Exclusive Rights",
+    "status": "published",
+    "tags": "",
+    "cover": "https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=400&q=80",
+    "audioUrl": "https://res.cloudinary.com/dc2pkdibz/video/upload/v1778950002/ulck9wzyb813pgtair3i.mp3",
+    "bpm": "91",
+    "date": "16 May 2026"
+  },
+  {
     "id": 1778949953266,
     "name": "THRONES",
     "producer": "Produced by Kraft Twumve",
