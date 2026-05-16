@@ -1,19 +1,5 @@
 [
   {
-    "id": 1778935153599,
-    "name": "MCJOe",
-    "producer": "Prod. Twumve",
-    "genre": "Trap / Hip-Hop",
-    "price": 30,
-    "license": "Exclusive Rights",
-    "status": "published",
-    "tags": "",
-    "cover": "https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=400&q=80",
-    "audioUrl": "https://res.cloudinary.com/dc2pkdibz/video/upload/v1778935150/dswww3xtsh7gr4vorj1g.wav",
-    "bpm": "153",
-    "date": "16 May 2026"
-  },
-  {
     "id": 1778885124484,
     "name": "AMBULANCE",
     "producer": "Prod. Twumve",
