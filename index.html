@@ -870,6 +870,7 @@ media-src 'self' https://res.cloudinary.com blob:;
   /* ── RESPONSIVE ── */
   @media (max-width: 1024px) {
     #process > div:nth-child(2) { grid-template-columns: 1fr 1fr; }
+    #process > div:nth-child(2)[style] { grid-template-columns: 1fr 1fr !important; }
     #about { grid-template-columns: 1fr; gap: 3rem; }
     .about-images { height: 380px; }
     .services-grid { grid-template-columns: 1fr 1fr; }
@@ -884,7 +885,7 @@ media-src 'self' https://res.cloudinary.com blob:;
     .ig-grid { grid-template-columns: repeat(3, 1fr); }
   }
   @media (max-width: 768px) {
-    #process > div:nth-child(2) { grid-template-columns: 1fr; }
+    #process > div:nth-child(2) { grid-template-columns: 1fr !important; }
     nav { padding: 0 4vw; }
     .nav-links { display: none; }
     .menu-toggle { display: flex; }
