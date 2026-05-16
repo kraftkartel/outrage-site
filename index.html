@@ -3459,7 +3459,7 @@ async function handleGalleryUpload(e) {
     localStorage.setItem('outrage_gallery', JSON.stringify(cloudGallery));
   }
 
-  <input type="file" id="galleryFile" accept="image/*,video/*,.mp4,.mov,.webm" multiple style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;" onchange="handleGalleryfiles.forEach(file => {
+  files.forEach(file => {
     const isVideo = file.type.startsWith('video/');
     const uploadUrl = isVideo
       ? 'https://api.cloudinary.com/v1_1/dc2pkdibz/video/upload'
@@ -3490,7 +3490,7 @@ async function handleGalleryUpload(e) {
     };
     xhr.onerror = () => showToast('⚠ Upload error');
     xhr.send(fd);
-  });Upload(event)" />
+  });
 }
 
 async function renderPublicGallery() {
