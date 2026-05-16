@@ -597,8 +597,11 @@ media-src 'self' https://res.cloudinary.com blob:;
   .studio-pane { padding: 3rem 5vw 6rem; }
   .masonry-grid { display: grid; grid-template-columns: repeat(12, 1fr); grid-auto-rows: 90px; gap: 4px; }
   .m-item { position: relative; overflow: hidden; cursor: pointer; background: var(--dark3); }
-  .m-item img { width: 100%; height: 100%; object-fit: cover; display: block; filter: brightness(0.75) contrast(1.1) saturate(0.7); transition: filter 0.6s ease, transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94); }
-  .m-item:hover img { filter: brightness(0.9) contrast(1.05) saturate(1); transform: scale(1.06); }
+  .m-item img { width: 100%; height: 100%; object-fit: cover; display: block; filter: brightness(0.62) contrast(1.1) saturate(0.6); transition: filter 0.5s ease, transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94), outline 0.2s; }
+  .m-item:hover img { filter: brightness(0.85) contrast(1.05) saturate(1); transform: scale(1.05); }
+  .m-item:hover { outline: 0.5px solid rgba(201,168,76,0.45); }
+  .m-item .om-gold-line { position:absolute;top:0;left:0;width:2px;height:0;background:#C9A84C;transition:height .4s ease;z-index:3;pointer-events:none; }
+  .m-item:hover .om-gold-line { height:100%; }
   .m-item:nth-child(1) { grid-column: 1 / 6; grid-row: 1 / 5; }
   .m-item:nth-child(2) { grid-column: 6 / 9; grid-row: 1 / 3; }
   .m-item:nth-child(3) { grid-column: 9 / 13; grid-row: 1 / 3; }
@@ -2351,19 +2354,19 @@ audio::-webkit-media-controls-panel {
 <section id="gallery">
 
   <!-- HEADER -->
-  <div class="gallery-header">
+  <div style="padding:3.5rem 5vw 0;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;">
     <div>
-      <div class="gallery-eyebrow">Media</div>
-      <h2 class="gallery-title">Inside <em>OutRage</em></h2>
+      <p style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:.45em;text-transform:uppercase;color:var(--gold);margin:0 0 .5rem;display:flex;align-items:center;gap:.75rem;"><span style="display:inline-block;width:28px;height:1px;background:var(--gold);"></span>Media</p>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(2.8rem,5vw,4.5rem);font-weight:300;line-height:1;letter-spacing:-.02em;color:var(--white);margin:0;">Inside <em style="font-style:italic;color:var(--gold);">OutRage</em></h2>
     </div>
-    <p class="gallery-meta">Behind the sessions, inside the booth — a raw look at where the music is made.</p>
+    <p style="font-size:13px;color:rgba(255,255,255,0.4);letter-spacing:.05em;line-height:1.8;max-width:280px;text-align:right;">Behind the sessions, inside the booth — a raw look at where the music is made.</p>
   </div>
 
   <!-- TAB NAV -->
   <nav class="tab-nav" role="tablist">
     <button class="tab-btn active" role="tab" aria-selected="true" onclick="switchTab('studio', this)">
       <span class="tab-icon">◈</span> Studio
-      <span class="tab-count">9</span>
+      <span class="tab-count" id="studioTabCount">9</span>
     </button>
     <button class="tab-btn" role="tab" aria-selected="false" onclick="switchTab('youtube', this)">
       <span class="tab-icon">▶</span> YouTube
@@ -2376,55 +2379,64 @@ audio::-webkit-media-controls-panel {
   <!-- ─ STUDIO PANE ─ -->
   <div class="tab-pane active studio-pane" id="pane-studio">
     <div class="masonry-grid" id="studioGrid">
-      <div class="m-item" onclick="openLightbox(this.querySelector('img'), 'The Console')">
+      <div class="m-item" onclick="omOpenLightbox(0)">
+        <div class="om-gold-line"></div>
         <img src="gallery-1.jpg" alt="OutRage Studio — Mixing Console" loading="lazy" />
         <div class="m-overlay"><span class="m-caption">The Console</span></div>
         <div class="m-expand-icon">⤢</div>
         <div class="corner-tl"></div><div class="corner-tr"></div><div class="corner-bl"></div><div class="corner-br"></div>
       </div>
-      <div class="m-item" onclick="openLightbox(this.querySelector('img'), 'In The Zone')">
+      <div class="m-item" onclick="omOpenLightbox(1)">
+        <div class="om-gold-line"></div>
         <img src="gallery-2.jpg" alt="Producer at work" loading="lazy" />
         <div class="m-overlay"><span class="m-caption">In The Zone</span></div>
         <div class="m-expand-icon">⤢</div>
         <div class="corner-tl"></div><div class="corner-br"></div>
       </div>
-      <div class="m-item" onclick="openLightbox(this.querySelector('img'), 'Production Suite')">
+      <div class="m-item" onclick="omOpenLightbox(2)">
+        <div class="om-gold-line"></div>
         <img src="gallery-3.jpg" alt="Production session" loading="lazy" />
         <div class="m-overlay"><span class="m-caption">Production Suite</span></div>
         <div class="m-expand-icon">⤢</div>
         <div class="corner-tl"></div><div class="corner-br"></div>
       </div>
-      <div class="m-item" onclick="openLightbox(this.querySelector('img'), 'Mastering Suite')">
+      <div class="m-item" onclick="omOpenLightbox(3)">
+        <div class="om-gold-line"></div>
         <img src="gallery-4.jpg" alt="Mastering setup" loading="lazy" />
         <div class="m-overlay"><span class="m-caption">Mastering Suite</span></div>
         <div class="m-expand-icon">⤢</div>
         <div class="corner-tl"></div><div class="corner-br"></div>
       </div>
-      <div class="m-item" onclick="openLightbox(this.querySelector('img'), 'Control Room')">
+      <div class="m-item" onclick="omOpenLightbox(4)">
+        <div class="om-gold-line"></div>
         <img src="gallery-5.jpg" alt="Control room" loading="lazy" />
         <div class="m-overlay"><span class="m-caption">Control Room</span></div>
         <div class="m-expand-icon">⤢</div>
         <div class="corner-tl"></div><div class="corner-br"></div>
       </div>
-      <div class="m-item" onclick="openLightbox(this.querySelector('img'), 'Session Vibes')">
+      <div class="m-item" onclick="omOpenLightbox(5)">
+        <div class="om-gold-line"></div>
         <img src="gallery-6.jpg" alt="Studio session" loading="lazy" />
         <div class="m-overlay"><span class="m-caption">Session Vibes</span></div>
         <div class="m-expand-icon">⤢</div>
         <div class="corner-tl"></div><div class="corner-br"></div>
       </div>
-      <div class="m-item" onclick="openLightbox(this.querySelector('img'), 'Late Night')">
+      <div class="m-item" onclick="omOpenLightbox(6)">
+        <div class="om-gold-line"></div>
         <img src="gallery-7.jpg" alt="Night session" loading="lazy" />
         <div class="m-overlay"><span class="m-caption">Late Night</span></div>
         <div class="m-expand-icon">⤢</div>
         <div class="corner-tl"></div><div class="corner-br"></div>
       </div>
-      <div class="m-item" onclick="openLightbox(this.querySelector('img'), 'Collab Session')">
+      <div class="m-item" onclick="omOpenLightbox(7)">
+        <div class="om-gold-line"></div>
         <img src="gallery-8.jpg" alt="Collab session" loading="lazy" />
         <div class="m-overlay"><span class="m-caption">Collab Session</span></div>
         <div class="m-expand-icon">⤢</div>
         <div class="corner-tl"></div><div class="corner-br"></div>
       </div>
-      <div class="m-item" onclick="openLightbox(this.querySelector('img'), 'The Room')">
+      <div class="m-item" onclick="omOpenLightbox(8)">
+        <div class="om-gold-line"></div>
         <img src="gallery-9.jpg" alt="The room" loading="lazy" />
         <div class="m-overlay"><span class="m-caption">The Room</span></div>
         <div class="m-expand-icon">⤢</div>
@@ -2586,6 +2598,46 @@ audio::-webkit-media-controls-panel {
     </div>
 
   </div>
+
+  <style>
+  #om-lb{position:fixed;inset:0;z-index:99998;background:rgba(8,8,7,.96);display:flex;align-items:center;justify-content:center;flex-direction:column;opacity:0;visibility:hidden;transition:opacity .28s ease,visibility .28s ease;}
+  #om-lb.open{opacity:1;visibility:visible;}
+  #om-lb-img{max-width:88vw;max-height:78vh;object-fit:contain;display:block;border:.5px solid rgba(201,168,76,.15);transform:scale(.96);transition:transform .28s ease;}
+  #om-lb.open #om-lb-img{transform:scale(1);}
+  #om-lb-close{position:fixed;top:1.5rem;right:1.75rem;background:none;border:.5px solid rgba(201,168,76,.35);color:#C9A84C;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;padding:8px 18px;cursor:pointer;transition:background .2s;z-index:2;}
+  #om-lb-close:hover{background:rgba(201,168,76,.1);}
+  #om-lb-prev,#om-lb-next{position:fixed;top:50%;transform:translateY(-50%);background:none;border:.5px solid rgba(201,168,76,.3);color:#C9A84C;font-size:1.6rem;width:48px;height:48px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;z-index:2;}
+  #om-lb-prev{left:1.25rem;}#om-lb-next{right:1.25rem;}
+  #om-lb-prev:hover,#om-lb-next:hover{background:rgba(201,168,76,.1);}
+  #om-lb-caption{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#C9A84C;margin-top:1.2rem;text-align:center;}
+  #om-lb-counter{font-size:10px;letter-spacing:.18em;color:rgba(201,168,76,.35);margin-top:4px;font-family:'Barlow Condensed',sans-serif;text-align:center;}
+  @media(max-width:600px){#om-lb-prev{left:.5rem;}#om-lb-next{right:.5rem;}#om-lb-img{max-width:94vw;max-height:70vh;}}
+  </style>
+
+  <div id="om-lb" role="dialog" aria-modal="true" aria-label="Photo viewer">
+    <button id="om-lb-close" onclick="omCloseLightbox()">✕ Close</button>
+    <button id="om-lb-prev" onclick="omLbNav(-1)" aria-label="Previous">‹</button>
+    <img id="om-lb-img" src="" alt="" />
+    <button id="om-lb-next" onclick="omLbNav(1)" aria-label="Next">›</button>
+    <div id="om-lb-caption"></div>
+    <div id="om-lb-counter"></div>
+  </div>
+
+  <script>
+  (function(){
+    var omIdx=0,lbEl=document.getElementById('om-lb'),imgEl=document.getElementById('om-lb-img'),capEl=document.getElementById('om-lb-caption'),cntEl=document.getElementById('om-lb-counter');
+    function getSlides(){var imgs=document.querySelectorAll('#studioGrid .m-item img'),caps=document.querySelectorAll('#studioGrid .m-item .m-caption');return Array.from(imgs).map(function(img,i){return{src:img.src,caption:caps[i]?caps[i].textContent:''};});}
+    function show(){var s=getSlides(),sl=s[omIdx];if(!sl)return;imgEl.src=sl.src;imgEl.alt=sl.caption;capEl.textContent=sl.caption;cntEl.textContent=(omIdx+1)+' / '+s.length;}
+    window.omOpenLightbox=function(i){omIdx=i;show();lbEl.classList.add('open');document.body.style.overflow='hidden';};
+    window.omCloseLightbox=function(){lbEl.classList.remove('open');document.body.style.overflow='';};
+    window.omLbNav=function(d){var l=getSlides().length;omIdx=(omIdx+d+l)%l;show();};
+    lbEl.addEventListener('click',function(e){if(e.target===lbEl)window.omCloseLightbox();});
+    document.addEventListener('keydown',function(e){if(!lbEl.classList.contains('open'))return;if(e.key==='Escape')window.omCloseLightbox();if(e.key==='ArrowLeft')window.omLbNav(-1);if(e.key==='ArrowRight')window.omLbNav(1);});
+    var tx=null;
+    lbEl.addEventListener('touchstart',function(e){tx=e.touches[0].clientX;},{passive:true});
+    lbEl.addEventListener('touchend',function(e){if(tx===null)return;var dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>40)window.omLbNav(dx<0?1:-1);tx=null;},{passive:true});
+  })();
+  </script>
 
   <script async src="//www.instagram.com/embed.js"></script>
 </section>
