@@ -82,6 +82,7 @@ media-src 'self' https://res.cloudinary.com blob:;
     --light: #F5F2EC;
     --white: #FFFFFF;
     --red: #C0392B;
+    --crimson-mid: #A52020;
   }
 
   [data-theme="light"] {
@@ -553,41 +554,7 @@ media-src 'self' https://res.cloudinary.com blob:;
   .marquee-text { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; color: var(--black); padding: 0 2rem; }
   @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-  .upload-success-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.92);
-    z-index: 99999; display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none; transition: opacity 0.4s;
-  }
-  .upload-success-overlay.show { opacity: 1; pointer-events: all; }
-  .upload-success-box {
-    background: var(--dark); border-top: 3px solid var(--gold);
-    padding: 3rem; max-width: 480px; width: 90%; text-align: center;
-    transform: translateY(30px); transition: transform 0.4s;
-  }
-  .upload-success-overlay.show .upload-success-box { transform: translateY(0); }
-  .upload-success-icon { font-size: 3.5rem; margin-bottom: 1.5rem; }
-  .upload-success-title { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 300; margin-bottom: 0.5rem; }
-  .upload-success-title em { color: var(--gold); font-style: italic; }
-  .upload-success-sub { font-size: 13px; color: rgba(255,255,255,0.45); margin-bottom: 2rem; line-height: 1.8; }
-  .upload-success-beat { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.25rem; }
-  .upload-success-meta { font-size: 12px; color: rgba(255,255,255,0.3); margin-bottom: 2rem; }
-  .upload-success-close { background: var(--gold); color: #0A0A0A; padding: 14px 40px; font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; border: none; border-radius: 2px; cursor: pointer; transition: background 0.3s ease, transform 0.2s ease; }
-  .upload-success-close:hover { background: var(--gold-light); transform: translateY(-1px); }
-  .beats-pagination { display: none; justify-content: center; gap: 0.5rem; margin-top: 2.5rem; flex-wrap: wrap; }
-  .beats-pagination.show { display: flex; }
-  .page-btn { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; padding: 10px 18px; border: 1px solid rgba(255,255,255,0.12); border-radius: 2px; background: transparent; color: rgba(255,255,255,0.45); cursor: pointer; transition: border-color 0.3s ease, color 0.3s ease, background 0.3s ease, transform 0.2s ease; }
-  .page-btn:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-1px); }
-  .page-btn.active { background: var(--gold); color: #0A0A0A; border-color: var(--gold); }
-  .page-btn.prev-next { padding: 10px 22px; }
-  #seeMoreWrap { text-align: center; margin-top: 2rem; display: none; }
-  #seeMoreWrap.show { display: block; }
-  .catalog-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--black); z-index: 9998; overflow-x: hidden; overflow-y: auto; -webkit-overflow-scrolling: touch; transform: translateX(100%); transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94); will-change: transform; }
-  .catalog-modal.open { transform: translateX(0); }
-  .catalog-modal-inner { max-width: 1200px; margin: 0 auto; padding: 5rem 5vw; }
-  .catalog-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; flex-wrap: wrap; gap: 1rem; }
-  .catalog-close-btn { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(255,255,255,0.4); background: none; border: 1px solid rgba(255,255,255,0.12); padding: 10px 22px; cursor: pointer; transition: all 0.2s; }
-  .catalog-close-btn:hover { color: var(--gold); border-color: var(--gold); }
-  .success-toast.show { transform: translateX(0); }
+  
   .upload-success-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 99999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s; }
   .upload-success-overlay.show { opacity: 1; pointer-events: all; }
   .upload-success-box { background: var(--dark); border-top: 3px solid var(--gold); padding: 3rem; max-width: 480px; width: 90%; text-align: center; transform: translateY(30px); transition: transform 0.4s; }
@@ -2213,6 +2180,8 @@ audio::-webkit-media-controls-panel {
     <li><a href="#gallery">Media</a></li>
     <li><a href="#shop">Beats</a></li>
     <li><a href="#voiceover">Talent</a></li>
+    <li><a href="#music">Music</a></li>
+    <li><a href="#faq">FAQ</a></li>
     <li><a href="#contact">Contact</a></li>
     <li><a href="#booking" class="nav-cta">Book Now</a></li>
   </ul>
@@ -2238,6 +2207,8 @@ audio::-webkit-media-controls-panel {
   <a href="#gallery" onclick="closeMobileMenu()">Media</a>
   <a href="#shop" onclick="closeMobileMenu()">Beats</a>
   <a href="#voiceover" onclick="closeMobileMenu()">Talent</a>
+  <a href="#process" onclick="closeMobileMenu()">How It Works</a>
+  <a href="#faq" onclick="closeMobileMenu()">FAQ</a>
   <a href="#contact" onclick="closeMobileMenu()">Contact</a>
   <a href="#booking" onclick="closeMobileMenu()" style="color:var(--gold);">Book Now →</a>
 </div>
@@ -2567,8 +2538,8 @@ audio::-webkit-media-controls-panel {
         </div>
       </div>
       <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
-        <a href="https://www.instagram.com/outragemusicrecords/" target="_blank" class="btn-gold">
-          Follow on Instagram
+        <a href="https://www.instagram.com/outragemusicrecords/" target="_blank" class="btn-gold" style="display:inline-flex;align-items:center;gap:0.75rem;padding:13px 28px;background:var(--gold);color:#080808;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;text-decoration:none;border:none;cursor:pointer;transition:background 0.3s,transform 0.2s;">
+          📷 Follow on Instagram
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
         </a>
         <a href="#booking" class="btn-ghost">Book a Studio Tour</a>
@@ -2760,44 +2731,37 @@ audio::-webkit-media-controls-panel {
 
 <!-- ── HOW IT WORKS ── -->
 <section id="process" style="background:var(--black);padding:7rem 5vw;">
-  <div style="text-align:center;margin-bottom:4rem;" class="fade-up">
+  <div style="text-align:center;margin-bottom:4rem;">
     <p class="section-eyebrow" style="justify-content:center;">Your Journey</p>
     <h2 class="section-title">How It <em>Works</em></h2>
-    <p style="color:rgba(255,255,255,0.4);font-size:14px;max-width:440px;margin:0.5rem auto 0;line-height:1.9;letter-spacing:0.03em;">From first contact to final delivery — a seamless creative process built entirely around your vision.</p>
+    <p style="color:rgba(255,255,255,0.4);font-size:14px;max-width:440px;margin:0.5rem auto 0;line-height:1.9;">From first contact to final delivery — a seamless creative process built around your vision.</p>
   </div>
-
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(201,168,76,0.08);max-width:1100px;margin:0 auto 3rem;">
-
-    <div class="fade-up" style="background:var(--dark);padding:2.5rem 2rem;position:relative;border-top:2px solid var(--gold);transition:background 0.3s;" onmouseover="this.style.background='var(--dark2)'" onmouseout="this.style.background='var(--dark)'">
+    <div style="background:var(--dark);padding:2.5rem 2rem;border-top:2px solid var(--gold);transition:background 0.3s;" onmouseover="this.style.background='var(--dark2)'" onmouseout="this.style.background='var(--dark)'">
       <div style="font-family:'Cormorant Garamond',serif;font-size:4rem;font-weight:300;color:rgba(201,168,76,0.09);line-height:1;margin-bottom:1rem;">01</div>
       <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--white);margin-bottom:0.75rem;">Reach Out</div>
       <p style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.8;margin-bottom:1.25rem;">Book via WhatsApp, email, or the form below. Share your vision, timeline, and budget — we respond within 24 hours with a custom plan.</p>
       <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);">WhatsApp · Email · Form</div>
     </div>
-
-    <div class="fade-up" style="background:var(--dark);padding:2.5rem 2rem;position:relative;border-top:2px solid var(--crimson);transition:background 0.3s;" onmouseover="this.style.background='var(--dark2)'" onmouseout="this.style.background='var(--dark)'">
+    <div style="background:var(--dark);padding:2.5rem 2rem;border-top:2px solid var(--crimson);transition:background 0.3s;" onmouseover="this.style.background='var(--dark2)'" onmouseout="this.style.background='var(--dark)'">
       <div style="font-family:'Cormorant Garamond',serif;font-size:4rem;font-weight:300;color:rgba(122,21,21,0.12);line-height:1;margin-bottom:1rem;">02</div>
       <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--white);margin-bottom:0.75rem;">We Plan</div>
       <p style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.8;margin-bottom:1.25rem;">We schedule your session, assign the right engineer or producer, and brief the entire team. Zero guesswork — everything is ready the moment you arrive.</p>
       <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:var(--crimson-mid);">Session · Team · Brief</div>
     </div>
-
-    <div class="fade-up" style="background:var(--dark);padding:2.5rem 2rem;position:relative;border-top:2px solid var(--gold);transition:background 0.3s;" onmouseover="this.style.background='var(--dark2)'" onmouseout="this.style.background='var(--dark)'">
+    <div style="background:var(--dark);padding:2.5rem 2rem;border-top:2px solid var(--gold);transition:background 0.3s;" onmouseover="this.style.background='var(--dark2)'" onmouseout="this.style.background='var(--dark)'">
       <div style="font-family:'Cormorant Garamond',serif;font-size:4rem;font-weight:300;color:rgba(201,168,76,0.09);line-height:1;margin-bottom:1rem;">03</div>
       <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--white);margin-bottom:0.75rem;">We Create</div>
       <p style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.8;margin-bottom:1.25rem;">Record, mix, master, dub — whatever your project demands. Revisions included. You are in the room and in control from the first take to the last.</p>
       <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);">Record · Mix · Master</div>
     </div>
-
-    <div class="fade-up" style="background:var(--dark);padding:2.5rem 2rem;position:relative;border-top:2px solid var(--crimson);transition:background 0.3s;" onmouseover="this.style.background='var(--dark2)'" onmouseout="this.style.background='var(--dark)'">
+    <div style="background:var(--dark);padding:2.5rem 2rem;border-top:2px solid var(--crimson);transition:background 0.3s;" onmouseover="this.style.background='var(--dark2)'" onmouseout="this.style.background='var(--dark)'">
       <div style="font-family:'Cormorant Garamond',serif;font-size:4rem;font-weight:300;color:rgba(122,21,21,0.12);line-height:1;margin-bottom:1rem;">04</div>
       <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--white);margin-bottom:0.75rem;">You Deliver</div>
       <p style="font-size:13px;color:rgba(255,255,255,0.45);line-height:1.8;margin-bottom:1.25rem;">Files delivered as WAV, MP3, and full stems within the agreed timeline. Release-ready, platform-optimized, and built to compete globally.</p>
       <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:var(--crimson-mid);">WAV · MP3 · Stems</div>
     </div>
-
   </div>
-
   <div style="text-align:center;">
     <a href="#booking" class="btn-primary">Start Your Project →</a>
   </div>
@@ -2913,6 +2877,37 @@ audio::-webkit-media-controls-panel {
   </div>
 </section>
 
+<!-- ── SOUNDCLOUD / MUSIC ── -->
+<section id="music" style="background:var(--black);padding:7rem 5vw;position:relative;overflow:hidden;">
+  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Cormorant Garamond',serif;font-size:20vw;font-weight:300;color:rgba(201,168,76,0.03);white-space:nowrap;pointer-events:none;user-select:none;letter-spacing:-0.05em;">SOUND</div>
+  <div style="position:relative;z-index:2;max-width:1100px;margin:0 auto;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:3rem;flex-wrap:wrap;gap:2rem;">
+      <div>
+        <p class="section-eyebrow">Listen Now</p>
+        <h2 class="section-title">Our <em>Music</em></h2>
+      </div>
+      <a href="https://soundcloud.com/outragemusic" target="_blank" style="display:inline-flex;align-items:center;gap:0.6rem;background:var(--gold);color:#0A0A0A;padding:13px 28px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;text-decoration:none;transition:background 0.2s,transform 0.2s;" onmouseover="this.style.background='#E8C97A';this.style.transform='translateY(-2px)'" onmouseout="this.style.background='var(--gold)';this.style.transform='translateY(0)'">
+        ☁ SoundCloud →
+      </a>
+    </div>
+    <div style="background:var(--dark2);border-top:2px solid var(--gold);overflow:hidden;">
+      <iframe width="100%" height="450"
+        scrolling="no" frameborder="no" allow="autoplay"
+        src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/outragemusic&color=%23C9A84C&auto_play=false&hide_related=false&show_comments=false&show_user=true&show_reposts=false&show_teaser=true&visual=true"
+        style="display:block;">
+      </iframe>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-top:1px;padding:1.25rem 1.5rem;background:var(--dark2);border-top:1px solid rgba(201,168,76,0.1);">
+      <span style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:rgba(255,255,255,0.2);">Stream on all platforms</span>
+      <div style="display:flex;gap:1.5rem;flex-wrap:wrap;">
+        <a href="https://soundcloud.com/outragemusic" target="_blank" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#E8C97A'" onmouseout="this.style.color='var(--gold)'">SoundCloud →</a>
+        <a href="https://www.youtube.com/@OutRageM" target="_blank" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='rgba(255,255,255,0.3)'">YouTube →</a>
+        <a href="https://open.spotify.com/artist/outragemusic" target="_blank" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='rgba(255,255,255,0.3)'">Spotify →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ── VOICEOVER / LANGUAGES ── -->
 <section id="voiceover">
   <div class="vo-bg-text">VOICE</div>
@@ -2944,6 +2939,84 @@ audio::-webkit-media-controls-panel {
     <div class="vo-image fade-up">
       <img src="https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800&q=85" alt="Voiceover session" loading="lazy" />
       <div class="vo-image-label">Multilingual Voice Talent · On-Call</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ── -->
+<section id="faq" style="background:var(--dark);padding:7rem 5vw;">
+  <div style="max-width:820px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:4rem;">
+      <p class="section-eyebrow" style="justify-content:center;">Got Questions</p>
+      <h2 class="section-title">Frequently <em>Asked</em></h2>
+    </div>
+    <div id="faqList" style="display:flex;flex-direction:column;gap:1px;">
+
+      <div class="faq-item" style="background:var(--dark2);border-left:2px solid transparent;transition:border-color 0.2s;">
+        <button onclick="toggleFaq(this)" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:1.5rem 2rem;background:none;border:none;cursor:pointer;text-align:left;gap:2rem;">
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--white);">How do I book a session?</span>
+          <span style="color:var(--gold);font-size:1.4rem;flex-shrink:0;transition:transform 0.3s;" class="faq-icon">+</span>
+        </button>
+        <div class="faq-body" style="display:none;padding:0 2rem 1.5rem;font-size:14px;color:rgba(255,255,255,0.55);line-height:1.85;">
+          Fill out the booking form on this page, message us on WhatsApp at +250 788 381 120, or email outragemusic20@gmail.com. We respond within 24 hours with availability and a custom quote for your project.
+        </div>
+      </div>
+
+      <div class="faq-item" style="background:var(--dark2);border-left:2px solid transparent;transition:border-color 0.2s;">
+        <button onclick="toggleFaq(this)" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:1.5rem 2rem;background:none;border:none;cursor:pointer;text-align:left;gap:2rem;">
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--white);">What are your studio rates?</span>
+          <span style="color:var(--gold);font-size:1.4rem;flex-shrink:0;transition:transform 0.3s;" class="faq-icon">+</span>
+        </button>
+        <div class="faq-body" style="display:none;padding:0 2rem 1.5rem;font-size:14px;color:rgba(255,255,255,0.55);line-height:1.85;">
+          Recording starts at $50/hr, mixing from $80/track, and mastering from $40/track. Beat leases start at $25. Dubbing and voiceover are quoted per project. We offer package deals for artists needing multiple services — ask us.
+        </div>
+      </div>
+
+      <div class="faq-item" style="background:var(--dark2);border-left:2px solid transparent;transition:border-color 0.2s;">
+        <button onclick="toggleFaq(this)" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:1.5rem 2rem;background:none;border:none;cursor:pointer;text-align:left;gap:2rem;">
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--white);">Can I work remotely with you?</span>
+          <span style="color:var(--gold);font-size:1.4rem;flex-shrink:0;transition:transform 0.3s;" class="faq-icon">+</span>
+        </button>
+        <div class="faq-body" style="display:none;padding:0 2rem 1.5rem;font-size:14px;color:rgba(255,255,255,0.55);line-height:1.85;">
+          Absolutely. We work with international clients regularly. Send us your stems or demo files, we handle the production and deliver finished WAV + MP3 files within the agreed timeline. We accept Wise, Payoneer, and MTN MoMo.
+        </div>
+      </div>
+
+      <div class="faq-item" style="background:var(--dark2);border-left:2px solid transparent;transition:border-color 0.2s;">
+        <button onclick="toggleFaq(this)" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:1.5rem 2rem;background:none;border:none;cursor:pointer;text-align:left;gap:2rem;">
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--white);">What languages do you dub in?</span>
+          <span style="color:var(--gold);font-size:1.4rem;flex-shrink:0;transition:transform 0.3s;" class="faq-icon">+</span>
+        </button>
+        <div class="faq-body" style="display:none;padding:0 2rem 1.5rem;font-size:14px;color:rgba(255,255,255,0.55);line-height:1.85;">
+          We offer dubbing and narration in Kinyarwanda, Swahili, French, English, Lingala, Amharic, Luganda, Somali, Hausa, Yoruba, Arabic, and Mandarin. Additional languages available upon request depending on project scope.
+        </div>
+      </div>
+
+      <div class="faq-item" style="background:var(--dark2);border-left:2px solid transparent;transition:border-color 0.2s;">
+        <button onclick="toggleFaq(this)" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:1.5rem 2rem;background:none;border:none;cursor:pointer;text-align:left;gap:2rem;">
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--white);">How long does mixing/mastering take?</span>
+          <span style="color:var(--gold);font-size:1.4rem;flex-shrink:0;transition:transform 0.3s;" class="faq-icon">+</span>
+        </button>
+        <div class="faq-body" style="display:none;padding:0 2rem 1.5rem;font-size:14px;color:rgba(255,255,255,0.55);line-height:1.85;">
+          Standard turnaround is 3–5 business days per track for mixing and 24–48 hours for mastering. Rush delivery is available. Beat purchases are delivered within 24 hours of confirmed payment.
+        </div>
+      </div>
+
+      <div class="faq-item" style="background:var(--dark2);border-left:2px solid transparent;transition:border-color 0.2s;">
+        <button onclick="toggleFaq(this)" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:1.5rem 2rem;background:none;border:none;cursor:pointer;text-align:left;gap:2rem;">
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--white);">Do you offer artist development?</span>
+          <span style="color:var(--gold);font-size:1.4rem;flex-shrink:0;transition:transform 0.3s;" class="faq-icon">+</span>
+        </button>
+        <div class="faq-body" style="display:none;padding:0 2rem 1.5rem;font-size:14px;color:rgba(255,255,255,0.55);line-height:1.85;">
+          Yes. Our artist development packages cover sonic identity, distribution strategy, brand positioning, music video production referrals, and session musician coordination. Contact us to discuss a custom development plan.
+        </div>
+      </div>
+
+    </div>
+
+    <div style="text-align:center;margin-top:3rem;">
+      <p style="color:rgba(255,255,255,0.35);font-size:13px;margin-bottom:1.5rem;letter-spacing:0.05em;">Still have questions? We're always available.</p>
+      <a href="https://wa.me/250788381120" target="_blank" class="btn-primary">Chat on WhatsApp →</a>
     </div>
   </div>
 </section>
@@ -4658,6 +4731,24 @@ function renderPublicGallery(resetPage = true) {
   window._renderGalleryPageFn = renderGalleryPage;
 
   renderGalleryPage();
+}
+
+// ── FAQ ACCORDION ──
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const body = item.querySelector('.faq-body');
+  const icon = btn.querySelector('.faq-icon');
+  const isOpen = body.style.display === 'block';
+  document.querySelectorAll('.faq-item').forEach(i => {
+    i.querySelector('.faq-body').style.display = 'none';
+    i.querySelector('.faq-icon').textContent = '+';
+    i.style.borderLeftColor = 'transparent';
+  });
+  if (!isOpen) {
+    body.style.display = 'block';
+    icon.textContent = '×';
+    item.style.borderLeftColor = 'var(--gold)';
+  }
 }
 
 document.querySelectorAll('a[href^="#"]').forEach(a => {
