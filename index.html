@@ -2601,17 +2601,57 @@ async function githubWriteFile(filename, data) {
     'Content-Type': 'application/json',
     'Accept': 'application/vnd.github.v3+json'
   };
-  try {
+
+  async function attemptWrite() {
+    // Always fetch a fresh SHA right before writing — never use a cached one
     let sha = null;
     try {
-      const getRes = await fetch(apiUrl + `?ref=${GITHUB_BRANCH}`, { headers });
-      if (getRes.ok) { const j = await getRes.json(); sha = j.sha; }
-    } catch(e) {}
+      const getRes = await fetch(apiUrl + `?ref=${GITHUB_BRANCH}&_=${Date.now()}`, {
+        headers,
+        cache: 'no-store'
+      });
+      if (getRes.ok) {
+        const j = await getRes.json();
+        sha = j.sha;
+      }
+    } catch(e) {
+      console.warn('Could not fetch SHA:', e);
+    }
+
     const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
-    const body = { message: `sync: update ${filename}`, content, branch: GITHUB_BRANCH, ...(sha ? { sha } : {}) };
-    const putRes = await fetch(apiUrl, { method: 'PUT', headers, body: JSON.stringify(body) });
-    const putJson = await putRes.json();
-    return putJson.content ? putJson.content.download_url : null;
+    const body = {
+      message: `sync: update ${filename} at ${new Date().toISOString()}`,
+      content,
+      branch: GITHUB_BRANCH,
+      ...(sha ? { sha } : {})
+    };
+
+    const putRes = await fetch(apiUrl, {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify(body)
+    });
+
+    return { status: putRes.status, json: await putRes.json() };
+  }
+
+  try {
+    let result = await attemptWrite();
+
+    // 409 = conflict (stale SHA) — wait 1s and retry once with a fresh SHA
+    if (result.status === 409) {
+      console.warn('SHA conflict — retrying in 1s...');
+      await new Promise(r => setTimeout(r, 1000));
+      result = await attemptWrite();
+    }
+
+    if (result.json.content) {
+      return result.json.content.download_url;
+    } else {
+      console.error('githubWriteFile unexpected response:', result.json);
+      showToast('⚠ Cloud sync error — check console');
+      return null;
+    }
   } catch(e) {
     console.error('githubWriteFile error:', e);
     showToast('⚠ Cloud sync error — check connection');
@@ -3035,40 +3075,54 @@ function saveEditBeat(id) {
   beat.license = document.getElementById('edit-license').value;
   beat.status = document.getElementById('edit-status').value;
   beat.cover = document.getElementById('edit-cover').value || beat.cover;
-  saveBeatsToStorage();
-  saveBeatsToCloud(adminBeats);
   renderBeats();
   updateStats();
   renderPublicBeats();
   renderCharts();
   document.getElementById('editModal').remove();
-  showToast('✓ Beat updated and synced');
+  showToast('⏳ Saving changes...');
+  saveBeatsToStorage().then(url => {
+    showToast(url ? '✓ Beat updated and synced' : '⚠ Saved locally — cloud sync failed');
+  }).catch(() => {
+    localStorage.setItem('outrage_beats', JSON.stringify(adminBeats));
+    showToast('⚠ Saved locally — cloud sync failed');
+  });
 }
 
 
 
 function toggleStatus(id) {
   const beat = adminBeats.find(b => b.id === id);
-  if (beat) {
-    beat.status = beat.status === 'published' ? 'draft' : 'published';
-    saveBeatsToStorage();
-    renderBeats();
-    updateStats();
-    renderPublicBeats();
-    showToast(beat.status === 'published' ? '✓ Beat published' : 'Beat moved to drafts');
-  }
+  if (!beat) return;
+  beat.status = beat.status === 'published' ? 'draft' : 'published';
+  const label = beat.status === 'published' ? '✓ Beat published' : 'Beat moved to drafts';
+  renderBeats();
+  updateStats();
+  renderPublicBeats();
+  showToast('⏳ Syncing...');
+  saveBeatsToStorage().then(url => {
+    showToast(url ? label + ' — synced' : label + ' (local only)');
+  }).catch(() => {
+    localStorage.setItem('outrage_beats', JSON.stringify(adminBeats));
+    showToast(label + ' (local only)');
+  });
 }
 
 function hideBeat(id) {
   const beat = adminBeats.find(b => b.id === id);
-  if (beat) {
-    beat.status = beat.status === 'hidden' ? 'published' : 'hidden';
-    saveBeatsToStorage();
-    renderBeats();
-    updateStats();
-    renderPublicBeats();
-    showToast(beat.status === 'hidden' ? '👁 Beat hidden from public' : '✓ Beat visible again');
-  }
+  if (!beat) return;
+  beat.status = beat.status === 'hidden' ? 'published' : 'hidden';
+  const label = beat.status === 'hidden' ? '👁 Beat hidden from public' : '✓ Beat visible again';
+  renderBeats();
+  updateStats();
+  renderPublicBeats();
+  showToast('⏳ Syncing...');
+  saveBeatsToStorage().then(url => {
+    showToast(url ? label + ' — synced' : label + ' (local only)');
+  }).catch(() => {
+    localStorage.setItem('outrage_beats', JSON.stringify(adminBeats));
+    showToast(label + ' (local only)');
+  });
 }
 
 function renderBeats() {
@@ -3561,11 +3615,16 @@ function closeMobileMenu() {
 // Smooth scroll for nav links
 function deleteBeat(id) {
   adminBeats = adminBeats.filter(b => b.id !== id);
-  saveBeatsToStorage();
   renderBeats();
   updateStats();
   renderPublicBeats();
-  showToast('Beat removed from catalog');
+  showToast('⏳ Deleting from cloud...');
+  saveBeatsToStorage().then(url => {
+    showToast(url ? '✓ Beat deleted and synced' : '⚠ Deleted locally — cloud sync failed');
+  }).catch(() => {
+    localStorage.setItem('outrage_beats', JSON.stringify(adminBeats));
+    showToast('⚠ Deleted locally — cloud sync failed');
+  });
 }
 
 function handleCoverSelect(e) {
