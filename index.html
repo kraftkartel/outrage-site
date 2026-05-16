@@ -13,8 +13,9 @@
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
   font-src https://fonts.gstatic.com;
   img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://i1.sndcdn.com https://www.instagram.com;
-  frame-src https://www.youtube.com https://www.instagram.com;
-  connect-src 'self' https://api.cloudinary.com https://res.cloudinary.com https://www.google-analytics.com https://api.jsonbin.io;
+  media-src 'self' https://res.cloudinary.com blob:;
+  frame-src https://www.youtube.com https://www.instagram.com https://res.cloudinary.com;
+  connect-src 'self' https://api.cloudinary.com https://res.cloudinary.com https://www.google-analytics.com https://api.jsonbin.io https://*.jsonbin.io;
 media-src 'self' https://res.cloudinary.com blob:;
 ">
 <title>OutRage Music Records | Kigali's Premier Creative Hub</title>
@@ -1409,7 +1410,7 @@ audio::-webkit-media-controls-panel {
         </div>
 
         <div style="background:var(--dark2);border:1px dashed rgba(201,168,76,0.3);padding:1.5rem 2rem;display:flex;align-items:center;gap:1.5rem;cursor:pointer;position:relative;transition:border-color 0.2s;margin-bottom:0.5rem;" id="galleryUploadZone">
-          <input type="file" id="galleryFile" accept="image/*" multiple style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;" onchange="handleGalleryUpload(event)" />
+          <input type="file" id="galleryFile" accept="image/*,video/*,.mp4,.mov,.webm" multiple style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;" onchange="handleGalleryUpload(event)" />
           <span style="font-size:1.8rem;">🖼</span>
           <div>
             <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);">Add Photos to Gallery</div>
@@ -2771,18 +2772,28 @@ function showToast(msg) {
 
 // Render public beats shop — merges admin beats with the 3 default ones
 const DEFAULT_BEATS = [];
-const JSONBIN_ID  = '6a079798c0954111d82ce3b4';
-const JSONBIN_KEY = '$2a$10$WTF/.coy39zehJv5BTytleME2ITaYjc0MFDcvRjZ7sGYf.Wv5HGvq';
-const GALLERY_BIN_KEY = '$2a$10$WTF/.coy39zehJv5BTytleME2ITaYjc0MFDcvRjZ7sGYf.Wv5HGvq';
-let GALLERY_BIN_ID = localStorage.getItem('outrage_gallery_bin_id') || '6a07ae09250b1311c35821e5';
+const CLOUDINARY_CLOUD = 'dc2pkdibz';
+const CLOUDINARY_UPLOAD_PRESET = 'outrage_beats';
+// Storage: Cloudinary raw uploads (JSONBin blocked by GitHub Pages CSP)
 
 async function loadBeatsFromCloud() {
   try {
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`, {
-      headers: { 'X-Master-Key': JSONBIN_KEY }
-    });
+    const res = await fetch(
+      `https://res.cloudinary.com/${CLOUDINARY_CLOUD}/raw/upload/outrage_data/beats.json?t=${Date.now()}`,
+      { cache: 'no-store' }
+    );
+    if (!res.ok) {
+      // fallback: try with version prefix stripped
+      const res2 = await fetch(
+        `https://res.cloudinary.com/${CLOUDINARY_CLOUD}/raw/upload/fl_attachment/outrage_data/beats.json?t=${Date.now()}`,
+        { cache: 'no-store' }
+      );
+      if (!res2.ok) return [];
+      const data2 = await res2.json();
+      return Array.isArray(data2) ? data2 : [];
+    }
     const data = await res.json();
-    return Array.isArray(data.record) ? data.record : [];
+    return Array.isArray(data) ? data : [];
   } catch(e) {
     console.error('Cloud load error:', e);
     return [];
@@ -2791,89 +2802,55 @@ async function loadBeatsFromCloud() {
 
 async function saveBeatsToCloud(beats) {
   try {
-    await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Master-Key': JSONBIN_KEY
-      },
-      body: JSON.stringify(beats)
+    const blob = new Blob([JSON.stringify(beats)], { type: 'application/json' });
+    const fd = new FormData();
+    fd.append('file', blob, 'beats.json');
+    fd.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+    fd.append('public_id', 'outrage_data/beats.json');
+    fd.append('overwrite', 'true');
+    fd.append('invalidate', 'true');
+    await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/raw/upload`, {
+      method: 'POST',
+      body: fd
     });
+    console.log('Beats synced to Cloudinary');
   } catch(e) {
     console.error('Cloud save error:', e);
   }
 }
 
 async function loadGalleryFromCloud() {
-  if (!GALLERY_BIN_ID) return null;
   try {
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${GALLERY_BIN_ID}/latest`, {
-      headers: { 'X-Master-Key': GALLERY_BIN_KEY }
-    });
+    const res = await fetch(
+      `https://res.cloudinary.com/${CLOUDINARY_CLOUD}/raw/upload/outrage_data/gallery.json?t=${Date.now()}`,
+      { cache: 'no-store' }
+    );
+    if (!res.ok) return null;
     const data = await res.json();
-    return Array.isArray(data.record) ? data.record : null;
-  } catch(e) { return null; }
-}
-
-async function saveGalleryToCloud(photos) {
-  if (!GALLERY_BIN_ID) return;
-  try {
-    await fetch(`https://api.jsonbin.io/v3/b/${GALLERY_BIN_ID}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'X-Master-Key': GALLERY_BIN_KEY },
-      body: JSON.stringify(photos)
-    });
-  } catch(e) {}
-}
-
-async function loadGalleryFromCloud() {
-  if (!GALLERY_BIN_ID) return null;
-  try {
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${GALLERY_BIN_ID}/latest`, {
-      headers: { 'X-Master-Key': GALLERY_BIN_KEY }
-    });
-    const data = await res.json();
-    return Array.isArray(data.record) ? data.record : null;
+    return Array.isArray(data) ? data : null;
   } catch(e) {
-    console.error('Gallery cloud fetch error:', e);
+    console.error('Gallery load error:', e);
     return null;
   }
 }
 
 async function saveGalleryToCloud(photos) {
   try {
-    if (!GALLERY_BIN_ID) {
-      // Create a new bin on first save
-      const res = await fetch('https://api.jsonbin.io/v3/b', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Master-Key': GALLERY_BIN_KEY,
-          'X-Bin-Name': 'outrage-gallery',
-          'X-Bin-Private': 'false'
-        },
-        body: JSON.stringify(photos)
-      });
-      const data = await res.json();
-      GALLERY_BIN_ID = data.metadata?.id || '';
-      if (GALLERY_BIN_ID) {
-        localStorage.setItem('outrage_gallery_bin_id', GALLERY_BIN_ID);
-        showToast('✓ Gallery bin created: ' + GALLERY_BIN_ID);
-        console.log('New Gallery Bin ID:', GALLERY_BIN_ID, '← Save this in your code!');
-      }
-    } else {
-      await fetch(`https://api.jsonbin.io/v3/b/${GALLERY_BIN_ID}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Master-Key': GALLERY_BIN_KEY
-        },
-        body: JSON.stringify(photos)
-      });
-    }
+    const blob = new Blob([JSON.stringify(photos)], { type: 'application/json' });
+    const fd = new FormData();
+    fd.append('file', blob, 'gallery.json');
+    fd.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+    fd.append('public_id', 'outrage_data/gallery.json');
+    fd.append('overwrite', 'true');
+    fd.append('invalidate', 'true');
+    await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/raw/upload`, {
+      method: 'POST',
+      body: fd
+    });
+    console.log('Gallery synced to Cloudinary');
   } catch(e) {
-    console.error('Gallery cloud save error:', e);
-    showToast('⚠ Could not sync gallery to cloud');
+    console.error('Gallery save error:', e);
+    showToast('⚠ Gallery sync failed: ' + e.message);
   }
 }
 
@@ -3473,29 +3450,38 @@ async function handleGalleryUpload(e) {
     localStorage.setItem('outrage_gallery', JSON.stringify(cloudGallery));
   }
 
-  files.forEach(file => {
+  <input type="file" id="galleryFile" accept="image/*,video/*,.mp4,.mov,.webm" multiple style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;" onchange="handleGalleryfiles.forEach(file => {
+    const isVideo = file.type.startsWith('video/');
+    const uploadUrl = isVideo
+      ? 'https://api.cloudinary.com/v1_1/dc2pkdibz/video/upload'
+      : 'https://api.cloudinary.com/v1_1/dc2pkdibz/image/upload';
     const fd = new FormData();
     fd.append('file', file);
     fd.append('upload_preset', 'outrage_beats');
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://api.cloudinary.com/v1_1/dc2pkdibz/image/upload');
+    xhr.open('POST', uploadUrl);
     xhr.onload = () => {
       const res = JSON.parse(xhr.responseText);
       if (res.secure_url) {
         if (adminGallery.length === 0) adminGallery = [...DEFAULT_GALLERY];
         const caption = file.name.replace(/\.[^.]+$/, '').replace(/[_-]/g, ' ');
-        adminGallery.push({ id: 'g' + Date.now() + Math.random(), url: res.secure_url, caption });
+        adminGallery.push({
+          id: 'g' + Date.now() + Math.random(),
+          url: res.secure_url,
+          caption,
+          type: isVideo ? 'video' : 'image'
+        });
         saveGallery();
         renderAdminGallery();
         renderPublicGallery();
-        showToast('✓ Photo added to gallery');
+        showToast('✓ ' + (isVideo ? 'Video' : 'Photo') + ' added to gallery');
       } else {
         showToast('⚠ Upload failed for ' + file.name);
       }
     };
     xhr.onerror = () => showToast('⚠ Upload error');
     xhr.send(fd);
-  });
+  });Upload(event)" />
 }
 
 async function renderPublicGallery() {
@@ -3548,20 +3534,27 @@ async function renderPublicGallery() {
     const visible = photos.slice(0, galleryPage * GALLERY_PER_PAGE);
     const first = visible[0];
     const rest = visible.slice(1);
+    function mediaEl(p, large) {
+      if (p.type === 'video') {
+        return `<video src="${p.url}" style="width:100%;height:100%;object-fit:cover;filter:brightness(0.85);" ${large ? 'controls' : 'muted autoplay loop playsinline'} preload="metadata"></video>`;
+      }
+      return `<img src="${p.url}" alt="${p.caption}" style="width:100%;height:100%;object-fit:cover;filter:brightness(0.85);" />`;
+    }
+
     grid.innerHTML = (first ? `
       <div class="gallery-item" style="grid-column:span 2;grid-row:span 2;"
-           onclick="openLightbox(this.querySelector('img'),'${first.caption}')">
-        <img src="${first.url}" alt="${first.caption}" />
+           onclick="${first.type === 'video' ? '' : `openLightbox(this.querySelector('img'),'${first.caption}')`}">
+        ${mediaEl(first, false)}
         <div class="gallery-overlay">
-          <span class="gallery-caption">${first.caption}</span>
+          <span class="gallery-caption">${first.type === 'video' ? '▶ ' : ''}${first.caption}</span>
         </div>
       </div>
     ` : '') + rest.map(p => `
       <div class="gallery-item"
-           onclick="openLightbox(this.querySelector('img'),'${p.caption}')">
-        <img src="${p.url}" alt="${p.caption}" />
+           onclick="${p.type === 'video' ? '' : `openLightbox(this.querySelector('img'),'${p.caption}')`}">
+        ${mediaEl(p, false)}
         <div class="gallery-overlay">
-          <span class="gallery-caption">${p.caption}</span>
+          <span class="gallery-caption">${p.type === 'video' ? '▶ ' : ''}${p.caption}</span>
         </div>
       </div>
     `).join('');
