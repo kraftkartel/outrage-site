@@ -2466,14 +2466,20 @@ async function loadBeatsFromCloud() {
   }
 
   // Strategy 3: Bootstrap via index file (for brand new devices with no localStorage)
-  // The index file is small and overwritten, so add nocache
   try {
-    const indexRes = await fetch(
-      `https://res.cloudinary.com/${CLOUDINARY_CLOUD}/raw/upload/outrage_data/beats_index.json${nocache}`,
-      { cache: 'no-store' }
-    );
-    if (indexRes.ok) {
-      const index = await indexRes.json();
+    // Try with nocache param first, fall back to plain URL
+    const indexUrls = [
+      `https://res.cloudinary.com/${CLOUDINARY_CLOUD}/raw/upload/outrage_data/beats_index.json?t=${Date.now()}`,
+      `https://res.cloudinary.com/${CLOUDINARY_CLOUD}/raw/upload/fl_attachment/outrage_data/beats_index.json`,
+    ];
+    let indexRes = null;
+    for (const u of indexUrls) {
+      try { indexRes = await fetch(u, { cache: 'no-store' }); if (indexRes.ok) break; } catch(e) {}
+    }
+    if (!indexRes || !indexRes.ok) throw new Error('index not found');
+    const indexRes2 = indexRes;
+    if (indexRes2.ok) {
+      const index = await indexRes2.json();
       // Save the URLs so next load is faster
       if (index.ptr) localStorage.setItem('outrage_beats_ptr_url', index.ptr);
       if (index.beats) localStorage.setItem('outrage_beats_url', index.beats);
@@ -2864,12 +2870,16 @@ function saveBeat() {
     date: new Date().toLocaleDateString('en-RW', { day: 'numeric', month: 'short', year: 'numeric' })
   };
   adminBeats.unshift(beat);
-  saveBeatsToStorage();
+  localStorage.setItem('outrage_beats', JSON.stringify(adminBeats));
   renderBeats();
   updateStats();
   showToast('⏳ Syncing to cloud...');
-  saveBeatsToCloud(adminBeats).then(() => {
-    showToast('✓ Beat saved and synced!');
+  saveBeatsToCloud(adminBeats).then((url) => {
+    if (url) {
+      showToast('✓ Beat saved and synced!');
+    } else {
+      showToast('⚠ Saved locally — cloud sync failed');
+    }
     renderPublicBeats();
   });
   clearForm();
@@ -3353,20 +3363,35 @@ document.addEventListener('keydown', e => {
 
 // Init beats and gallery — both load from cloud then render
 async function initBeats() {
+  // Show cached immediately
   const cached = JSON.parse(localStorage.getItem('outrage_beats') || '[]');
   if (cached.length) {
     adminBeats = cached;
     renderPublicBeats();
+  } else {
+    // Show loading state while we fetch
+    const grid = document.getElementById('publicBeatsGrid');
+    if (grid) grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:3rem 2rem;color:rgba(255,255,255,0.3);font-family:'Barlow Condensed',sans-serif;letter-spacing:0.2em;text-transform:uppercase;font-size:11px;"><div style="font-size:1.5rem;margin-bottom:0.75rem;">⏳</div>Loading beats...</div>`;
   }
-  try {
-    const cloudBeats = await loadBeatsFromCloud();
-    if (cloudBeats && cloudBeats.length) {
-      adminBeats = cloudBeats;
-      localStorage.setItem('outrage_beats', JSON.stringify(cloudBeats));
-      renderPublicBeats();
-    }
-  } catch(e) {}
+
+  // Try cloud up to 3 times with short delays (mobile networks can be slow)
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      if (attempt > 0) await new Promise(r => setTimeout(r, 1500 * attempt));
+      const cloudBeats = await loadBeatsFromCloud();
+      if (cloudBeats && cloudBeats.length) {
+        adminBeats = cloudBeats;
+        localStorage.setItem('outrage_beats', JSON.stringify(cloudBeats));
+        renderPublicBeats();
+        checkSeeMore();
+        return;
+      }
+    } catch(e) {}
+  }
+
+  // If still nothing after retries, show empty state properly
   checkSeeMore();
+  if (!adminBeats.length) renderPublicBeats();
 }
 
 async function initGallery() {
