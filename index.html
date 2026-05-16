@@ -1319,10 +1319,137 @@ audio::-webkit-media-controls-panel {
   }
 
 }
+/* ── PARTICLE CANVAS ── */
+  #hero-canvas {
+    position: absolute; inset: 0; z-index: 1;
+    pointer-events: none; width: 100%; height: 100%;
+  }
+
+  /* ── SCROLL PROGRESS BAR ── */
+  #scroll-bar {
+    position: fixed; top: 0; left: 0; height: 2px;
+    background: var(--gold); z-index: 9999;
+    width: 0%; transition: width 0.1s linear;
+  }
+
+  /* ── CURSOR GLOW ── */
+  #cursor-glow {
+    position: fixed; width: 300px; height: 300px;
+    border-radius: 50%; pointer-events: none; z-index: 0;
+    background: radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+    transition: left 0.15s ease, top 0.15s ease;
+  }
+
+  /* ── TESTIMONIALS ── */
+  #testimonials { background: var(--black); overflow: hidden; }
+  .testimonials-track {
+    display: flex; gap: 1.5rem;
+    animation: scrollTrack 30s linear infinite;
+    width: max-content;
+  }
+  .testimonials-track:hover { animation-play-state: paused; }
+  @keyframes scrollTrack { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .testi-card {
+    background: var(--dark); border: 1px solid rgba(201,168,76,0.12);
+    padding: 2rem; width: 320px; flex-shrink: 0;
+    border-left: 3px solid var(--gold);
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .testi-card:hover { background: var(--dark2); border-color: var(--gold-light); }
+  .testi-quote {
+    font-family: 'Cormorant Garamond', serif; font-size: 1rem;
+    font-weight: 300; color: rgba(255,255,255,0.7);
+    line-height: 1.8; margin-bottom: 1.5rem; font-style: italic;
+  }
+  .testi-author {
+    font-family: 'Barlow Condensed', sans-serif; font-size: 11px;
+    font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--gold);
+  }
+  .testi-role {
+    font-size: 11px; color: rgba(255,255,255,0.35);
+    letter-spacing: 0.1em; margin-top: 0.2rem;
+  }
+  [data-theme="light"] .testi-card { background: rgba(255,250,242,0.9); border-color: rgba(139,105,20,0.15); }
+  [data-theme="light"] .testi-card:hover { background: #FFF8F0; }
+  [data-theme="light"] .testi-quote { color: rgba(26,18,8,0.7); }
+  [data-theme="light"] .testi-role { color: rgba(26,18,8,0.35); }
+
+  /* ── NOW PLAYING TICKER ── */
+  #now-playing {
+    background: var(--dark2); border-bottom: 1px solid rgba(201,168,76,0.15);
+    padding: 0.6rem 5vw; display: flex; align-items: center; gap: 1rem;
+    overflow: hidden;
+  }
+  .np-label {
+    font-family: 'Barlow Condensed', sans-serif; font-size: 9px; font-weight: 700;
+    letter-spacing: 0.4em; text-transform: uppercase; color: var(--gold);
+    white-space: nowrap; display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0;
+  }
+  .np-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--gold);
+    animation: npPulse 1.2s ease-in-out infinite;
+  }
+  @keyframes npPulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.7); } }
+  .np-ticker {
+    font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 600;
+    letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.5);
+    white-space: nowrap; overflow: hidden; flex: 1;
+    animation: npScroll 20s linear infinite;
+  }
+  @keyframes npScroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+  [data-theme="light"] #now-playing { background: #E4DDD0; border-bottom-color: rgba(139,105,20,0.2); }
+  [data-theme="light"] .np-ticker { color: rgba(26,18,8,0.45); }
+
+  /* ── STATS COUNTER ANIMATION ── */
+  .stat-num { transition: color 0.3s; }
+  .stat-num.counting { color: var(--gold-light); }
+
+  /* ── SERVICE CARD ICON UPGRADE ── */
+  .service-icon-wrap {
+    width: 48px; height: 48px; border: 1px solid rgba(201,168,76,0.25);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.25rem; transition: border-color 0.3s, background 0.3s;
+  }
+  .service-card:hover .service-icon-wrap {
+    border-color: var(--gold); background: rgba(201,168,76,0.08);
+  }
+  .service-icon-wrap span { font-size: 1.4rem; }
+
+  /* ── BEAT CARD SKELETON ── */
+  @keyframes shimmer {
+    0% { background-position: -400px 0; }
+    100% { background-position: 400px 0; }
+  }
+  .beat-skeleton {
+    background: var(--dark2);
+    background-image: linear-gradient(90deg, var(--dark2) 25%, var(--dark3) 50%, var(--dark2) 75%);
+    background-size: 400px 100%;
+    animation: shimmer 1.4s ease infinite;
+    border-radius: 0; aspect-ratio: 1; margin-bottom: 0.5rem;
+  }
+
+  /* ── SECTION DIVIDER LINES ── */
+  .gold-divider {
+    width: 60px; height: 1px; background: var(--gold); margin: 0 auto 3rem;
+    opacity: 0.4;
+  }
+
+  /* ── HERO BADGE ── */
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.25);
+    padding: 6px 16px; margin-bottom: 1.5rem;
+    font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold);
+  }
+  .hero-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: #25D366; animation: npPulse 1.5s ease-in-out infinite; }
 </style>
 </head>
 <body>
-
+<div id="scroll-bar"></div>
+<div id="cursor-glow"></div>
 <!-- PAGE LOADER -->
 <div id="page-loader">
   <div class="loader-logo">OutRage <span>Music</span></div>
@@ -1622,6 +1749,10 @@ audio::-webkit-media-controls-panel {
     <span></span><span></span><span></span>
   </button>
 </nav>
+<div id="now-playing">
+  <div class="np-label"><div class="np-dot"></div> Now Playing</div>
+  <div class="np-ticker" id="npTicker">Kraft Kartel · K Clamp · Yannick MYK · Lil Puppy · Gurin · Triple Kingdom$ · OutRage Music Records · Kigali, Rwanda · Est. 2018 · Kraft Kartel · K Clamp · Yannick MYK · Lil Puppy</div>
+</div>
 <div class="mobile-menu" id="mobileMenu">
   <a href="#home" onclick="closeMobileMenu()">Home</a>
   <a href="#about" onclick="closeMobileMenu()">About</a>
@@ -1636,9 +1767,11 @@ audio::-webkit-media-controls-panel {
 
 <!-- ── HERO ── -->
 <section id="home">
+  <canvas id="hero-canvas"></canvas>
   <div class="hero-bg"></div>
   <div class="hero-content">
-    <p class="hero-eyebrow">OutRage Music Records · Kigali, Rwanda</p>
+    <div class="hero-badge"><div class="hero-badge-dot"></div> Live · Kigali, Rwanda</div>
+<p class="hero-eyebrow">OutRage Music Records · Est. 2018</p>
     <h1 class="hero-title">
       Where Sound<br>
       Becomes <em>Legacy</em>
@@ -2083,6 +2216,31 @@ audio::-webkit-media-controls-panel {
   </div>
   <div style="text-align:center;margin-top:1.5rem;">
     <a href="#booking" class="btn-outline">Inquire About Custom Beats →</a>
+  </div>
+</section>
+<!-- ── TESTIMONIALS ── -->
+<section id="testimonials">
+  <div style="text-align:center;margin-bottom:3rem;" class="fade-up">
+    <p class="section-eyebrow" style="justify-content:center;">Client Love</p>
+    <h2 class="section-title">What They <em>Say</em></h2>
+    <div class="gold-divider"></div>
+  </div>
+  <div style="overflow:hidden;">
+    <div class="testimonials-track">
+      <div class="testi-card"><p class="testi-quote">"OutRage took my rough demo and turned it into a radio-ready record. The mixing alone changed everything."</p><div class="testi-author">Kraft Kartel</div><div class="testi-role">Recording Artist · Kigali</div></div>
+      <div class="testi-card"><p class="testi-quote">"Best dubbing studio in East Africa — no question. Delivered our documentary in 4 languages flawlessly."</p><div class="testi-author">Sarah M.</div><div class="testi-role">Documentary Producer · Nairobi</div></div>
+      <div class="testi-card"><p class="testi-quote">"The beats catalog is insane. Found exactly what I needed for my project and the licensing process was smooth."</p><div class="testi-author">Yannick MYK</div><div class="testi-role">Artist · Kigali</div></div>
+      <div class="testi-card"><p class="testi-quote">"Professional, creative, and fast. Twumve understood my vision from the very first session."</p><div class="testi-author">Gurin</div><div class="testi-role">Afrobeat Artist · Rwanda</div></div>
+      <div class="testi-card"><p class="testi-quote">"Their voiceover team handled our 3-language ad campaign perfectly. On time, on budget, on point."</p><div class="testi-author">Jean-Paul K.</div><div class="testi-role">Brand Manager · Kigali</div></div>
+      <div class="testi-card"><p class="testi-quote">"I flew from Kampala just to record at OutRage. Worth every kilometer. The control room is world class."</p><div class="testi-author">K Clamp</div><div class="testi-role">Rap Artist · Uganda</div></div>
+      <!-- Duplicate for seamless loop -->
+      <div class="testi-card"><p class="testi-quote">"OutRage took my rough demo and turned it into a radio-ready record. The mixing alone changed everything."</p><div class="testi-author">Kraft Kartel</div><div class="testi-role">Recording Artist · Kigali</div></div>
+      <div class="testi-card"><p class="testi-quote">"Best dubbing studio in East Africa — no question. Delivered our documentary in 4 languages flawlessly."</p><div class="testi-author">Sarah M.</div><div class="testi-role">Documentary Producer · Nairobi</div></div>
+      <div class="testi-card"><p class="testi-quote">"The beats catalog is insane. Found exactly what I needed for my project and the licensing process was smooth."</p><div class="testi-author">Yannick MYK</div><div class="testi-role">Artist · Kigali</div></div>
+      <div class="testi-card"><p class="testi-quote">"Professional, creative, and fast. Twumve understood my vision from the very first session."</p><div class="testi-author">Gurin</div><div class="testi-role">Afrobeat Artist · Rwanda</div></div>
+      <div class="testi-card"><p class="testi-quote">"Their voiceover team handled our 3-language ad campaign perfectly. On time, on budget, on point."</p><div class="testi-author">Jean-Paul K.</div><div class="testi-role">Brand Manager · Kigali</div></div>
+      <div class="testi-card"><p class="testi-quote">"I flew from Kampala just to record at OutRage. Worth every kilometer. The control room is world class."</p><div class="testi-author">K Clamp</div><div class="testi-role">Rap Artist · Uganda</div></div>
+    </div>
   </div>
 </section>
 
@@ -3715,6 +3873,133 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     }
   });
 });
+// ── PARTICLE HERO ──
+(function() {
+  const canvas = document.getElementById('hero-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [], mouse = { x: null, y: null };
+  const GOLD = 'rgba(201,168,76,';
+  const COUNT = window.innerWidth < 768 ? 40 : 80;
+
+  function resize() {
+    W = canvas.width = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+  }
+
+  function Particle() {
+    this.x = Math.random() * W;
+    this.y = Math.random() * H;
+    this.vx = (Math.random() - 0.5) * 0.4;
+    this.vy = (Math.random() - 0.5) * 0.4;
+    this.r = Math.random() * 1.5 + 0.5;
+    this.alpha = Math.random() * 0.5 + 0.1;
+  }
+
+  Particle.prototype.update = function() {
+    this.x += this.vx;
+    this.y += this.vy;
+    if (this.x < 0 || this.x > W) this.vx *= -1;
+    if (this.y < 0 || this.y > H) this.vy *= -1;
+    if (mouse.x) {
+      const dx = this.x - mouse.x;
+      const dy = this.y - mouse.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 120) {
+        this.x += dx / dist * 1.5;
+        this.y += dy / dist * 1.5;
+      }
+    }
+  };
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(p => {
+      p.update();
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = GOLD + p.alpha + ')';
+      ctx.fill();
+    });
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 100) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = GOLD + (0.15 * (1 - dist / 100)) + ')';
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  for (let i = 0; i < COUNT; i++) particles.push(new Particle());
+  draw();
+
+  window.addEventListener('resize', () => { resize(); });
+  document.getElementById('home').addEventListener('mousemove', e => {
+    const rect = canvas.getBoundingClientRect();
+    mouse.x = e.clientX - rect.left;
+    mouse.y = e.clientY - rect.top;
+  });
+  document.getElementById('home').addEventListener('mouseleave', () => {
+    mouse.x = null; mouse.y = null;
+  });
+})();
+
+// ── SCROLL PROGRESS BAR ──
+window.addEventListener('scroll', () => {
+  const scrolled = window.scrollY;
+  const total = document.documentElement.scrollHeight - window.innerHeight;
+  document.getElementById('scroll-bar').style.width = (scrolled / total * 100) + '%';
+}, { passive: true });
+
+// ── CURSOR GLOW ──
+if (window.innerWidth > 768) {
+  const glow = document.getElementById('cursor-glow');
+  if (glow) {
+    document.addEventListener('mousemove', e => {
+      glow.style.left = e.clientX + 'px';
+      glow.style.top = e.clientY + 'px';
+    }, { passive: true });
+  }
+}
+
+// ── ANIMATED STAT COUNTERS ──
+function animateCount(el, target, suffix) {
+  let start = 0;
+  const dur = 1800;
+  const step = target / (dur / 16);
+  const tick = () => {
+    start = Math.min(start + step, target);
+    el.textContent = Math.floor(start) + suffix;
+    if (start < target) requestAnimationFrame(tick);
+  };
+  tick();
+}
+const statObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const nums = e.target.querySelectorAll('.stat-num');
+      nums.forEach(n => {
+        const txt = n.textContent;
+        if (txt.includes('250')) animateCount(n, 250, '+');
+        else if (txt.includes('12')) animateCount(n, 12, '+');
+      });
+      statObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.5 });
+const heroStats = document.querySelector('.hero-stats');
+if (heroStats) statObserver.observe(heroStats);
+
 </script>
 </body>
 </html>
