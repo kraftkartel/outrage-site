@@ -5015,12 +5015,11 @@ document.querySelectorAll('#studioGrid .m-item').forEach((item, i) => {
           child.style.animationDelay = (i * 0.12) + 's';
         });
         processObserver.unobserve(e.target);
- });
-}, { threshold: 0.5 });
-
-const heroStats = document.querySelector('.hero-stats');
-if (heroStats) statObserver.observe(heroStats);
-  document.body.appendChild(dot);
+      }
+    });
+  }, { threshold: 0.2 });
+  processObserver.observe(processGrid);
+})();
   let mouseX = 0, mouseY = 0;
   document.addEventListener('mousemove', e => {
     mouseX = e.clientX; mouseY = e.clientY;
