@@ -19,6 +19,33 @@
 media-src 'self' https://res.cloudinary.com blob:;
 ">
 <title>OutRage Music Records | Kigali's Premier Creative Hub</title>
+<meta name="description" content="OutRage Music Records — East Africa's premier recording studio in Kigali, Rwanda. World-class recording, mixing, mastering, beat production, dubbing and multilingual voiceover services." />
+<meta name="keywords" content="recording studio Kigali, music production Rwanda, beat store, dubbing East Africa, voiceover Kinyarwanda, mixing mastering Rwanda, OutRage Music" />
+<meta name="author" content="OutRage Music Records" />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://www.outragemusic.rw/" />
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://www.outragemusic.rw/" />
+<meta property="og:title" content="OutRage Music Records | Kigali's Premier Creative Hub" />
+<meta property="og:description" content="East Africa's premier recording studio — world-class production, mixing, mastering, dubbing and multilingual voiceover. All under one roof in Kigali, Rwanda." />
+<meta property="og:image" content="https://www.outragemusic.rw/og-image.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:locale" content="en_RW" />
+<meta property="og:site_name" content="OutRage Music Records" />
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="OutRage Music Records | Kigali's Premier Creative Hub" />
+<meta name="twitter:description" content="East Africa's premier recording studio in Kigali, Rwanda." />
+<meta name="twitter:image" content="https://www.outragemusic.rw/og-image.jpg" />
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" href="favicon.png" />
+<link rel="apple-touch-icon" href="favicon.png" />
+<meta name="theme-color" content="#C9A84C" />
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-JJDSJD8M6J"></script>
@@ -26,7 +53,12 @@ media-src 'self' https://res.cloudinary.com blob:;
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-JJDSJD8M6J');
+  const _savedPrefs = JSON.parse(localStorage.getItem('outrage_prefs') || '{}');
+  if (_savedPrefs.cookiesAccepted) {
+    gtag('config', 'G-JJDSJD8M6J');
+  } else {
+    window['ga-disable-G-JJDSJD8M6J'] = true;
+  }
   function trackEvent(action, category, label) {
     gtag('event', action, { event_category: category, event_label: label });
   }
@@ -911,7 +943,7 @@ media-src 'self' https://res.cloudinary.com blob:;
   /* Page fade-in */
   #page-loader {
     position: fixed; inset: 0; z-index: 999999;
-    background: #0A0A0A;
+    background: #0A0A0A !important;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     gap: 1.5rem;
     transition: opacity 0.6s ease, visibility 0.6s ease;
@@ -920,9 +952,9 @@ media-src 'self' https://res.cloudinary.com blob:;
   .loader-logo {
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 28px; font-weight: 900; letter-spacing: 0.15em;
-    text-transform: uppercase; color: #fff;
+    text-transform: uppercase; color: #ffffff !important;
   }
-  .loader-logo span { color: #C9A84C; }
+  .loader-logo span { color: #C9A84C !important; }
   .loader-bar-wrap {
     width: 160px; height: 1px; background: rgba(201,168,76,0.2);
   }
@@ -934,7 +966,7 @@ media-src 'self' https://res.cloudinary.com blob:;
   .loader-sub {
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 10px; font-weight: 600; letter-spacing: 0.45em;
-    text-transform: uppercase; color: rgba(201,168,76,0.5);
+    text-transform: uppercase; color: rgba(201,168,76,0.5) !important;
   }
 
   /* ══════════════════════════════════
@@ -1605,6 +1637,19 @@ audio::-webkit-media-controls-panel {
   <div id="lightbox-caption"></div>
 </div>
 
+<!-- ── BACK TO TOP ── -->
+<button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top"
+  style="position:fixed;bottom:5.5rem;right:1.75rem;z-index:4999;
+         width:42px;height:42px;border-radius:50%;
+         background:var(--dark2);border:1px solid rgba(201,168,76,0.35);
+         color:var(--gold);font-size:1.1rem;cursor:pointer;
+         display:flex;align-items:center;justify-content:center;
+         opacity:0;pointer-events:none;
+         transition:opacity 0.3s,transform 0.3s,background 0.2s;
+         transform:translateY(8px);">
+  ↑
+</button>
+
 <!-- ── WHATSAPP FLOAT ── -->
 <a href="https://wa.me/250788381120" target="_blank" class="wa-float" aria-label="Chat on WhatsApp">
   💬
@@ -1818,6 +1863,59 @@ audio::-webkit-media-controls-panel {
 <!-- ══ SUCCESS TOAST ══ -->
 <div class="success-toast" id="toast"></div>
 
+<!-- ── PRIVACY POLICY MODAL ── -->
+<div id="privacyModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:99998;overflow-y:auto;-webkit-overflow-scrolling:touch;">
+  <div style="max-width:680px;margin:4rem auto;background:var(--dark);border-top:3px solid var(--gold);padding:3rem;position:relative;">
+    <button onclick="closePrivacyModal()" style="position:absolute;top:1.5rem;right:1.5rem;background:none;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.4);padding:6px 14px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;">✕ Close</button>
+    <p style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:var(--gold);margin-bottom:0.5rem;">Legal</p>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;margin-bottom:2rem;">Privacy <em style="color:var(--gold);font-style:italic;">Policy</em></h2>
+    <div style="font-size:14px;color:rgba(255,255,255,0.6);line-height:1.9;">
+      <p style="margin-bottom:1.25rem;"><strong style="color:var(--white);font-family:'Barlow Condensed',sans-serif;letter-spacing:0.1em;text-transform:uppercase;font-size:12px;">Last updated: January 2026</strong></p>
+      <p style="margin-bottom:1.25rem;">OutRage Music Records ("we", "us") operates the website outragemusic.rw. This policy explains what data we collect and how we use it.</p>
+      <p style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin:1.5rem 0 0.5rem;">Data We Collect</p>
+      <p style="margin-bottom:1.25rem;">We collect information you voluntarily provide (name, email, phone) via the booking form. We also collect anonymous usage data via Google Analytics (page views, session duration, referral source) when you accept cookies.</p>
+      <p style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin:1.5rem 0 0.5rem;">How We Use It</p>
+      <p style="margin-bottom:1.25rem;">Booking information is used solely to respond to your inquiry via WhatsApp or email. We do not sell your data to third parties.</p>
+      <p style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin:1.5rem 0 0.5rem;">Cookies</p>
+      <p style="margin-bottom:1.25rem;">We use cookies for analytics (Google Analytics) and to remember your preferences (theme, last section visited). You can decline cookies via the banner on first visit. Declining disables Google Analytics tracking.</p>
+      <p style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin:1.5rem 0 0.5rem;">Your Rights</p>
+      <p style="margin-bottom:1.25rem;">You may request deletion of any personal data we hold by contacting us at outragemusic20@gmail.com.</p>
+      <p style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin:1.5rem 0 0.5rem;">Contact</p>
+      <p>OutRage Music Records · KN 2 Ave, Kigali, Rwanda · outragemusic20@gmail.com</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── BEAT LICENSE TERMS MODAL ── -->
+<div id="termsModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:99998;overflow-y:auto;-webkit-overflow-scrolling:touch;">
+  <div style="max-width:680px;margin:4rem auto;background:var(--dark);border-top:3px solid var(--gold);padding:3rem;position:relative;">
+    <button onclick="closeTermsModal()" style="position:absolute;top:1.5rem;right:1.5rem;background:none;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.4);padding:6px 14px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;">✕ Close</button>
+    <p style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.4em;text-transform:uppercase;color:var(--gold);margin-bottom:0.5rem;">Legal</p>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;margin-bottom:2rem;">Beat License <em style="color:var(--gold);font-style:italic;">Terms</em></h2>
+    <div style="font-size:14px;color:rgba(255,255,255,0.6);line-height:1.9;">
+      <p style="margin-bottom:1.5rem;">All beats produced by OutRage Music Records are protected under copyright. Purchase of a license grants you the right to use the beat under the terms of the selected license type only.</p>
+
+      <p style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin:1.5rem 0 0.5rem;">Basic Lease</p>
+      <p style="margin-bottom:1rem;">Non-exclusive. Up to 10,000 streams/downloads. 1 music video. Must credit "Prod. Twumve / OutRage Music". OutRage retains the right to lease the beat to other artists.</p>
+
+      <p style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin:1.5rem 0 0.5rem;">Premium Lease</p>
+      <p style="margin-bottom:1rem;">Non-exclusive. Up to 100,000 streams/downloads. Unlimited music videos. Must credit "Prod. Twumve / OutRage Music". OutRage retains the right to lease the beat to other artists.</p>
+
+      <p style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin:1.5rem 0 0.5rem;">Unlimited License</p>
+      <p style="margin-bottom:1rem;">Non-exclusive. Unlimited streams and distribution. All formats permitted. Must credit "Prod. Twumve / OutRage Music".</p>
+
+      <p style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin:1.5rem 0 0.5rem;">Exclusive Rights</p>
+      <p style="margin-bottom:1rem;">Full exclusive ownership transferred to buyer. Beat removed from catalog. No credit required. Contact us directly for exclusive pricing.</p>
+
+      <p style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin:1.5rem 0 0.5rem;">Delivery</p>
+      <p style="margin-bottom:1rem;">Beats delivered as WAV + MP3 (and stems where applicable) within 24 hours of confirmed payment.</p>
+
+      <p style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin:1.5rem 0 0.5rem;">Contact</p>
+      <p>OutRage Music Records · outragemusic20@gmail.com · +250 788 381 120</p>
+    </div>
+  </div>
+</div>
+
 <div class="upload-success-overlay" id="uploadSuccessOverlay" style="display:none;">
   <div class="upload-success-box">
     <div class="upload-success-icon">✅</div>
@@ -1969,12 +2067,14 @@ audio::-webkit-media-controls-panel {
       class="about-img-main"
       src="studio-1.jpg"
       alt="Recording studio console"
+      loading="lazy"
       style="filter:brightness(0.9) contrast(1.05) saturate(0.85);"
     />
     <img
       class="about-img-accent"
       src="studio-2.jpg"
       alt="Artist recording"
+      loading="lazy"
       style="filter:brightness(0.9) contrast(1.05) saturate(0.85);"
     />
     <div class="about-img-badge">
@@ -2057,6 +2157,7 @@ audio::-webkit-media-controls-panel {
       <img
         src="studio-3.jpg"
         alt="OutRage Music Studio"
+        loading="lazy"
       />
     </div>
     <div class="studio-content">
@@ -2499,7 +2600,7 @@ audio::-webkit-media-controls-panel {
       </div>
     </div>
     <div class="vo-image fade-up">
-      <img src="https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800&q=85" alt="Voiceover session" />
+      <img src="https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800&q=85" alt="Voiceover session" loading="lazy" />
       <div class="vo-image-label">Multilingual Voice Talent · On-Call</div>
     </div>
   </div>
@@ -2624,7 +2725,13 @@ audio::-webkit-media-controls-panel {
     <li><a href="#partners">Partners</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
-  <div class="footer-copy">© 2026 OutRage Music Records. All rights reserved.</div>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.5rem;flex-wrap:wrap;">
+    <div class="footer-copy">© 2026 OutRage Music Records. All rights reserved.</div>
+    <div style="display:flex;gap:1.5rem;">
+      <a href="#privacy" onclick="openPrivacyModal()" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.2);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='rgba(255,255,255,0.2)'">Privacy Policy</a>
+      <a href="#terms" onclick="openTermsModal()" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.2);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='rgba(255,255,255,0.2)'">Beat License Terms</a>
+    </div>
+  </div>
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -2805,6 +2912,28 @@ function showUploadSuccess(beat) {
   overlay.style.display = 'flex';
   setTimeout(() => overlay.classList.add('show'), 50);
 }
+function openPrivacyModal() {
+  document.getElementById('privacyModal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+function closePrivacyModal() {
+  document.getElementById('privacyModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+function openTermsModal() {
+  document.getElementById('termsModal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+function closeTermsModal() {
+  document.getElementById('termsModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+// Close modals on backdrop click
+document.addEventListener('click', e => {
+  if (e.target.id === 'privacyModal') closePrivacyModal();
+  if (e.target.id === 'termsModal') closeTermsModal();
+});
+
 function closeSuccessOverlay() {
   const overlay = document.getElementById('uploadSuccessOverlay');
   overlay.classList.remove('show');
@@ -3711,8 +3840,17 @@ document.getElementById('lightbox')?.addEventListener('click', function(e) {
   if (e.target === this) closeLightbox();
 });
 document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeLightbox();
+    closePrivacyModal();
+    closeTermsModal();
+    closeCatalogModal();
+    const editModal = document.getElementById('editModal');
+    if (editModal) editModal.remove();
+    const buyModal = document.getElementById('buyModal');
+    if (buyModal) buyModal.remove();
+  }
   if (!document.getElementById('lightbox').classList.contains('open')) return;
-  if (e.key === 'Escape') closeLightbox();
   if (e.key === 'ArrowLeft') lightboxNav(-1);
   if (e.key === 'ArrowRight') lightboxNav(1);
 });
@@ -3775,12 +3913,24 @@ async function initGallery() {
 initBeats();
 initGallery();
 
-// Nav scroll effect
+// Nav scroll effect + back to top
 const navbar = document.getElementById('navbar');
+const backToTop = document.getElementById('back-to-top');
 window.addEventListener('scroll', () => {
   navbar.style.background = window.scrollY > 80
     ? 'rgba(10,10,10,0.99)'
     : 'rgba(10,10,10,0.95)';
+  if (backToTop) {
+    if (window.scrollY > 600) {
+      backToTop.style.opacity = '1';
+      backToTop.style.pointerEvents = 'all';
+      backToTop.style.transform = 'translateY(0)';
+    } else {
+      backToTop.style.opacity = '0';
+      backToTop.style.pointerEvents = 'none';
+      backToTop.style.transform = 'translateY(8px)';
+    }
+  }
 });
 
 // Beat play button
