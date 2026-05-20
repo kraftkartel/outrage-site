@@ -1585,74 +1585,70 @@ audio::-webkit-media-controls-panel {
   }
 
   .beats-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1rem;
     min-height: 100px;
     background: transparent;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .beat-card {
-    width: 100%;
-    padding: 0.85rem;
-    display: grid;
-    grid-template-columns: 100px 1fr;
-    grid-template-rows: auto;
-    gap: 0 0.85rem;
-    align-items: start;
+    width: 100% !important;
+    box-sizing: border-box;
+    padding: 1.25rem;
+    display: flex !important;
+    flex-direction: column !important; /* Stacks everything cleanly on mobile screens */
+    align-items: center;
+    text-align: center;
+    gap: 0.75rem;
   }
 
   .beat-card .beat-cover {
-    grid-column: 1;
-    grid-row: 1 / 5;
-    width: 100px;
-    height: 100px;
+    width: 120px !important;
+    height: 120px !important;
     aspect-ratio: 1;
-    max-height: none;
     object-fit: cover;
-    margin-bottom: 0;
+    margin: 0 auto 0.5rem auto;
   }
 
   .beat-card .beat-genre {
-    grid-column: 2;
-    grid-row: 1;
     margin-bottom: 0.2rem;
+    width: 100%;
   }
 
   .beat-card .beat-name {
-    grid-column: 2;
-    grid-row: 2;
-    font-size: 15px;
+    font-size: 16px;
     margin-bottom: 0.15rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: normal; /* Allows text to wrap naturally if title is long */
+    width: 100%;
   }
 
   .beat-card .beat-producer {
-    grid-column: 2;
-    grid-row: 3;
     margin-bottom: 0.5rem;
     font-size: 11px;
+    width: 100%;
   }
 
   .beat-card .beat-footer {
-    grid-column: 2;
-    grid-row: 4;
+    width: 100%;
+    display: flex;
+    justify-content: center;
     align-items: center;
   }
 
   .beat-card .wave-bars {
-    grid-column: 1 / -1;
-    grid-row: 5;
-    height: 28px;
+    width: 100%;
+    height: 32px;
     margin-top: 0.5rem;
+    display: flex;
+    justify-content: center;
   }
 
   .beat-card .beat-buy {
-    grid-column: 1 / -1;
-    grid-row: 6;
-    margin-top: 0.5rem;
+    width: 100% !important;
+    margin-top: 0.75rem;
   }
 
   .waveform-player {
@@ -2886,8 +2882,8 @@ audio::-webkit-media-controls-panel {
         <p class="section-eyebrow">Listen Now</p>
         <h2 class="section-title">Our <em>Music</em></h2>
       </div>
-      <a href="https://soundcloud.com/outragemusic" target="_blank" style="display:inline-flex;align-items:center;gap:0.6rem;background:var(--gold);color:#0A0A0A;padding:13px 28px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;text-decoration:none;transition:background 0.2s,transform 0.2s;" onmouseover="this.style.background='#E8C97A';this.style.transform='translateY(-2px)'" onmouseout="this.style.background='var(--gold)';this.style.transform='translateY(0)'">
-        ☁ SoundCloud →
+      <a href="https://www.youtube.com/@OutRageM" target="_blank" style="display:inline-flex;align-items:center;gap:0.6rem;background:var(--gold);color:#0A0A0A;padding:13px 28px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;text-decoration:none;transition:background 0.2s,transform 0.2s;" onmouseover="this.style.background='#E8C97A';this.style.transform='translateY(-2px)'" onmouseout="this.style.background='var(--gold)';this.style.transform='translateY(0)'">
+        ▶ YouTube →
       </a>
     </div>
     <div style="background:var(--dark2);border-top:2px solid var(--gold);overflow:hidden;">
@@ -4894,372 +4890,6 @@ if (heroStats) statObserver.observe(heroStats);
 //  ANIMATION ENGINE — inject before </script>
 // ══════════════════════════════════════════════
 
-// ── CURSOR DOT ──
-(function() {
-  if (window.innerWidth <= 768) return;
-  const dot = document.createElement('div');
-  dot.id = 'cursor-dot';
-  document.body.appendChild(dot);
-  let mouseX = 0, mouseY = 0;
-  document.addEventListener('mousemove', e => {
-    mouseX = e.clientX; mouseY = e.clientY;
-    dot.style.left = mouseX + 'px';
-    dot.style.top = mouseY + 'px';
-  }, { passive: true });
-  // Hover effect on interactive elements
-  const hoverEls = 'a, button, .beat-card, .m-item, .service-card, .testi-card, .gallery-item';
-  document.addEventListener('mouseover', e => {
-    if (e.target.closest(hoverEls)) dot.classList.add('hovering');
-  });
-  document.addEventListener('mouseout', e => {
-    if (e.target.closest(hoverEls)) dot.classList.remove('hovering');
-  });
-})();
-
-// ── MAGNETIC BUTTONS ──
-document.querySelectorAll('.btn-primary, .btn-gold, .btn-outline').forEach(btn => {
-  btn.classList.add('btn-magnetic');
-  btn.addEventListener('mousemove', function(e) {
-    const rect = this.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-    this.style.transform = `translateY(-2px) translate(${x * 0.18}px, ${y * 0.18}px)`;
-  });
-  btn.addEventListener('mouseleave', function() {
-    this.style.transform = '';
-  });
-});
-
-// ── SERVICE CARD RIPPLE ──
-document.querySelectorAll('.service-card').forEach(card => {
-  card.addEventListener('click', function(e) {
-    const r = document.createElement('span');
-    r.classList.add('ripple');
-    const rect = this.getBoundingClientRect();
-    const size = Math.max(rect.width, rect.height) * 1.5;
-    r.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - rect.left - size/2}px;top:${e.clientY - rect.top - size/2}px;`;
-    this.appendChild(r);
-    r.addEventListener('animationend', () => r.remove());
-  });
-});
-
-
-
-// ── SECTION EYEBROW LINE DRAW ──
-const eyebrowObserver = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.classList.add('line-drawn');
-      eyebrowObserver.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.5 });
-document.querySelectorAll('.section-eyebrow').forEach(el => {
-  eyebrowObserver.observe(el);
-});
-
-// ── SLIDE-LEFT / SLIDE-RIGHT elements ──
-const aboutImages = document.querySelector('.about-images');
-const aboutText = document.querySelector('.about-text');
-if (aboutImages) aboutImages.classList.add('slide-left');
-if (aboutText) aboutText.classList.add('slide-right');
-
-const voInner = document.querySelector('.vo-inner > div:first-child');
-const voImage = document.querySelector('.vo-image');
-if (voInner) voInner.classList.add('slide-left');
-if (voImage) voImage.classList.add('slide-right');
-
-const contactInfo = document.querySelector('#contact > div:first-child');
-const contactRight = document.querySelector('#contact > div:last-child');
-if (contactInfo) contactInfo.classList.add('slide-left');
-if (contactRight) contactRight.classList.add('slide-right');
-
-const slideObserver = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.classList.add('visible');
-      slideObserver.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.15 });
-document.querySelectorAll('.slide-left, .slide-right').forEach(el => slideObserver.observe(el));
-
-// ── HERO TITLE LINE SPLIT ──
-(function() {
-  const title = document.querySelector('.hero-title');
-  if (!title) return;
-  // Wrap each br-separated line
-  title.innerHTML = title.innerHTML
-    .split('<br>')
-    .map(line => `<span class="hero-title-line">${line}</span>`)
-    .join('<br>');
-})();
-
-// ── GALLERY ITEM COUNTER BADGES ──
-document.querySelectorAll('#studioGrid .m-item').forEach((item, i) => {
-  const badge = document.createElement('div');
-  badge.className = 'm-item-counter';
-  badge.textContent = String(i + 1).padStart(2, '0');
-  item.appendChild(badge);
-});
-
-// ── PROCESS STEPS enter animation ──
-(function() {
-  const processGrid = document.querySelector('#process [style*="grid-template-columns:repeat(4"]');
-  if (!processGrid) return;
-  const processObserver = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        [...e.target.children].forEach((child, i) => {
-          child.classList.add('process-step-anim');
-          child.style.animationDelay = (i * 0.12) + 's';
-        });
-        processObserver.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.2 });
-  processObserver.observe(processGrid);
-})();
-  let mouseX = 0, mouseY = 0;
-  document.addEventListener('mousemove', e => {
-    mouseX = e.clientX; mouseY = e.clientY;
-    dot.style.left = mouseX + 'px';
-    dot.style.top = mouseY + 'px';
-  }, { passive: true });
-  
-  // Hover effect on interactive elements
-  const hoverEls = 'a, button, .beat-card, .m-item, .service-card, .testi-card, .gallery-item';
-  document.addEventListener('mouseover', e => {
-    if (e.target.closest(hoverEls)) dot.classList.add('hovering');
-  });
-  document.addEventListener('mouseout', e => {
-    if (e.target.closest(hoverEls)) dot.classList.remove('hovering');
-  });
-})();
-
-// ── MAGNETIC BUTTONS ──
-document.querySelectorAll('.btn-primary, .btn-gold, .btn-outline').forEach(btn => {
-  btn.classList.add('btn-magnetic');
-  btn.addEventListener('mousemove', function(e) {
-    const rect = this.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-    this.style.transform = `translateY(-2px) translate(${x * 0.18}px, ${y * 0.18}px)`;
-  });
-  btn.addEventListener('mouseleave', function() {
-    this.style.transform = '';
-  });
-});
-
-// ── SERVICE CARD RIPPLE ──
-document.querySelectorAll('.service-card').forEach(card => {
-  card.addEventListener('click', function(e) {
-    const r = document.createElement('span');
-    r.classList.add('ripple');
-    const rect = this.getBoundingClientRect();
-    const size = Math.max(rect.width, rect.height) * 1.5;
-    r.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - rect.left - size/2}px;top:${e.clientY - rect.top - size/2}px;`;
-    this.appendChild(r);
-    r.addEventListener('animationend', () => r.remove());
-  });
-});
-
-// ── 3D TILT on beat cards and testi cards ──
-function addTilt(selector, intensity = 8) {
-  document.querySelectorAll(selector).forEach(card => {
-    card.addEventListener('mousemove', function(e) {
-      const rect = this.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width - 0.5;
-      const y = (e.clientY - rect.top) / rect.height - 0.5;
-      this.style.transform = `perspective(800px) rotateY(${x * intensity}deg) rotateX(${-y * intensity}deg) translateY(-4px)`;
-    });
-    card.addEventListener('mouseleave', function() {
-      this.style.transform = '';
-    });
-  });
-}
-addTilt('.beat-card', 6);
-addTilt('.testi-card', 4);
-
-// ── SECTION EYEBROW LINE DRAW ──
-const eyebrowObserver = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.classList.add('line-drawn');
-      eyebrowObserver.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.5 });
-document.querySelectorAll('.section-eyebrow').forEach(el => {
-  eyebrowObserver.observe(el);
-});
-
-// ── SLIDE-LEFT / SLIDE-RIGHT elements ──
-const aboutImages = document.querySelector('.about-images');
-const aboutText = document.querySelector('.about-text');
-if (aboutImages) aboutImages.classList.add('slide-left');
-if (aboutText) aboutText.classList.add('slide-right');
-
-const voInner = document.querySelector('.vo-inner > div:first-child');
-const voImage = document.querySelector('.vo-image');
-if (voInner) voInner.classList.add('slide-left');
-if (voImage) voImage.classList.add('slide-right');
-
-const contactInfo = document.querySelector('#contact > div:first-child');
-const contactRight = document.querySelector('#contact > div:last-child');
-if (contactInfo) contactInfo.classList.add('slide-left');
-if (contactRight) contactRight.classList.add('slide-right');
-
-const slideObserver = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.classList.add('visible');
-      slideObserver.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.15 });
-document.querySelectorAll('.slide-left, .slide-right').forEach(el => slideObserver.observe(el));
-
-// ── HERO TITLE LINE SPLIT ──
-(function() {
-  const title = document.querySelector('.hero-title');
-  if (!title) return;
-  title.innerHTML = title.innerHTML
-    .split('<br>')
-    .map(line => `<span class="hero-title-line">${line}</span>`)
-    .join('<br>');
-})();
-
-// ── GALLERY ITEM COUNTER BADGES ──
-document.querySelectorAll('#studioGrid .m-item').forEach((item, i) => {
-  const badge = document.createElement('div');
-  badge.className = 'm-item-counter';
-  badge.textContent = String(i + 1).padStart(2, '0');
-  item.appendChild(badge);
-});
-
-// ── PROCESS STEPS enter animation ──
-(function() {
-  const processGrid = document.querySelector('#process [style*="grid-template-columns:repeat(4"]');
-  if (!processGrid) return;
-  const processObserver = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        [...e.target.children].forEach((child, i) => {
-          child.classList.add('process-step-anim');
-          child.style.animationDelay = (i * 0.12) + 's';
-        });
-        processObserver.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.2 });
-  processObserver.observe(processGrid);
-  }, { threshold: 0.2 });
-  processObserver.observe(processGrid);
-})();
-
-// ── BEAT CARD stagger on grid render ──
-const _origRenderPublicBeats = window.renderPublicBeats || null;
-if (typeof renderPublicBeats === 'function') {
-  const origFn = renderPublicBeats;
-  window.renderPublicBeats = function() {
-    origFn.apply(this, arguments);
-    setTimeout(() => {
-      document.querySelectorAll('#publicBeatsGrid .beat-card:not(.entered)').forEach((card, i) => {
-        card.classList.add('enter');
-        card.style.animationDelay = (i * 0.06) + 's';
-        card.classList.add('entered');
-      });
-    }, 50);
-  };
-}
-
-// ── FAQ ICON rotate on open ──
-const origToggleFaq = window.toggleFaq;
-if (typeof toggleFaq === 'function') {
-  window.toggleFaq = function(btn) {
-    const item = btn.closest('.faq-item');
-    const wasOpen = item.querySelector('.faq-body').style.display === 'block';
-    document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
-    origToggleFaq.apply(this, arguments);
-    if (!wasOpen) item.classList.add('open');
-  };
-}
-
-// ── GOLD MARQUEE pause on hover ──
-const marqueeBar = document.querySelector('.marquee-bar');
-if (marqueeBar) {
-  marqueeBar.addEventListener('mouseenter', () => {
-    const track = document.querySelector('.marquee-track');
-    if (track) track.style.animationPlayState = 'paused';
-  });
-  marqueeBar.addEventListener('mouseleave', () => {
-    const track = document.querySelector('.marquee-track');
-    if (track) track.style.animationPlayState = 'running';
-  });
-}
-
-// ── LANGUAGE LIST stagger ──
-(function() {
-  const langObserver = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        [...document.querySelectorAll('.lang-item')].forEach((item, i) => {
-          item.style.opacity = '0';
-          item.style.transform = 'translateX(-16px)';
-          item.style.transition = `opacity 0.4s ease ${i * 0.05}s, transform 0.4s ease ${i * 0.05}s, color 0.2s, padding-left 0.25s`;
-          setTimeout(() => {
-            item.style.opacity = '';
-            item.style.transform = '';
-          }, 50 + i * 50);
-        });
-        langObserver.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.3 });
-  const langSection = document.querySelector('.lang-list');
-  if (langSection) langObserver.observe(langSection);
-})();
-
-// ── PARTNER CARD glow ──
-document.querySelectorAll('#partners [style*="background:var(--dark2)"]').forEach(card => {
-  card.classList.add('partner-card-glow');
-});
-
-// ── STUDIO FEATURE stagger ──
-(function() {
-  const featObserver = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        [...document.querySelectorAll('.studio-feature')].forEach((feat, i) => {
-          feat.style.opacity = '0';
-          feat.style.transform = 'translateX(20px)';
-          feat.style.transition = `opacity 0.5s ease ${i * 0.1}s, transform 0.5s cubic-bezier(0.16,1,0.3,1) ${i * 0.1}s`;
-          setTimeout(() => {
-            feat.style.opacity = '';
-            feat.style.transform = '';
-          }, 50 + i * 100);
-        });
-        featObserver.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.3 });
-  const featsWrap = document.querySelector('.studio-features');
-  if (featsWrap) featObserver.observe(featsWrap);
-})();
-
-// ── WAVE BARS playing class ──
-const origPlayBeat = window.playBeat;
-if (typeof playBeat === 'function') {
-  window.playBeat = function(btn, audioUrl, beat) {
-    document.querySelectorAll('.wave-bars').forEach(w => w.classList.remove('playing'));
-    origPlayBeat.apply(this, arguments);
-    const waveEl = document.getElementById('wave-' + beat.id);
-    if (waveEl) waveEl.classList.add('playing');
-  };
-}
-
-</script>
 <style>
 /* ── TEXT REVEAL (split chars) ── */
 .reveal-text {
