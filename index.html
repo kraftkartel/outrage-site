@@ -2889,10 +2889,65 @@ audio::-webkit-media-controls-panel {
 
   </div>
 
-  <div style="margin-top:2.5rem;font-size:10px;color:rgba(255,255,255,0.18);letter-spacing:0.25em;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;">
-    + more collaborations across East Africa
-  </div>
-</section>
+<div style="margin-top:2.5rem;font-size:10px;color:rgba(255,255,255,0.18);letter-spacing:0.25em;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;">
+      + more collaborations across East Africa
+    </div>
+  </section>
+
+  <section id="music" class="reveal-on-scroll" style="background:var(--black);padding:7rem 5vw;position:relative;overflow:hidden;">
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Cormorant Garamond',serif;font-size:20vw;font-weight:300;color:rgba(201,168,76,0.03);white-space:nowrap;pointer-events:none;user-select:none;letter-spacing:-0.05em;">SOUND</div>
+    <div style="position:relative;z-index:2;max-width:1100px;margin:0 auto;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:3rem;flex-wrap:wrap;gap:2rem;">
+        <div>
+          <p class="section-eyebrow">Listen Now</p>
+          <h2 class="section-title">Our <em>Music</em></h2>
+        </div>
+        <a href="https://www.youtube.com/@OutRageM" target="_blank" class="interactive-hover-lift" style="display:inline-flex;align-items:center;gap:0.6rem;background:var(--gold);color:#0A0A0A;padding:13px 28px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;text-decoration:none;transition:background 0.2s,transform 0.2s;" onmouseover="this.style.background='#E8C97A';this.style.transform='translateY(-2px)'" onmouseout="this.style.background='var(--gold)';this.style.transform='translateY(0)'">
+          ▶ YouTube Channel →
+        </a>
+      </div>
+      <div style="background:var(--dark2);border-top:2px solid var(--gold);overflow:hidden;box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+        <iframe width="100%" height="450"
+          src="https://www.youtube.com/embed/h2lG6YpcPjk"
+          title="OutRage Music - Energy Levels"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen
+          style="display:block; border:none;">
+        </iframe>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Intersection Observer engine for clean scroll fades
+      const revealElements = document.querySelectorAll(".reveal-on-scroll");
+      const revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("active");
+            observer.unobserve(entry.target); // Animates once for performance optimization
+          }
+        });
+      }, { threshold: 0.15 });
+
+      revealElements.forEach(element => revealObserver.observe(element));
+
+      // Dynamic global dark/light theme switch engine handler
+      const toggleBtn = document.getElementById("theme-toggle");
+      if (toggleBtn) {
+        toggleBtn.addEventListener("click", () => {
+          const currentTheme = document.documentElement.getAttribute("data-theme") || "dark";
+          const newTheme = currentTheme === "dark" ? "light" : "dark";
+          document.documentElement.setAttribute("data-theme", newTheme);
+          localStorage.setItem("outrage_prefs", JSON.stringify({ cookiesAccepted: true, theme: newTheme }));
+        });
+      }
+    });
+  </script>
+</body>
+</html>
 
 <!-- ── SOUNDCLOUD / MUSIC ── -->
 <section id="music" style="background:var(--black);padding:7rem 5vw;position:relative;overflow:hidden;">
