@@ -431,7 +431,7 @@ media-src 'self' https://res.cloudinary.com blob:;
   [data-theme="light"] #catalogModal [style*="background:var(--black)"] { background: #F4F0E8 !important; border-bottom-color: rgba(139,105,20,0.2) !important; }
   [data-theme="light"] #catalogModal [style*="color:var(--gold)"] { color: #8B6914 !important; }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
     background: var(--black);
@@ -440,6 +440,27 @@ media-src 'self' https://res.cloudinary.com blob:;
     font-weight: 300;
     line-height: 1.6;
     overflow-x: hidden;
+  }
+
+  /* ── SMOOTH SCROLL ENTRANCE REVEAL DESIGN ── */
+  .reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: transform, opacity;
+  }
+
+  .reveal-on-scroll.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Hover scale dynamic micro-interactions for links/elements */
+  .interactive-hover-lift {
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease;
+  }
+  .interactive-hover-lift:hover {
+    transform: translateY(-4px) scale(1.02);
   }
 
   /* ── NAV ── */
@@ -2899,7 +2920,7 @@ audio::-webkit-media-controls-panel {
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-top:1px;padding:1.25rem 1.5rem;background:var(--dark2);border-top:1px solid rgba(201,168,76,0.1);">
       <span style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:rgba(255,255,255,0.2);">Stream on all platforms</span>
       <div style="display:flex;gap:1.5rem;flex-wrap:wrap;">
-        <a href="https://soundcloud.com/outragemusic" target="_blank" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#E8C97A'" onmouseout="this.style.color='var(--gold)'">SoundCloud →</a>
+        <a href="https://soundcloud.com/kraftkartel" target="_blank" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#E8C97A'" onmouseout="this.style.color='var(--gold)'">SoundCloud →</a>
         <a href="https://www.youtube.com/@OutRageM" target="_blank" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='rgba(255,255,255,0.3)'">YouTube →</a>
         <a href="https://open.spotify.com/artist/2psSrXqTG3p05k8QaAw4aW" target="_blank" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='rgba(255,255,255,0.3)'">Spotify →</a>
       </div>
